@@ -158,6 +158,7 @@
 .category-table td:nth-child(2) {
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .category-table th:nth-child(3),
