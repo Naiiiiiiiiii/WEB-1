@@ -108,7 +108,7 @@
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
-    table-layout: auto;
+    table-layout: fixed;
     background: #fff;
 }
 
@@ -218,7 +218,7 @@
 }
 
 /* Nút hành động */
-.products-category .action-buttons {
+.action-buttons {
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -226,7 +226,7 @@
     white-space: nowrap;
 }
 
-.products-category .action-buttons button {
+.action-buttons button {
     min-width: 90px;
     padding: 8px 10px;
     border: none;
@@ -490,13 +490,13 @@
         align-items: stretch;
     }
 
-    .products-category .action-buttons {
+    .action-buttons {
         flex-direction: column;
         align-items: stretch;
     }
 
-    .products-category .btn-edit-category,
-    .products-category .btn-delete-category {
+    .btn-edit-category,
+    .btn-delete-category {
         width: 100%;
     }
 }
