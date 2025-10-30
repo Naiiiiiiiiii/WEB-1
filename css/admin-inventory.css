@@ -5,138 +5,309 @@
 
 /* Low Stock Warning (Đã chuyển từ admin.css cũ) */
 .table-warning {
-    background-color: #fff3cd !important;
+  background-color: #fff3cd !important;
 }
 
 .stock-status-low {
-    color: #e74c3c;
-    font-weight: 700;
+  color: #e74c3c;
+  font-weight: 700;
 }
 
 .stock-status-ok {
-    color: #27ae60;
-    font-weight: 500;
+  color: #27ae60;
+  font-weight: 500;
 }
 
 /* Button View Movements */
 .btn-view-movements {
-    background: #667eea;
-    color: white;
+  background: #667eea;
+  color: white;
 }
 
 .btn-view-movements:hover {
-    background: #5a6de5;
+  background: #5a6de5;
 }
 
 /* Filter Form in Modal (Đã chuyển từ admin.css cũ) */
 .filter-form {
-    display: flex;
-    gap: 15px;
-    align-items: flex-end;
-    margin-bottom: 25px;
-    padding: 20px;
-    border: 1px solid #e8e8e8;
-    border-radius: 8px;
-    background: #fafafa;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+  margin-bottom: 25px;
+  padding: 20px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  background: #fafafa;
+  flex-wrap: wrap;
 }
 
 .filter-form .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    flex: 1;
-    min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 150px;
 }
 
 .filter-form label {
-    font-weight: 600;
-    font-size: 13px;
-    color: #34495e;
+  font-weight: 600;
+  font-size: 13px;
+  color: #34495e;
 }
 
 /* Summary Container (Đã chuyển từ admin.css cũ) */
 .summary-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    margin: 25px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin: 25px 0;
 }
 
 .summary-box {
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    border: 2px solid #e8e8e8;
-    background: #fff;
-    transition: transform 0.2s ease;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  border: 2px solid #e8e8e8;
+  background: #fff;
+  transition: transform 0.2s ease;
 }
 
 .summary-box:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .summary-box .label {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 8px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .summary-box .value {
-    font-size: 28px;
-    font-weight: bold;
-    color: #2c3e50;
+  font-size: 28px;
+  font-weight: bold;
+  color: #2c3e50;
 }
 
 .summary-box.start {
-    border-color: #f39c12;
-    background: #fef5e7;
+  border-color: #f39c12;
+  background: #fef5e7;
 }
 
 .summary-box.start .value {
-    color: #f39c12;
+  color: #f39c12;
 }
 
 .summary-box.in {
-    border-color: #27ae60;
-    background: #eafaf1;
+  border-color: #27ae60;
+  background: #eafaf1;
 }
 
 .summary-box.in .value {
-    color: #27ae60;
+  color: #27ae60;
 }
 
 .summary-box.out {
-    border-color: #e74c3c;
-    background: #fadbd8;
+  border-color: #e74c3c;
+  background: #fadbd8;
 }
 
 .summary-box.out .value {
-    color: #e74c3c;
+  color: #e74c3c;
 }
 
 .summary-box.end {
-    border-color: #3498db;
-    background: #ebf5fb;
+  border-color: #3498db;
+  background: #ebf5fb;
 }
 
 .summary-box.end .value {
-    color: #3498db;
+  color: #3498db;
 }
 
 /* Responsive Overrides cho Inventory */
 @media (max-width: 768px) {
-    .filter-form {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .filter-form .input-group {
-        width: 100%;
-        min-width: unset;
-    }
+  .filter-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-form .input-group {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+/* ===================================================================
+   INVENTORY TABLE - BẢNG QUẢN LÝ TỒN KHO
+   =================================================================== */
+#inventoryTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+#inventoryTable th,
+#inventoryTable td {
+  padding: 12px 16px;
+  border: 1px solid #f0f0f0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #2c3e50;
+  vertical-align: middle;
+  word-break: break-word;
+}
+
+#inventoryTable th {
+  background: #fafafa;
+  font-weight: 700;
+  color: #333;
+  border-bottom: 2px solid #e5e5e5;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+#inventoryTable tbody tr:hover {
+  background: #fff8f8;
+}
+
+/* ----- Căn chỉnh từng cột ----- */
+#inventoryTable th:nth-child(1),
+#inventoryTable td:nth-child(1) {
+  width: 7%;
+  text-align: center;
+  font-weight: 700;
+  font-family: "Courier New", monospace;
+}
+
+#inventoryTable th:nth-child(2),
+#inventoryTable td:nth-child(2) {
+  text-align: left;
+  font-weight: 600;
+}
+
+#inventoryTable th:nth-child(3),
+#inventoryTable td:nth-child(3) {
+  text-align: center;
+  width: 10%;
+  color: #555;
+}
+
+#inventoryTable th:nth-child(4),
+#inventoryTable td:nth-child(4) {
+  text-align: center;
+  width: 5%;
+  font-weight: 600;
+}
+
+#inventoryTable th:nth-child(5),
+#inventoryTable td:nth-child(5) {
+  text-align: center;
+  width: 10%;
+  color: #34495e;
+}
+
+#inventoryTable th:nth-child(6),
+#inventoryTable td:nth-child(6) {
+  text-align: center;
+  width: 8%;
+}
+
+#inventoryTable th:nth-child(7),
+#inventoryTable td:nth-child(7) {
+  text-align: center;
+  width: 7%;
+}
+
+/* ----- Trạng thái tồn kho ----- */
+.stock-status-low {
+  color: #e74c3c;
+  font-weight: 700;
+}
+
+.stock-status-ok {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+/* ----- Badge trạng thái ----- */
+.status-badge {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 100px;
+}
+
+.status-badge.status-active {
+  background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+  color: #1e7e34;
+}
+
+.status-badge.status-hidden {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+  color: #666;
+}
+
+/* ----- Nút hành động ----- */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.action-buttons button {
+  min-width: 90px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-view-movements {
+  background: linear-gradient(135deg, #667eea 0%, #5a6de5 100%);
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+}
+
+.btn-view-movements:hover {
+  background: linear-gradient(135deg, #5a6de5 0%, #4a5de0 100%);
+  transform: translateY(-2px);
+}
+
+.btn-edit-stock {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  box-shadow: 0 2px 6px rgba(72, 187, 120, 0.3);
+}
+
+.btn-edit-stock:hover {
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+  transform: translateY(-2px);
+}
+
+/* ----- Hiệu ứng cập nhật ----- */
+#inventoryTable tr.updated td {
+  background-color: #e8fce8 !important;
+  transition: background-color 1.2s ease;
 }

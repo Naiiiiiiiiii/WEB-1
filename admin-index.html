@@ -31,7 +31,7 @@
     </div>
 
     <div id="adminPanel" style="display: none">
-        
+
         <div class="menu">
             <div class="nav-container">
                 <div class="logo"><i class="fa-solid fa-shoe-prints"></i> ShoeStore</div>
@@ -52,7 +52,7 @@
         </div>
 
         <div class="main-content">
-            
+
             <div class="header">
                 <span>Chào, <b>ADMIN</b></span>
                 <a href="" class="logout">Đăng xuất</a>
@@ -132,18 +132,18 @@
                     </form>
                 </div>
 
-                <table class="data-table category-table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Tên loại</th>
-            <th class="nowrap w-120">Trạng thái</th>
-            <th class="nowrap w-160">Hành động</th>
-        </tr>
-    </thead>
-    <tbody id="categoryTableBody">
-    </tbody>
-</table>
+                <table class="data-table category-table">z
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên loại</th>
+                            <th class="nowrap w-120">Trạng thái</th>
+                            <th class="nowrap w-160">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryTableBody">
+                    </tbody>
+                </table>
             </section>
 
             <section class="orders" id="orders">
@@ -191,7 +191,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                         <tr>
+                        <tr>
                             <td colspan="6" style="text-align: center; padding: 20px;">
                                 <i class="fa-solid fa-spinner fa-spin"></i> Đang tải đơn hàng...
                             </td>
@@ -211,21 +211,21 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="order-detail-grid">
                         <div class="detail-section">
                             <h4><i class="fa-solid fa-user"></i> Thông tin Khách hàng & Giao hàng</h4>
                             <div id="orderDetailMeta" class="muted">
-                                </div>
+                            </div>
                         </div>
-                        
+
                         <div class="detail-section">
                             <h4><i class="fa-solid fa-boxes-stacked"></i> Danh sách Sản phẩm</h4>
                             <div id="orderDetailItems">
-                                </div>
-                            
+                            </div>
+
                             <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-                            
+
                             <h4><i class="fa-solid fa-truck-fast"></i> Cập nhật Trạng thái</h4>
                             <form id="orderStatusUpdateForm">
                                 <div class="field" style="display: flex; align-items: center; gap: 15px;">
@@ -392,7 +392,8 @@
             <section class="price" id="price">
                 <h2><i class="fa-solid fa-dollar-sign"></i> Quản lý Giá bán & Lợi nhuận</h2>
                 <p class="description">
-                    Sử dụng công cụ này để thiết lập giá bán tự động dựa trên <strong>Giá Vốn</strong> và <strong>Tỉ lệ Lợi nhuận (Margin)</strong> mong muốn.
+                    Sử dụng công cụ này để thiết lập giá bán tự động dựa trên <strong>Giá Vốn</strong> và <strong>Tỉ lệ
+                        Lợi nhuận (Margin)</strong> mong muốn.
                     <br>
                     Công thức: <code>Giá Bán = Giá Vốn / (1 - (Tỉ lệ Lợi nhuận % / 100))</code>
                 </p>
@@ -462,7 +463,7 @@
 
                         <div class="field">
                             <label for="importSlipProductSelect">
-                                <i class="fa-solid fa-box"></i> Chọn Sản phẩm 
+                                <i class="fa-solid fa-box"></i> Chọn Sản phẩm
                                 <span class="required">*</span>
                             </label>
                             <select id="importSlipProductSelect" required>
@@ -472,7 +473,7 @@
 
                         <div class="field">
                             <label for="importSlipQuantity">
-                                <i class="fa-solid fa-hashtag"></i> Số lượng nhập 
+                                <i class="fa-solid fa-hashtag"></i> Số lượng nhập
                                 <span class="required">*</span>
                             </label>
                             <input type="number" id="importSlipQuantity" min="1" placeholder="VD: 50" required>
@@ -480,15 +481,16 @@
 
                         <div class="field">
                             <label for="importSlipPrice">
-                                <i class="fa-solid fa-dollar-sign"></i> Giá nhập (Giá vốn) 
+                                <i class="fa-solid fa-dollar-sign"></i> Giá nhập (Giá vốn)
                                 <span class="required">*</span>
                             </label>
-                            <input type="number" id="importSlipPrice" min="1000" step="1000" placeholder="VD: 1500000" required>
+                            <input type="number" id="importSlipPrice" min="1000" step="1000" placeholder="VD: 1500000"
+                                required>
                         </div>
 
                         <div class="field" id="importSlipSizeGroup" style="display: none;">
                             <label for="importSlipSize">
-                                <i class="fa-solid fa-ruler"></i> Kích cỡ (Size) 
+                                <i class="fa-solid fa-ruler"></i> Kích cỡ (Size)
                                 <span class="required">*</span>
                             </label>
                             <input type="number" id="importSlipSize" placeholder="VD: 41" min="36" max="45">
@@ -517,7 +519,7 @@
                 </div>
 
                 <h3 class="mt-40"><i class="fa-solid fa-list"></i> Danh sách Phiếu Nhập Hàng</h3>
-                
+
                 <div class="section-toolbar filter-toolbar">
                     <div class="field">
                         <label for="importFilterStatus">
@@ -658,7 +660,7 @@
                             URL Hình ảnh
                             <span class="required">*</span>
                         </label>
-                        <input type="url" id="modalProductImage" placeholder="https://example.com/image.jpg" required>
+                        <input type="text" id="modalProductImage" placeholder="https://example.com/image.jpg" required>
                         <small>Link hình ảnh từ internet hoặc thư mục dự án</small>
 
                         <div id="imagePreview" class="image-preview-container">
@@ -671,8 +673,8 @@
                             Mô tả Sản phẩm
                             <span class="required">*</span>
                         </label>
-                        <textarea id="modalProductDescription"
-                            placeholder="Nhập mô tả chi tiết về sản phẩm..." required></textarea>
+                        <textarea id="modalProductDescription" placeholder="Nhập mô tả chi tiết về sản phẩm..."
+                            required></textarea>
                         <small>Mô tả chi tiết giúp khách hàng hiểu rõ hơn</small>
                     </div>
                 </form>
@@ -770,7 +772,7 @@
                 <form id="editImportSlipForm" class="modal-form">
                     <div class="form-group">
                         <label for="editImportSlipQuantity">
-                            <i class="fa-solid fa-hashtag"></i> Số lượng nhập 
+                            <i class="fa-solid fa-hashtag"></i> Số lượng nhập
                             <span class="required">*</span>
                         </label>
                         <input type="number" id="editImportSlipQuantity" min="1" required>
@@ -778,7 +780,7 @@
 
                     <div class="form-group">
                         <label for="editImportSlipPrice">
-                            <i class="fa-solid fa-dollar-sign"></i> Giá nhập (Giá vốn) 
+                            <i class="fa-solid fa-dollar-sign"></i> Giá nhập (Giá vốn)
                             <span class="required">*</span>
                         </label>
                         <input type="number" id="editImportSlipPrice" min="1000" step="1000" required>
@@ -819,19 +821,20 @@
         </div>
     </div>
 
-<script type="module" src="./js/user.js"></script>
-<script type="module" src="./js/category.js"></script>
-<script type="module" src="./js/Product.js"></script>
-<script type="module" src="./js/ProductManager.js"></script>
-<script type="module" src="./js/order-manager.js"></script>
-<script type="module" src="./js/ImportSlip.js"></script>
-<script type="module" src="./js/admin.js"></script>
-<script type="module" src="./js/category-admin.js"></script>
-<script type="module" src="./js/product-admin.js"></script>
-<script type="module" src="./js/order-admin.js"></script>
-<script type="module" src="./js/import-admin.js"></script>
-<script type="module" src="./js/price-admin.js"></script>
+    <script type="module" src="./js/user.js"></script>
+    <script type="module" src="./js/category.js"></script>
+    <script type="module" src="./js/Product.js"></script>
+    <script type="module" src="./js/ProductManager.js"></script>
+    <script type="module" src="./js/order-manager.js"></script>
+    <script type="module" src="./js/ImportSlip.js"></script>
+    <script type="module" src="./js/admin.js"></script>
+    <script type="module" src="./js/category-admin.js"></script>
+    <script type="module" src="./js/product-admin.js"></script>
+    <script type="module" src="./js/order-admin.js"></script>
+    <script type="module" src="./js/import-admin.js"></script>
+    <script type="module" src="./js/price-admin.js"></script>
 
 
 </body>
+
 </html>
