@@ -10,7 +10,7 @@ Tài liệu này tóm tắt tất cả các cải thiện đã được thực h
 
 ### 1. Hệ Thống CSS Variables (`variables.css`)
 
-**Tạo mới:** File `css/variables.css` với 140+ CSS custom properties
+**Tạo mới:** File `css/variables.css` với 94 CSS custom properties
 
 **Bao gồm:**
 - ✅ Color palette (primary, secondary, neutral, status colors)
@@ -193,7 +193,7 @@ Tài liệu này tóm tắt tất cả các cải thiện đã được thực h
 
 | Metric | Before | After | Improvement |
 |--------|--------|-------|-------------|
-| CSS Variables | 0 | 140+ | ✅ New |
+| CSS Variables | 0 | 94 | ✅ New |
 | Hardcoded Colors | ~200+ | 0 | ✅ 100% |
 | Focus States | Few | All interactive elements | ✅ Complete |
 | Accessibility Score | Unknown | Improved | ✅ Better |
