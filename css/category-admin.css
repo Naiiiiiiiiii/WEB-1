@@ -155,6 +155,11 @@
     text-align: left;
 }
 
+.category-table td:nth-child(2) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .category-table th:nth-child(3),
 .category-table td:nth-child(3) {
     width: 120px;
@@ -163,7 +168,8 @@
 
 .category-table th:nth-child(4),
 .category-table td:nth-child(4) {
-    width: 180px;
+    width: 220px;
+    min-width: 220px;
     text-align: right;
 }
 
