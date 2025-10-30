@@ -81,7 +81,7 @@
     opacity: 1;
 }
 
-.modal-content {
+.product-modal .modal-content {
     background: white;
     border-radius: 16px;
     width: 90%;
@@ -97,7 +97,7 @@
     transform: translateY(0);
 }
 
-.modal-header {
+.product-modal .modal-header {
     padding: 25px 30px;
     border-bottom: 2px solid #f0f0f0;
     display: flex;
@@ -136,7 +136,7 @@
     transform: rotate(90deg);
 }
 
-.modal-body {
+.product-modal .modal-body {
     padding: 30px;
 }
 
@@ -219,7 +219,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.modal-footer {
+.product-modal .modal-footer {
     padding: 20px 30px;
     border-top: 2px solid #f0f0f0;
     display: flex;
@@ -379,7 +379,7 @@
 }
 
 /* Action Buttons */
-.action-buttons {
+.products .action-buttons {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
@@ -663,12 +663,12 @@
    Responsive Overrides
    ------------------------------------------------------------------- */
 @media (max-width: 768px) {
-    .modal-content {
+    .product-modal .modal-content {
         width: 95%;
         max-height: 95vh;
     }
     
-    .modal-body {
+    .product-modal .modal-body {
         padding: 20px;
     }
     
@@ -683,12 +683,12 @@
         display: block;
     }
     
-    .action-buttons {
+    .products .action-buttons {
         flex-direction: column;
         align-items: stretch;
     }
     
-    .action-buttons button {
+    .products .action-buttons button {
         width: 100%;
         justify-content: center;
     }

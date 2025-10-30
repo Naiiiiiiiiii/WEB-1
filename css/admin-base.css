@@ -4,6 +4,75 @@
    =================================================================== */
 
 /* ===============================
+   CSS VARIABLES (Design Tokens)
+=============================== */
+:root {
+    /* Primary Colors */
+    --color-primary: #667eea;
+    --color-primary-dark: #5a6de5;
+    --color-secondary: #764ba2;
+    
+    /* Status Colors */
+    --color-success: #27ae60;
+    --color-success-dark: #229954;
+    --color-warning: #f39c12;
+    --color-danger: #e74c3c;
+    --color-danger-dark: #c0392b;
+    --color-info: #3498db;
+    
+    /* Neutral Colors */
+    --color-text-primary: #2c3e50;
+    --color-text-secondary: #34495e;
+    --color-text-muted: #888;
+    --color-border: #e8e8e8;
+    --color-border-light: #ddd;
+    --color-bg-light: #fafafa;
+    --color-bg-body: #f4f7f6;
+    
+    /* Spacing */
+    --spacing-xs: 6px;
+    --spacing-sm: 10px;
+    --spacing-md: 15px;
+    --spacing-lg: 20px;
+    --spacing-xl: 25px;
+    --spacing-2xl: 30px;
+    
+    /* Border Radius */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 10px 25px rgba(0, 0, 0, 0.2);
+    
+    /* Focus Ring */
+    --focus-ring-width: 3px;
+    --focus-ring-color: rgba(102, 126, 234, 0.3);
+}
+
+/* ===============================
+   FOCUS VISIBLE - Accessibility
+=============================== */
+button:focus-visible,
+.btn:focus-visible,
+.close-modal-btn:focus-visible,
+.close-btn:focus-visible,
+.close-detail-btn:focus-visible,
+.category-modal-close:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+}
+
+/* ===============================
    RESET & BASE (Đã sửa lỗi khoảng trắng)
 =============================== */
 * {
