@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Admin - ShoeStore</title>
+    <link rel="stylesheet" href="./css/admin-base.css">
+    <link rel="stylesheet" href="./css/admin-product.css">
+    <link rel="stylesheet" href="./css/admin-inventory.css">
+    <link rel="stylesheet" href="./css/category-admin.css">
+    <link rel="stylesheet" href="./css/admin-import.css">
+    <link rel="stylesheet" href="./css/admin-price.css">
+    <link rel="stylesheet" href="./css/admin-order.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+
+<body>
+    <div id="loginPage">
+        <form class="form_login" id="formDangNhap">
+            <h1>Đăng nhập Admin</h1>
+            <label>Username</label>
+            <input type="text" id="username" placeholder="admin">
+
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Admin123">
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <div id="adminPanel" style="display: none">
+        
+        <div class="menu">
+            <div class="nav-container">
+                <div class="logo"><i class="fa-solid fa-shoe-prints"></i> ShoeStore</div>
+
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="#index"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
+                        <li><a href="#user"><i class="fa-solid fa-users"></i> Quản lý tài khoản</a></li>
+                        <li><a href="#products"><i class="fa-solid fa-box"></i> Quản lý sản phẩm</a></li>
+                        <li><a href="#categories"><i class="fa-solid fa-tags"></i> Quản lý danh mục</a></li>
+                        <li><a href="#orders"><i class="fa-solid fa-cart-shopping"></i> Quản lý đơn đặt hàng</a></li>
+                        <li><a href="#inventory"><i class="fa-solid fa-warehouse"></i> Quản lý tồn kho</a></li>
+                        <li><a href="#price"><i class="fa-solid fa-dollar-sign"></i> Quản lý Giá bán</a></li>
+                        <li><a href="#import-slips"><i class="fa-solid fa-file-import"></i> Quản lý Phiếu nhập</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <div class="main-content">
+            
+            <div class="header">
+                <span>Chào, <b>ADMIN</b></span>
+                <a href="" class="logout">Đăng xuất</a>
+            </div>
+
+            <section class="index" id="index">
+                <div class="index-content">
+                    <div class="index-content1">
+                        <div class="index-content" id="countAccount">Số tài khoản hiện có:</div>
+                        <div class="index-content" id="countProducts">Số sản phẩm hiện có:</div>
+                    </div>
+                    <div class="index-content2">
+                        <div class="index-content" id="countOrders">Số đơn đặt hàng hiện có:</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="user" id="user">
+                <h2>Quản lý tài khoản người dùng</h2>
+                <div class="userTable-container">
+                    <table class="userTable" id="userTable">
+                        <thead>
+                            <tr>
+                                <th>Họ tên</th>
+                                <th>Tên đăng nhập</th>
+                                <th>Email</th>
+                                <th class="nowrap w-120">Đơn hàng</th>
+                                <th class="nowrap w-120">Trạng thái</th>
+                                <th class="nowrap w-240">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="products" id="products">
+                <h2>Quản lý Sản phẩm</h2>
+
+                <div class="section-toolbar">
+                    <button id="addProductBtn" class="btn btn-primary">
+                        <i class="fa-solid fa-plus"></i>
+                        Thêm Sản phẩm Mới
+                    </button>
+                </div>
+
+                <h3 class="mt-40">Danh sách Sản phẩm</h3>
+                <table class="userTable">
+                    <thead>
+                        <tr>
+                            <th class="nowrap w-80">ID</th>
+                            <th>Tên Sản phẩm</th>
+                            <th class="nowrap w-120">Danh mục</th>
+                            <th class="nowrap w-120 right">Giá</th>
+                            <th class="nowrap w-80 center">Tồn kho</th>
+                            <th class="nowrap w-120">Trạng thái</th>
+                            <th class="nowrap w-220">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody"></tbody>
+                </table>
+            </section>
+
+            <section class="products-category" id="categories">
+                <h2>Quản lý Danh mục Sản phẩm</h2>
+
+                <div class="section-toolbar">
+                    <form id="addCategoryForm" class="actions">
+                        <div class="field">
+                            <label for="newCategoryName">Thêm Loại Sản phẩm mới</label>
+                            <input type="text" id="newCategoryName" placeholder="Tên loại (vd: Giày Sandal)" required
+                                minlength="2" maxlength="50">
+                            <small class="input-hint">Tối thiểu 2 ký tự, tối đa 50 ký tự</small>
+                        </div>
+                        <button type="submit" class="btn primary">Thêm</button>
+                    </form>
+                </div>
+
+                <table class="data-table category-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên loại</th>
+            <th class="nowrap w-120">Trạng thái</th>
+            <th class="nowrap w-160">Hành động</th>
+        </tr>
+    </thead>
+    <tbody id="categoryTableBody">
+    </tbody>
+</table>
+            </section>
+
+            <section class="orders" id="orders">
+                <h2>Quản lý đơn đặt hàng</h2>
+                <div class="section-toolbar">
+                    <div class="field">
+                        <label for="orderFilterFrom">Từ ngày</label>
+                        <input type="date" id="orderFilterFrom">
+                    </div>
+                    <div class="field">
+                        <label for="orderFilterTo">Đến ngày</label>
+                        <input type="date" id="orderFilterTo">
+                    </div>
+                    <div class="field">
+                        <label for="orderFilterStatus">Trạng thái</label>
+                        <select id="orderFilterStatus" class="w-160">
+                            <option value="all">Tất cả</option>
+                            <option value="new">Đang chờ xử lý</option>
+                            <option value="processed">Đã xử lý</option>
+                            <option value="delivered">Đã giao</option>
+                            <option value="canceled">Đã hủy</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <button class="btn primary" id="orderFilterApply">
+                            <i class="fa-solid fa-filter"></i> Lọc
+                        </button>
+                    </div>
+                    <div class="field">
+                        <button class="btn" id="orderFilterReset">
+                            <i class="fa-solid fa-rotate-right"></i> Đặt lại
+                        </button>
+                    </div>
+                </div>
+
+                <table id="ordersTable">
+                    <thead>
+                        <tr>
+                            <th class="nowrap">Mã đơn</th>
+                            <th class="nowrap w-120">Ngày đặt</th>
+                            <th>Khách hàng</th>
+                            <th class="right w-120">Tổng tiền</th>
+                            <th class="w-160">Trạng thái</th>
+                            <th class="nowrap w-120">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                         <tr>
+                            <td colspan="6" style="text-align: center; padding: 20px;">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Đang tải đơn hàng...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pagination" id="ordersPagination"></div>
+
+                <div class="panel" id="orderDetailBox" style="display:none">
+                    <div class="grid-2" style="align-items: center;">
+                        <div>
+                            <h3><i class="fa-solid fa-file-invoice-dollar"></i> Chi tiết đơn hàng</h3>
+                        </div>
+                        <div class="right">
+                            <button class="btn" id="orderDetailClose">
+                                <i class="fa-solid fa-xmark"></i> Đóng
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="order-detail-grid">
+                        <div class="detail-section">
+                            <h4><i class="fa-solid fa-user"></i> Thông tin Khách hàng & Giao hàng</h4>
+                            <div id="orderDetailMeta" class="muted">
+                                </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h4><i class="fa-solid fa-boxes-stacked"></i> Danh sách Sản phẩm</h4>
+                            <div id="orderDetailItems">
+                                </div>
+                            
+                            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                            
+                            <h4><i class="fa-solid fa-truck-fast"></i> Cập nhật Trạng thái</h4>
+                            <form id="orderStatusUpdateForm">
+                                <div class="field" style="display: flex; align-items: center; gap: 15px;">
+                                    <label for="orderStatusUpdateSelect">Chọn trạng thái mới:</label>
+                                    <select id="orderStatusUpdateSelect">
+                                        <option value="Đang chờ xử lý">Đang chờ xử lý</option>
+                                        <option value="Đã xử lý">Đã xử lý</option>
+                                        <option value="Đã giao">Đã giao</option>
+                                        <option value="Đã hủy">Đã hủy (Hoàn tồn kho)</option>
+                                    </select>
+                                    <button type="submit" class="btn primary" id="orderStatusUpdateBtn">
+                                        <i class="fa-solid fa-check"></i> Cập nhật
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="inventory" id="inventory">
+                <h2>Quản lý Tồn kho & Nhập hàng</h2>
+
+                <div class="section-toolbar">
+                    <form id="addImportForm" class="actions form-grid form-grid-3">
+                        <h3>Thêm Phiếu Nhập Hàng</h3>
+
+                        <div class="field">
+                            <label for="importProductSelect">Chọn Sản phẩm *</label>
+                            <select id="importProductSelect" required></select>
+                        </div>
+
+                        <div class="field">
+                            <label for="importQuantity">Số lượng nhập *</label>
+                            <input type="number" id="importQuantity" min="1" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="importPrice">Giá nhập (Giá vốn) *</label>
+                            <input type="number" id="importPrice" min="1000" required>
+                        </div>
+
+                        <div class="field" id="importSizeInputGroup" style="display: none;">
+                            <label for="importSize">Kích cỡ (Size) *</label>
+                            <input type="number" id="importSize" class="form-control" placeholder="Ví dụ: 41" min="36"
+                                max="45" title="Chỉ cần nhập size nếu sản phẩm có biến thể" />
+                            <small class="form-text text-muted">Trường này chỉ bắt buộc khi nhập hàng cho sản phẩm có
+                                quản lý theo size.</small>
+                        </div>
+                        <div class="field full-width">
+                            <label for="importNote">Ghi chú (Tùy chọn)</label>
+                            <textarea id="importNote" rows="1"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn primary full-width">Hoàn thành Phiếu Nhập</button>
+                    </form>
+                </div>
+
+                <h3 class="mt-40">Bảng Tổng hợp Tồn kho</h3>
+
+                <div class="section-toolbar">
+                    <div class="field">
+                        <label for="invFilterCategory">Phân loại</label>
+                        <select id="invFilterCategory" class="w-160">
+                            <option value="all">Tất cả</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="invFilterName">Tên sản phẩm</label>
+                        <input type="text" id="invFilterName" placeholder="Nhập tên sản phẩm...">
+                    </div>
+                    <div class="field">
+                        <button class="btn primary" id="invFilterApply">Tra cứu</button>
+                    </div>
+                    <div class="field">
+                        <button class="btn" id="invFilterReset">Đặt lại</button>
+                    </div>
+                </div>
+
+                <table id="inventoryTable">
+                    <thead>
+                        <tr>
+                            <th class="nowrap">Mã SP</th>
+                            <th>Tên</th>
+                            <th class="nowrap">Loại</th>
+                            <th class="right nowrap w-120">Tồn</th>
+                            <th class="right nowrap w-120">Giá Vốn</th>
+                            <th class="nowrap">Trạng thái</th>
+                            <th class="nowrap">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody"></tbody>
+                </table>
+
+                <div id="stockMovementModal" class="modal">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 id="movementProductName">Lịch sử Nhập/Xuất/Tồn</h5>
+                            <span class="close-btn" id="closeMovementModal">&times;</span>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <form id="movementFilterForm" class="filter-form">
+                                <div class="input-group">
+                                    <label for="movementStartDate">Từ ngày:</label>
+                                    <input type="date" id="movementStartDate" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="movementEndDate">Đến ngày:</label>
+                                    <input type="date" id="movementEndDate" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Xem báo cáo</button>
+                            </form>
+
+                            <div class="summary-container mt-20">
+                                <div class="summary-box start">
+                                    <div class="label">Tồn Đầu Kỳ</div>
+                                    <div class="value" id="summaryStartStock">0</div>
+                                </div>
+                                <div class="summary-box in">
+                                    <div class="label">Tổng Nhập</div>
+                                    <div class="value" id="summaryTotalIn">0</div>
+                                </div>
+                                <div class="summary-box out">
+                                    <div class="label">Tổng Xuất</div>
+                                    <div class="value" id="summaryTotalOut">0</div>
+                                </div>
+                                <div class="summary-box end">
+                                    <div class="label">Tồn Cuối Kỳ</div>
+                                    <div class="value" id="summaryEndStock">0</div>
+                                </div>
+                            </div>
+
+                            <h4 class="mt-40">Chi tiết Giao dịch (Nhập/Xuất)</h4>
+                            <table class="userTable mt-10">
+                                <thead>
+                                    <tr>
+                                        <th class="nowrap w-120">Ngày</th>
+                                        <th class="nowrap w-80">Loại</th>
+                                        <th class="nowrap w-120 right">Số lượng</th>
+                                        <th>Ghi chú/Mã đơn hàng</th>
+                                        <th class="nowrap w-120 right">Giá Vốn</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="movementLogTableBody">
+                                    <tr>
+                                        <td colspan="5" class="center">Vui lòng chọn khoảng thời gian để xem chi tiết.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" id="closeMovementModalFooter">Đóng</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+
+            <section class="price" id="price">
+                <h2><i class="fa-solid fa-dollar-sign"></i> Quản lý Giá bán & Lợi nhuận</h2>
+                <p class="description">
+                    Sử dụng công cụ này để thiết lập giá bán tự động dựa trên <strong>Giá Vốn</strong> và <strong>Tỉ lệ Lợi nhuận (Margin)</strong> mong muốn.
+                    <br>
+                    Công thức: <code>Giá Bán = Giá Vốn / (1 - (Tỉ lệ Lợi nhuận % / 100))</code>
+                </p>
+
+                <h3 class="mt-40">Bộ lọc & Tra cứu</h3>
+                <div class="section-toolbar filter-toolbar">
+                    <div class="field">
+                        <label for="priceFilterCategory">
+                            <i class="fa-solid fa-tags"></i> Phân loại
+                        </label>
+                        <select id="priceFilterCategory" class="w-160">
+                            <option value="all">Tất cả</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="priceFilterName">
+                            <i class="fa-solid fa-search"></i> Tên sản phẩm
+                        </label>
+                        <input type="text" id="priceFilterName" placeholder="Nhập tên sản phẩm...">
+                    </div>
+                    <div class="field">
+                        <button class="btn primary" id="priceFilterApply">
+                            <i class="fa-solid fa-magnifying-glass"></i> Lọc
+                        </button>
+                    </div>
+                    <div class="field">
+                        <button class="btn" id="priceFilterReset">
+                            <i class="fa-solid fa-rotate-right"></i> Đặt lại
+                        </button>
+                    </div>
+                </div>
+
+                <h3 class="mt-40">Bảng Tra cứu & Cập nhật Giá</h3>
+                <div class="table-responsive">
+                    <table class="userTable price-table">
+                        <thead>
+                            <tr>
+                                <th class="nowrap">Mã SP</th>
+                                <th>Tên Sản phẩm</th>
+                                <th class="nowrap w-120">Danh mục</th>
+                                <th class="nowrap w-120 right">Giá Vốn</th>
+                                <th class="nowrap w-120 right">Giá Bán (Hiện tại)</th>
+                                <th class="nowrap w-100 right">Lợi nhuận (Thực tế)</th>
+                                <th class="nowrap w-160 center">Thiết lập Lợi nhuận (%)</th>
+                                <th class="nowrap w-120">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="priceTableBody">
+                            <tr>
+                                <td colspan="8" class="center">
+                                    <div class="loading-placeholder">
+                                        <i class="fa-solid fa-spinner fa-spin"></i> Đang tải dữ liệu...
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="import-slips" id="import-slips">
+                <h2><i class="fa-solid fa-file-import"></i> Quản lý Phiếu Nhập Hàng</h2>
+
+                <div class="section-toolbar">
+                    <form id="addImportSlipForm" class="actions form-grid form-grid-3">
+                        <h3><i class="fa-solid fa-plus-circle"></i> Tạo Phiếu Nhập Mới (Nháp)</h3>
+
+                        <div class="field">
+                            <label for="importSlipProductSelect">
+                                <i class="fa-solid fa-box"></i> Chọn Sản phẩm 
+                                <span class="required">*</span>
+                            </label>
+                            <select id="importSlipProductSelect" required>
+                                <option value="">-- Chọn Sản phẩm --</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="importSlipQuantity">
+                                <i class="fa-solid fa-hashtag"></i> Số lượng nhập 
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" id="importSlipQuantity" min="1" placeholder="VD: 50" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="importSlipPrice">
+                                <i class="fa-solid fa-dollar-sign"></i> Giá nhập (Giá vốn) 
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" id="importSlipPrice" min="1000" step="1000" placeholder="VD: 1500000" required>
+                        </div>
+
+                        <div class="field" id="importSlipSizeGroup" style="display: none;">
+                            <label for="importSlipSize">
+                                <i class="fa-solid fa-ruler"></i> Kích cỡ (Size) 
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" id="importSlipSize" placeholder="VD: 41" min="36" max="45">
+                            <small class="text-muted">Chỉ cần nhập nếu sản phẩm có biến thể</small>
+                        </div>
+
+                        <div class="field">
+                            <label for="importSlipSupplier">
+                                <i class="fa-solid fa-truck"></i> Nhà cung cấp
+                            </label>
+                            <input type="text" id="importSlipSupplier" placeholder="VD: Công ty ABC" maxlength="100">
+                        </div>
+
+                        <div class="field full-width">
+                            <label for="importSlipNote">
+                                <i class="fa-solid fa-note-sticky"></i> Ghi chú
+                            </label>
+                            <textarea id="importSlipNote" rows="2" placeholder="Ghi chú thêm về lô hàng..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn primary full-width">
+                            <i class="fa-solid fa-plus"></i>
+                            Tạo Phiếu Nhập (Nháp)
+                        </button>
+                    </form>
+                </div>
+
+                <h3 class="mt-40"><i class="fa-solid fa-list"></i> Danh sách Phiếu Nhập Hàng</h3>
+                
+                <div class="section-toolbar filter-toolbar">
+                    <div class="field">
+                        <label for="importFilterStatus">
+                            <i class="fa-solid fa-filter"></i> Trạng thái
+                        </label>
+                        <select id="importFilterStatus" class="w-160">
+                            <option value="ALL">Tất cả</option>
+                            <option value="DRAFT">Nháp</option>
+                            <option value="COMPLETED">Đã hoàn thành</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="importFilterName">
+                            <i class="fa-solid fa-search"></i> Sản phẩm / Số phiếu
+                        </label>
+                        <input type="text" id="importFilterName" placeholder="Nhập tên sản phẩm hoặc số phiếu...">
+                    </div>
+
+                    <div class="field">
+                        <label for="importFilterFrom">
+                            <i class="fa-solid fa-calendar-days"></i> Từ ngày
+                        </label>
+                        <input type="date" id="importFilterFrom">
+                    </div>
+
+                    <div class="field">
+                        <label for="importFilterTo">
+                            <i class="fa-solid fa-calendar-check"></i> Đến ngày
+                        </label>
+                        <input type="date" id="importFilterTo">
+                    </div>
+
+                    <div class="field">
+                        <button class="btn primary" id="importFilterApply">
+                            <i class="fa-solid fa-magnifying-glass"></i> Lọc
+                        </button>
+                    </div>
+
+                    <div class="field">
+                        <button class="btn" id="importFilterReset">
+                            <i class="fa-solid fa-rotate-right"></i> Đặt lại
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="userTable import-slips-table">
+                        <thead>
+                            <tr>
+                                <th class="nowrap w-160">
+                                    <i class="fa-solid fa-barcode"></i> Số Phiếu
+                                </th>
+                                <th>
+                                    <i class="fa-solid fa-box"></i> Tên Sản phẩm
+                                </th>
+                                <th class="nowrap w-120 center">
+                                    <i class="fa-solid fa-ruler"></i> Size
+                                </th>
+                                <th class="nowrap w-100 right">
+                                    <i class="fa-solid fa-hashtag"></i> SL
+                                </th>
+                                <th class="nowrap w-120 right">
+                                    <i class="fa-solid fa-dollar-sign"></i> Giá nhập
+                                </th>
+                                <th class="nowrap w-140 right">
+                                    <i class="fa-solid fa-money-bill-wave"></i> Tổng giá trị
+                                </th>
+                                <th class="nowrap w-160">
+                                    <i class="fa-solid fa-calendar"></i> Ngày tạo
+                                </th>
+                                <th class="nowrap w-140 center">
+                                    <i class="fa-solid fa-circle-info"></i> Trạng thái
+                                </th>
+                                <th class="nowrap w-280">
+                                    <i class="fa-solid fa-gear"></i> Hành động
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="importSlipsTableBody">
+                            <tr>
+                                <td colspan="9" class="center">
+                                    <div class="loading-placeholder">
+                                        <i class="fa-solid fa-spinner fa-spin"></i> Đang tải dữ liệu...
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <div id="productModal" class="product-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="productModalTitle">➕ Thêm Sản phẩm Mới</h3>
+                <button class="close-modal-btn" type="button">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="productModalForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="modalProductName">
+                            Tên Sản phẩm
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" id="modalProductName" placeholder="VD: Giày thể thao Nike Air Max" required>
+                        <small>Tối thiểu 3 ký tự</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modalProductCategory">
+                            Danh mục
+                            <span class="required">*</span>
+                        </label>
+                        <select id="modalProductCategory" required>
+                            <option value="">-- Chọn Danh mục --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modalProductPrice">
+                            Giá bán (VNĐ)
+                            <span class="required">*</span>
+                        </label>
+                        <input type="number" id="modalProductPrice" placeholder="VD: 2500000" min="1000" step="1000"
+                            required>
+                        <small>Giá phải lớn hơn 0</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modalProductImage">
+                            URL Hình ảnh
+                            <span class="required">*</span>
+                        </label>
+                        <input type="url" id="modalProductImage" placeholder="https://example.com/image.jpg" required>
+                        <small>Link hình ảnh từ internet hoặc thư mục dự án</small>
+
+                        <div id="imagePreview" class="image-preview-container">
+                            <img id="previewImg" src="" alt="Preview">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modalProductDescription">
+                            Mô tả Sản phẩm
+                            <span class="required">*</span>
+                        </label>
+                        <textarea id="modalProductDescription"
+                            placeholder="Nhập mô tả chi tiết về sản phẩm..." required></textarea>
+                        <small>Mô tả chi tiết giúp khách hàng hiểu rõ hơn</small>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary cancel-modal-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                    Hủy
+                </button>
+                <button type="submit" form="productModalForm" class="btn-primary">
+                    <i class="fa-solid fa-check"></i>
+                    Lưu Sản phẩm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editCategoryModal" class="category-modal-overlay">
+        <div class="category-modal-content">
+            <div class="category-modal-header">
+                <h3>
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    Sửa Danh Mục
+                </h3>
+                <button class="category-modal-close" type="button">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="category-modal-body">
+                <div class="category-current-info">
+                    <i class="fa-solid fa-tag"></i>
+                    <div class="category-current-info-text">
+                        <div class="category-current-info-label">Tên hiện tại</div>
+                        <div class="category-current-info-value" id="currentCategoryName">-</div>
+                    </div>
+                </div>
+
+                <form id="editCategoryForm">
+                    <div class="category-form-group">
+                        <label class="category-form-label">
+                            <i class="fa-solid fa-signature"></i>
+                            Tên mới
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" id="editCategoryNameInput" class="category-form-input"
+                            placeholder="Nhập tên danh mục mới..." minlength="2" maxlength="50" required>
+                        <div class="category-input-helper" id="editCategoryHelper">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span id="editCategoryHelperText">Tối thiểu 2 ký tự, tối đa 50 ký tự</span>
+                            <span class="category-char-counter" id="editCategoryCharCounter">0/50</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="category-modal-footer">
+                <button class="btn btn-cancel category-modal-cancel" type="button">
+                    <i class="fa-solid fa-xmark"></i>
+                    Hủy
+                </button>
+                <button class="btn btn-save category-modal-save" id="editCategorySaveBtn" type="submit"
+                    form="editCategoryForm">
+                    <i class="fa-solid fa-check"></i>
+                    Lưu Thay Đổi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editImportSlipModal" class="modal import-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fa-solid fa-pen-to-square"></i> Chỉnh sửa Phiếu Nhập
+                </h3>
+                <button class="close-modal-btn" type="button">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="info-box mb-3">
+                    <div class="info-row">
+                        <strong><i class="fa-solid fa-barcode"></i> Số phiếu:</strong>
+                        <span id="editSlipNumber" class="badge-info">-</span>
+                    </div>
+                    <div class="info-row">
+                        <strong><i class="fa-solid fa-box"></i> Sản phẩm:</strong>
+                        <span id="editProductName">-</span>
+                    </div>
+                </div>
+
+                <form id="editImportSlipForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="editImportSlipQuantity">
+                            <i class="fa-solid fa-hashtag"></i> Số lượng nhập 
+                            <span class="required">*</span>
+                        </label>
+                        <input type="number" id="editImportSlipQuantity" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editImportSlipPrice">
+                            <i class="fa-solid fa-dollar-sign"></i> Giá nhập (Giá vốn) 
+                            <span class="required">*</span>
+                        </label>
+                        <input type="number" id="editImportSlipPrice" min="1000" step="1000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editImportSlipSize">
+                            <i class="fa-solid fa-ruler"></i> Kích cỡ (Size)
+                        </label>
+                        <input type="number" id="editImportSlipSize" placeholder="VD: 41" min="36" max="45">
+                        <small class="text-muted">Để trống nếu không có biến thể</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editImportSlipSupplier">
+                            <i class="fa-solid fa-truck"></i> Nhà cung cấp
+                        </label>
+                        <input type="text" id="editImportSlipSupplier" maxlength="100" placeholder="VD: Công ty ABC">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editImportSlipNote">
+                            <i class="fa-solid fa-note-sticky"></i> Ghi chú
+                        </label>
+                        <textarea id="editImportSlipNote" rows="3" placeholder="Ghi chú về lô hàng..."></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary cancel-modal-btn">
+                    <i class="fa-solid fa-xmark"></i> Hủy
+                </button>
+                <button type="submit" form="editImportSlipForm" class="btn-primary">
+                    <i class="fa-solid fa-check"></i> Lưu thay đổi
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script type="module" src="./js/user.js"></script>
+<script type="module" src="./js/category.js"></script>
+<script type="module" src="./js/Product.js"></script>
+<script type="module" src="./js/ProductManager.js"></script>
+<script type="module" src="./js/order-manager.js"></script>
+<script type="module" src="./js/ImportSlip.js"></script>
+<script type="module" src="./js/admin.js"></script>
+<script type="module" src="./js/category-admin.js"></script>
+<script type="module" src="./js/product-admin.js"></script>
+<script type="module" src="./js/order-admin.js"></script>
+<script type="module" src="./js/import-admin.js"></script>
+<script type="module" src="./js/price-admin.js"></script>
+
+
+</body>
+</html>

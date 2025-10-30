@@ -1,0 +1,109 @@
+/* File: css/admin-price.css */
+
+/* Bảng quản lý giá */
+.price-table th,
+.price-table td {
+    vertical-align: middle;
+}
+
+/* Input để thiết lập % lợi nhuận */
+.price-table .margin-input-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.price-table .margin-input {
+    width: 70px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: right;
+    margin-right: 5px;
+    /* Tăng kích thước font cho dễ nhìn */
+    font-size: 14px; 
+}
+
+/* Hiển thị % bên cạnh input */
+.price-table .margin-input-group span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+/* Nút Cập nhật trong bảng */
+.price-table .btn-update-price {
+    padding: 6px 10px;
+    font-size: 12px;
+    background-color: #007bff; /* Primary color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.price-table .btn-update-price:hover {
+    background-color: #0056b3;
+}
+
+.price-table .btn-update-price:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Định dạng số */
+.price-table .cost-price,
+.price-table .sale-price {
+    font-weight: 600;
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: -0.5px;
+}
+
+.price-table .cost-price {
+    color: #d9534f; /* Màu đỏ cho giá vốn */
+}
+
+.price-table .sale-price {
+    color: #2a9d8f; /* Màu xanh cho giá bán */
+}
+
+/* Lợi nhuận */
+.price-table .profit-margin {
+    font-weight: bold;
+}
+
+/* Màu sắc cho % lợi nhuận */
+.price-table .profit-margin.positive {
+    color: #2a9d8f; /* Xanh */
+}
+
+.price-table .profit-margin.zero {
+    color: #777; /* Xám */
+}
+
+.price-table .profit-margin.negative {
+    color: #d9534f; /* Đỏ  */
+}
+
+/* Mô tả section */
+.price p.description {
+    font-size: 14px;
+    line-height: 1.6;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 15px;
+    border-radius: 5px;
+    max-width: 90%;
+}
+
+.price p.description code {
+    background-color: #e9ecef;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+    color: #c7254e;
+}

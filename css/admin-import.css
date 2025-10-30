@@ -1,0 +1,680 @@
+/* ===================================================================
+   FILE: admin-import.css - Style cho module Quản lý Phiếu Nhập
+   Author: ShoeStore Admin
+   Version: 2.0
+   =================================================================== */
+
+/* ===============================
+   IMPORT SLIPS SECTION
+=============================== */
+.import-slips {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.import-slips h2 {
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.import-slips h2 i {
+    color: #667eea;
+    font-size: 28px;
+}
+
+.import-slips h3 {
+    color: #34495e;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.import-slips h3 i {
+    color: #3498db;
+}
+
+/* ===============================
+   FORM THÊM PHIẾU NHẬP
+=============================== */
+.import-slips .section-toolbar {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid #dee2e6;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.import-slips .section-toolbar:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.import-slips .form-grid h3 {
+    grid-column: 1 / -1;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.import-slips .field label {
+    font-weight: 600;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.import-slips .field label i {
+    color: #667eea;
+    font-size: 14px;
+}
+
+.import-slips .required {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.import-slips input,
+.import-slips select,
+.import-slips textarea {
+    transition: all 0.3s ease;
+}
+
+.import-slips input:focus,
+.import-slips select:focus,
+.import-slips textarea:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
+}
+
+/* ===============================
+   BỘ LỌC / FILTER TOOLBAR
+=============================== */
+.filter-toolbar {
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.filter-toolbar .field label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.filter-toolbar .field label i {
+    color: #3498db;
+}
+
+/* ===============================
+   BẢNG DANH SÁCH PHIẾU NHẬP
+=============================== */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.import-slips-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 14px;
+}
+
+.import-slips-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.import-slips-table thead th {
+    padding: 15px 12px;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    border: none;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.import-slips-table thead th i {
+    margin-right: 6px;
+    opacity: 0.9;
+}
+
+.import-slips-table tbody tr {
+    border-bottom: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.import-slips-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.002);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.import-slips-table tbody td {
+    padding: 15px 12px;
+    vertical-align: middle;
+    color: #495057;
+}
+
+.import-slips-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+/* ===============================
+   STATUS BADGES (PHIẾU NHẬP)
+=============================== */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.status-badge::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-draft {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    color: #856404;
+    border: 2px solid #ffc107;
+}
+
+.status-draft::before {
+    background: #ffc107;
+    animation: pulse 2s infinite;
+}
+
+.status-completed {
+    background: linear-gradient(135deg, #d4edda 0%, #a8e6cf 100%);
+    color: #155724;
+    border: 2px solid #28a745;
+}
+
+.status-completed::before {
+    background: #28a745;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* ===============================
+   ACTION BUTTONS (TRONG BẢNG)
+=============================== */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.action-buttons button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.action-buttons button i {
+    font-size: 13px;
+}
+
+.btn-edit-slip {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+}
+
+.btn-edit-slip:hover {
+    background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+}
+
+.btn-complete-slip {
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(39, 174, 96, 0.3);
+}
+
+.btn-complete-slip:hover {
+    background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(39, 174, 96, 0.4);
+}
+
+.btn-delete-slip {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+}
+
+.btn-delete-slip:hover {
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.4);
+}
+
+.btn-view-slip {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(155, 89, 182, 0.3);
+}
+
+.btn-view-slip:hover {
+    background: linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(155, 89, 182, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    color: white;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+}
+
+/* ===============================
+   MODAL: SỬA PHIẾU NHẬP
+=============================== */
+.import-modal .modal-content {
+    border-radius: 16px;
+    overflow: hidden;
+    max-width: 600px;
+}
+
+.import-modal .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 25px;
+}
+
+.import-modal .modal-header h3 {
+    color: white;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.import-modal .modal-header h3 i {
+    color: white;
+}
+
+.import-modal .close-modal-btn {
+    color: white;
+    opacity: 0.9;
+    font-size: 26px;
+}
+
+.import-modal .close-modal-btn:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+
+/* Info Box trong Modal */
+.info-box {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.info-row strong {
+    color: #495057;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-row strong i {
+    color: #667eea;
+}
+
+.info-row span {
+    color: #212529;
+    font-weight: 500;
+}
+
+.badge-info {
+    background: #667eea;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Form trong Modal */
+.import-modal .modal-form .form-group {
+    margin-bottom: 20px;
+}
+
+.import-modal .modal-form .form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.import-modal .modal-form .form-group label i {
+    color: #667eea;
+}
+
+.import-modal .modal-form .form-group input,
+.import-modal .modal-form .form-group textarea,
+.import-modal .modal-form .form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.import-modal .modal-form .form-group input:focus,
+.import-modal .modal-form .form-group textarea:focus,
+.import-modal .modal-form .form-group select:focus {
+    border-color: #667eea;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.import-modal .modal-form .form-group small {
+    display: block;
+    margin-top: 6px;
+    color: #6c757d;
+    font-size: 12px;
+}
+
+.import-modal .modal-footer {
+    background: #f8f9fa;
+    padding: 20px 25px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* ===============================
+   EMPTY STATE / LOADING
+=============================== */
+.loading-placeholder {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.loading-placeholder i {
+    font-size: 32px;
+    margin-bottom: 15px;
+    color: #667eea;
+}
+
+.import-slips tbody .center {
+    text-align: center;
+}
+
+.import-slips tbody .center i.fa-inbox {
+    font-size: 56px;
+    color: #dee2e6;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.import-slips tbody .center p {
+    color: #6c757d;
+    font-size: 16px;
+    margin: 10px 0 0 0;
+}
+
+/* ===============================
+   UTILITY CLASSES
+=============================== */
+.mb-3 { margin-bottom: 15px; }
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+.mt-40 { margin-top: 40px; }
+
+.nowrap { white-space: nowrap; }
+.center { text-align: center; }
+.right { text-align: right; }
+
+.text-muted {
+    color: #6c757d;
+    font-size: 12px;
+    font-style: italic;
+}
+
+.required {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* Width Classes */
+.w-80 { width: 80px; min-width: 80px; }
+.w-100 { width: 100px; min-width: 100px; }
+.w-120 { width: 120px; min-width: 120px; }
+.w-140 { width: 140px; min-width: 140px; }
+.w-160 { width: 160px; min-width: 160px; }
+.w-280 { width: 280px; min-width: 280px; }
+
+/* ===============================
+   RESPONSIVE DESIGN
+=============================== */
+
+/* Tablets */
+@media (max-width: 1024px) {
+    .import-slips-table {
+        font-size: 13px;
+    }
+
+    .import-slips-table thead th,
+    .import-slips-table tbody td {
+        padding: 12px 10px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-buttons button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .import-slips h2 {
+        font-size: 20px;
+    }
+
+    .import-slips h3 {
+        font-size: 16px;
+    }
+
+    .import-slips .section-toolbar {
+        padding: 20px 15px;
+    }
+
+    .filter-toolbar {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .filter-toolbar .field {
+        width: 100%;
+    }
+
+    .table-responsive {
+        border-radius: 8px;
+    }
+
+    .import-slips-table {
+        font-size: 12px;
+    }
+
+    .import-slips-table thead th,
+    .import-slips-table tbody td {
+        padding: 10px 8px;
+    }
+
+    .import-slips-table thead th i {
+        display: none; /* Ẩn icon trên mobile để tiết kiệm không gian */
+    }
+
+    .status-badge {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+
+    .action-buttons button {
+        font-size: 11px;
+        padding: 7px 10px;
+    }
+
+    .import-modal .modal-content {
+        max-width: 95%;
+        margin: 10px;
+    }
+
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .import-slips h2 {
+        font-size: 18px;
+    }
+
+    .import-slips-table thead th,
+    .import-slips-table tbody td {
+        padding: 8px 6px;
+    }
+
+    .status-badge {
+        font-size: 9px;
+        padding: 5px 8px;
+    }
+
+    .action-buttons button {
+        font-size: 10px;
+        padding: 6px 8px;
+    }
+}
+
+/* ===============================
+   ANIMATIONS
+=============================== */
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.import-slips-table tbody tr {
+    animation: slideInFromRight 0.3s ease-out;
+}
+
+.import-slips-table tbody tr:nth-child(even) {
+    animation-delay: 0.05s;
+}
+
+/* ===============================
+   PRINT STYLES
+=============================== */
+@media print {
+    .filter-toolbar,
+    .action-buttons,
+    .btn,
+    .modal {
+        display: none !important;
+    }
+
+    .import-slips-table {
+        border: 1px solid #000;
+    }
+
+    .import-slips-table thead {
+        background: #f0f0f0 !important;
+        color: #000 !important;
+    }
+
+    .status-badge {
+        border: 1px solid #000;
+    }
+}

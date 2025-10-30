@@ -1,0 +1,460 @@
+/**
+ * css/cart-and-user-ui.css
+ * Chứa CSS cho:
+ * 1. User/Login/Logout UI (Header).
+ * 2. Cart Modal/Overlay UI (Hiển thị giỏ hàng).
+ */
+
+/* =========================================================================
+   1. CSS UI USER/LOGIN/LOGOUT (Từ main.js)
+   ========================================================================= */
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.user-info i {
+    font-size: 1.5rem;
+    color: #ff6b35; /* Màu accent cho icon user */
+}
+.user-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+    text-decoration: none;
+    color: white; 
+}
+.logout-btn {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.logout-btn:hover {
+    background: linear-gradient(45deg, #c82333, #bd2130);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+.logout-btn:active {
+    transform: translateY(0);
+}
+
+/* -------------------------------------------------------------------------
+   🔥 BỔ SUNG CSS CẦN THIẾT CHO BIẾN ĐẾM GIỎ HÀNG (Đã được thêm vào)
+   ------------------------------------------------------------------------- */
+/* 1. Thiết lập thẻ cha (cart-icon-wrapper) để định vị tuyệt đối cho số đếm */
+.cart-icon-wrapper {
+    position: relative; /* RẤT QUAN TRỌNG: Giúp .cart-count định vị đúng */
+    display: inline-block;
+}
+
+/* 2. Định nghĩa kiểu dáng và vị trí của số đếm */
+.cart-count {
+    position: absolute;
+    top: -5px;          /* Đẩy lên phía trên */
+    right: -5px;        /* Đẩy sang phải */
+    background: #ff6b35;/* Màu nổi bật */
+    color: white;
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    border-radius: 50%; 
+    min-width: 18px;    
+    text-align: center;
+    line-height: 1.2;
+    z-index: 10;
+}
+
+/* Animation cho Giỏ hàng */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+.cart-icon-wrapper.bounce {
+    animation: bounce 0.6s;
+}
+
+/* Media Queries cho User UI */
+@media (max-width: 768px) {
+    .user-section { flex-direction: column; gap: 8px; }
+    .user-name { max-width: 80px; }
+    .logout-btn { padding: 6px 12px; font-size: 0.8rem; }
+}
+@media (max-width: 480px) {
+    .user-name { display: none; }
+    .logout-btn span { display: none; }
+    .logout-btn { width: 35px; height: 35px; border-radius: 50%; padding: 0; justify-content: center; }
+}
+
+
+/* =========================================================================
+   2. CSS CART MODAL/OVERLAY (Từ cart-ui.js)
+   ========================================================================= */
+
+/* Overlay */
+.cart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none; 
+    justify-content: flex-end; /* Đẩy modal sang phải */
+    align-items: flex-start;
+    z-index: 1000;
+}
+
+/* Modal */
+.cart-modal {
+    width: 100%;
+    max-width: 450px; 
+    height: 100%;
+    background: white;
+    padding: 20px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    transform: translateX(100%); /* Bắt đầu từ ngoài màn hình */
+    transition: transform 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Trạng thái mở */
+.cart-overlay.open .cart-modal {
+    transform: translateX(0); /* Trượt vào */
+}
+
+/* Header và Đóng */
+.cart-modal h2 {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+.cart-modal .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #888;
+}
+
+/* Chi tiết sản phẩm */
+.cart-items-container {
+    flex-grow: 1; 
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+.item-img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+.item-details {
+    flex-grow: 1;
+}
+.item-name {
+    font-weight: bold;
+    margin: 0;
+}
+.item-variant {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 2px 0;
+}
+.item-price {
+    font-size: 0.9rem;
+    color: #ff6b35;
+    font-weight: 500;
+}
+
+/* Controls */
+.item-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.qty-btn {
+    background: #f7f7f7;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.item-qty {
+    width: 40px;
+    text-align: center;
+    border: none;
+}
+.item-total-price {
+    font-size: 0.95rem;
+    font-weight: bold;
+    margin: 0;
+}
+.remove-item-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* Summary */
+.cart-summary {
+    border-top: 2px solid #333;
+    padding-top: 15px;
+}
+.cart-summary p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+}
+.primary-btn, .secondary-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.primary-btn {
+    background: #ff6b35;
+    color: white;
+    border: none;
+}
+.secondary-btn {
+    background: #ccc;
+    color: #333;
+    border: none;
+}
+/* Trạng thái giỏ hàng trống */
+.cart-overlay.empty .cart-summary {
+    display: none;
+}
+
+/* ==================================== */
+/* 1. CART OVERLAY & MODAL STRUCTURE */
+/* ==================================== */
+.cart-overlay {
+    /* Đảm bảo modal phủ toàn màn hình */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none; /* Mặc định ẩn */
+    justify-content: flex-end; /* Đẩy modal sang phải */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.cart-overlay.open {
+    display: flex;
+    opacity: 1;
+}
+
+.cart-modal {
+    background-color: #fff;
+    width: 100%;
+    max-width: 400px; /* Chiều rộng cố định */
+    height: 100%;
+    padding: 20px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-overlay.open .cart-modal {
+    transform: translateX(0); /* Trượt vào */
+}
+
+/* ==================================== */
+/* 2. CART ITEMS (Sửa lỗi hiển thị Size) */
+/* ==================================== */
+.cart-items-container {
+    flex-grow: 1;
+    overflow-y: auto; /* Cho phép cuộn khi quá nhiều sản phẩm */
+    padding-right: 10px;
+}
+
+.cart-item {
+    display: flex; /*  Dùng Flexbox để sắp xếp ngang */
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    gap: 10px; 
+    position: relative;
+}
+
+.cart-item .item-img {
+    width: 60px; 
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.cart-item .item-details {
+    flex-grow: 1; /* Cho phép chiếm không gian chính */
+    min-width: 120px;
+}
+
+.cart-item .item-name {
+    font-weight: 600;
+    margin: 0 0 3px 0;
+    font-size: 15px;
+    line-height: 1.2;
+}
+
+/* 🔥 Đảm bảo phần tử chứa SIZE hiển thị và có style */
+.cart-item .item-variant { 
+    font-size: 13px;
+    color: #555;
+    margin: 0;
+    font-style: italic;
+    display: block; 
+}
+
+.cart-item .item-price {
+    font-size: 14px;
+    color: #888;
+    margin: 3px 0 0 0;
+}
+
+/* ==================================== */
+/* 3. CART CONTROLS */
+/* ==================================== */
+.item-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 90px;
+    flex-shrink: 0;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.qty-btn {
+    background: none;
+    border: none;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.item-qty {
+    width: 30px;
+    text-align: center;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    padding: 5px 0;
+}
+
+.item-total-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #ff6b35; /* Màu nổi bật */
+    margin: 0;
+}
+
+/* Nút xóa */
+.remove-item-btn {
+    position: absolute;
+    top: 5px;
+    right: 0;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.remove-item-btn:hover {
+    color: #e74c3c;
+}
+/* ==================================== */
+/* 4. CART SUMMARY */
+/* ==================================== */
+.cart-summary {
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.cart-summary p {
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.cart-summary .primary-btn, 
+.cart-summary .secondary-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.cart-summary .primary-btn {
+    background-color: #ff6b35;
+    color: white;
+}
+
+.cart-summary .secondary-btn {
+    background-color: #f1f3f5;
+    color: #495057;
+}

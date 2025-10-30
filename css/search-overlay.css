@@ -1,0 +1,650 @@
+/**
+ * search-overlay.css - CSS cho tìm kiếm dạng overlay popup
+ */
+
+/* ========== OVERLAY CONTAINER ========== */
+.search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Màu nền tối hơn, dùng rgba để tránh blur quá nhiều màu trắng */
+    background: rgba(44, 62, 80, 0.95); 
+    backdrop-filter: blur(8px); /* Blur mạnh hơn một chút */
+    z-index: 1000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.search-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.search-overlay-content {
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 960px; /* Tăng max-width một chút để hiển thị grid 3 cột đẹp hơn */
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 2.5rem;
+    position: relative;
+    transform: scale(0.9); /* Dùng scale thay vì translateY để tạo hiệu ứng pop-in */
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Dùng bouncy curve */
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+}
+
+.search-overlay.active .search-overlay-content {
+    transform: scale(1);
+}
+
+/* ========== CLOSE BUTTON ========== */
+.search-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: #ff6b35;
+    color: white;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
+}
+
+.search-close:hover {
+    background: #e74c3c;
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
+}
+
+/* ========== HEADER ========== */
+.search-overlay-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.search-overlay-title {
+    font-size: 2.2rem; /* Tăng kích thước một chút */
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-weight: 800; /* Dày hơn */
+}
+
+.search-overlay-title i {
+    color: #ff6b35;
+}
+
+.search-overlay-subtitle {
+    font-size: 1.1rem; /* Lớn hơn */
+    color: #7f8c8d;
+}
+
+/* ========== SEARCH BOX & ADVANCED TOGGLE ========== */
+.search-overlay-box-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+.search-overlay-box {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 30px; /* Bo tròn vừa phải */
+    border: 1px solid #e9ecef; /* Viền mỏng hơn */
+    transition: all 0.3s ease;
+    min-width: 250px;
+}
+
+.search-overlay-box:focus-within {
+    border-color: #ff6b35;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.15); /* Thay đổi shadow khi focus */
+}
+
+.search-overlay-icon {
+    position: absolute;
+    left: 20px;
+    font-size: 1.1rem;
+    color: #ff6b35;
+    pointer-events: none;
+}
+
+.search-overlay-input {
+    width: 100%;
+    padding: 14px 50px 14px 50px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    outline: none;
+    background: transparent;
+    color: #2c3e50;
+}
+
+.search-overlay-input::placeholder {
+    color: #adb5bd;
+}
+
+.overlay-clear-btn {
+    position: absolute;
+    right: 15px;
+    background: #bdc3c7; /* Màu xám nhẹ hơn */
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.overlay-clear-btn:hover {
+    background: #e74c3c;
+    transform: scale(1.1);
+}
+
+.overlay-advanced-toggle {
+    padding: 14px 24px;
+    /* Dùng màu chủ đạo cho nút */
+    background: #ff6b35; 
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(255, 107, 53, 0.3);
+}
+
+.overlay-advanced-toggle:hover {
+    background: #e74c3c; /* Màu hover rõ ràng */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
+}
+
+/* Tùy chọn: Thêm class .open cho nút toggle khi advanced panel mở */
+/* .overlay-advanced-toggle.open { 
+    background: #764ba2; 
+} */
+
+/* ========== ADVANCED PANEL ========== */
+.overlay-advanced-panel {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef; /* Thêm viền nhẹ */
+    /* animation: slideDown 0.3s ease; - Giữ nguyên */
+}
+
+/* Giữ nguyên @keyframes slideDown */
+
+.overlay-advanced-title {
+    font-size: 1.3rem; /* Lớn hơn */
+    color: #2c3e50;
+    margin-bottom: 1.5rem; /* Khoảng cách lớn hơn */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+}
+
+.overlay-advanced-title i {
+    color: #ff6b35;
+}
+
+.overlay-advanced-filters {
+    display: grid;
+    /* Chia 2 cột cho desktop */
+    grid-template-columns: 1fr 2fr; 
+    gap: 2rem;
+}
+
+.overlay-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.overlay-filter-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.overlay-filter-label i {
+    color: #ff6b35;
+}
+
+.overlay-filter-select {
+    padding: 10px 12px;
+    border: 1px solid #ced4da; /* Viền tiêu chuẩn */
+    border-radius: 8px; /* Bo tròn nhẹ nhàng */
+    font-size: 0.95rem;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.overlay-filter-select:focus {
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.overlay-price-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.overlay-price-input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.overlay-price-input:focus {
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.overlay-price-separator {
+    color: #7f8c8d;
+    font-weight: bold;
+}
+
+.overlay-price-presets {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.8rem;
+}
+
+.overlay-preset-btn {
+    padding: 8px 14px;
+    background: white;
+    border: 1px solid #ced4da;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #495057;
+    font-weight: 500;
+}
+
+.overlay-preset-btn:hover {
+    background: #ff6b35;
+    color: white;
+    border-color: #ff6b35;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
+}
+
+.overlay-filter-actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1.5rem; /* Khoảng cách lớn hơn */
+    grid-column: 1 / -1; /* Đảm bảo nằm trên 2 cột */
+}
+
+.overlay-btn-apply,
+.overlay-btn-reset {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+
+.overlay-btn-apply {
+    background: #ff6b35; /* Dùng màu chủ đạo cho apply */
+    color: white;
+}
+
+.overlay-btn-apply:hover {
+    background: #e74c3c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+}
+
+.overlay-btn-reset {
+    background: white;
+    color: #495057;
+    border: 1px solid #ced4da;
+}
+
+.overlay-btn-reset:hover {
+    background: #f1f1f1;
+}
+
+/* ========== RESULTS ========== */
+.search-overlay-results {
+    margin-top: 2rem;
+}
+
+.overlay-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f1f1f1;
+}
+
+.overlay-results-title {
+    font-size: 1.6rem;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.overlay-results-count {
+    font-size: 0.9rem;
+    color: white;
+    background: #667eea; /* Dùng màu phụ để tách biệt */
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.overlay-loading-spinner,
+.overlay-no-results {
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.overlay-loading-spinner i {
+    font-size: 3rem; /* Lớn hơn */
+    color: #ff6b35;
+    margin-bottom: 1rem;
+}
+
+.overlay-no-results i {
+    font-size: 3rem;
+    color: #bdc3c7;
+    margin-bottom: 1rem;
+}
+
+.overlay-no-results h3 {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.overlay-no-results p {
+    color: #7f8c8d;
+}
+
+/* ========== PRODUCT GRID (Cần đồng bộ với product-card.css nếu có) ========== */
+.overlay-product-grid {
+    display: grid;
+    /* Cố gắng hiển thị 3 cột trên màn hình lớn */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* Tối ưu Product Card cho Overlay (Giả định bạn có Product Card CSS riêng) */
+.overlay-product-grid .product-card {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    position: relative; /* Quan trọng để overlay hoạt động */
+}
+
+.overlay-product-grid .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-color: #ff6b35;
+}
+
+/* --- PHẦN CHỈNH SỬA QUICK VIEW --- */
+
+/* 1. TÙY CHỈNH PRODUCT OVERLAY (Đảm bảo độ mờ và vị trí) */
+.product-card .product-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Thêm màu nền mờ để nổi bật nút hơn */
+    background: rgba(0, 0, 0, 0.35); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    /* Dùng transition nhanh hơn một chút */
+    transition: opacity 0.2s ease-in-out; 
+    z-index: 5; 
+}
+
+.product-card:hover .product-overlay {
+    opacity: 1;
+}
+
+/* 2. ĐỊNH NGHĨA LẠI NÚT QUICK VIEW CHO NHỎ GỌN */
+.product-card .quick-view {
+    /* Giảm kích thước */
+    padding: 10px 18px; /* Padding nhỏ gọn */
+    font-size: 0.9rem; /* Cỡ chữ nhỏ */
+    
+    /* Thiết kế */
+    background: #ff6b35; 
+    color: white;
+    text-decoration: none;
+    border-radius: 5px; 
+    border: none;
+    cursor: pointer;
+    
+    /* Căn chỉnh nội dung (Icon + Text) */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa icon và text */
+    font-weight: 600;
+    
+    /* Hiệu ứng mượt mà khi hover */
+    transform: translateY(15px); /* Bắt đầu từ dưới */
+    opacity: 0;
+    /* Dùng cubic-bezier để tạo hiệu ứng hơi nảy (bouncy) */
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.4, 1.2); 
+}
+
+/* 3. Hiệu ứng làm hiện nút khi hover vào product-card */
+.product-card:hover .quick-view {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 4. Hiệu ứng hover cho chính nút */
+.product-card .quick-view:hover {
+    background: #e74c3c; 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Hiệu ứng đã thêm vào giỏ */
+.overlay-product-grid .product-card .add-to-cart.added {
+    background: #2ecc71 !important; /* Màu xanh lá cây */
+    transform: scale(1.05);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 992px) {
+    .overlay-product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .search-overlay-content {
+        padding: 1.5rem;
+        max-height: 95vh;
+    }
+    
+    .search-close {
+        top: 15px;
+        right: 15px;
+        width: 35px;
+        height: 35px;
+    }
+    
+    .search-overlay-title {
+        font-size: 1.5rem;
+    }
+    
+    .search-overlay-box-container {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .search-overlay-box {
+        min-width: 100%;
+    }
+    
+    .overlay-advanced-toggle {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .overlay-advanced-filters {
+        grid-template-columns: 1fr; /* Trở về 1 cột trên mobile */
+        gap: 1.5rem;
+    }
+    
+    .overlay-price-inputs {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .overlay-price-separator {
+        display: none;
+    }
+    
+    .overlay-filter-actions {
+        flex-direction: column;
+    }
+    
+    .overlay-product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* 2 cột nhỏ hơn */
+        gap: 1rem;
+    }
+
+    /* Hiển thị nút Quick View trên mobile (nếu cần) */
+    .product-card .quick-view {
+        /* Trên mobile, có thể làm nhỏ nút hơn một chút */
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+    
+    /* Trên mobile, không cần ẩn overlay, chỉ cần giảm độ mờ */
+    .product-card .product-overlay {
+        opacity: 0.9;
+        background: rgba(0, 0, 0, 0.1); 
+    }
+    
+    .product-card:hover .product-overlay {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-overlay {
+        padding: 10px;
+    }
+    
+    .search-overlay-content {
+        padding: 1.2rem;
+        border-radius: 15px;
+    }
+    
+    .search-overlay-title {
+        font-size: 1.3rem;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .search-overlay-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .overlay-results-title {
+        font-size: 1.2rem;
+    }
+    
+    .overlay-price-presets {
+        /* Giữ nguyên flex-wrap hoặc chuyển thành 1 cột nếu cần */
+        justify-content: space-between;
+    }
+    
+    .overlay-preset-btn {
+        flex: 1 1 auto; /* Cho phép co giãn */
+    }
+}
+
+/* ========== SCROLLBAR (Giữ nguyên) ========== */
+.search-overlay-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.search-overlay-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.search-overlay-content::-webkit-scrollbar-thumb {
+    background: #ff6b35;
+    border-radius: 10px;
+}
+
+.search-overlay-content::-webkit-scrollbar-thumb:hover {
+    background: #e74c3c;
+}

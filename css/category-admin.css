@@ -1,0 +1,502 @@
+/* 
+   FILE: category-admin.css
+  
+*/
+
+/* --------------------------------------------------------------
+   RESET & PHẦN KHUNG CHUNG
+-------------------------------------------------------------- */
+.products-category {
+    padding: 30px 25px;
+    font-family: "Segoe UI", sans-serif;
+    color: #2c3e50;
+}
+
+.products-category h2 {
+    position: relative;
+    font-size: 22px;
+    margin-bottom: 25px;
+    color: #333;
+    font-weight: 700;
+    padding-bottom: 10px;
+}
+
+.products-category h2::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 2px;
+}
+
+/* --------------------------------------------------------------
+   FORM THÊM DANH MỤC
+-------------------------------------------------------------- */
+#addCategoryForm {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    padding: 20px 25px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+#addCategoryForm .field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#addCategoryForm label {
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#addCategoryForm label::before {
+    content: "📂";
+}
+
+#addCategoryForm input {
+    padding: 12px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fafafa;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+#addCategoryForm input:focus {
+    outline: none;
+    background: #fff;
+    border-color: #f5576c;
+    box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.15);
+}
+
+#addCategoryForm button[type="submit"] {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+    transition: 0.3s;
+}
+
+#addCategoryForm button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(245, 87, 108, 0.4);
+}
+
+/* --------------------------------------------------------------
+   BẢNG DANH MỤC (CATEGORY TABLE) - CĂN CHỈNH CHUẨN CỘT
+-------------------------------------------------------------- */
+.category-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: fixed;
+    background: #fff;
+}
+
+.category-table th,
+.category-table td {
+    box-sizing: border-box;
+    padding: 12px 16px;
+    border: 1px solid #eee;
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: left;
+    vertical-align: middle;
+    word-break: break-word;
+}
+
+.category-table thead th {
+    background: #fafafa;
+    font-weight: 700;
+    color: #333;
+    border-bottom: 2px solid #e5e5e5;
+}
+
+.category-table tbody td {
+    background: #fff;
+    border-bottom: 1px solid #f1f1f1;
+    color: #333;
+}
+
+.category-table tbody tr:hover {
+    background: #fff8f8;
+}
+
+/* Căn chỉnh từng cột */
+.category-table th:nth-child(1),
+.category-table td:nth-child(1) {
+    width: 70px;
+    min-width: 70px;
+    text-align: center;
+}
+
+.category-table th:nth-child(2),
+.category-table td:nth-child(2) {
+    width: auto;
+    text-align: left;
+}
+
+.category-table th:nth-child(3),
+.category-table td:nth-child(3) {
+    width: 120px;
+    text-align: center;
+}
+
+.category-table th:nth-child(4),
+.category-table td:nth-child(4) {
+    width: 180px;
+    text-align: right;
+}
+
+/* Cột ID */
+.category-id {
+    font-weight: 700;
+    color: #f5576c;
+    background: #fff0f3;
+    border-left: 3px solid #f5576c;
+    font-family: "Courier New", monospace;
+}
+
+/* Tên loại */
+.category-name {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.category-name strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.category-name .product-count {
+    font-size: 12px;
+    color: #888;
+    font-style: italic;
+}
+
+/* Trạng thái */
+.status-badge {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 100px;
+}
+
+.status-badge.status-active {
+    background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+    color: #1e7e34;
+}
+
+.status-badge.status-hidden {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    color: #666;
+}
+
+/* Nút hành động */
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.action-buttons button {
+    min-width: 90px;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-edit-category {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    box-shadow: 0 2px 6px rgba(72, 187, 120, 0.3);
+}
+
+.btn-edit-category:hover {
+    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+    transform: translateY(-2px);
+}
+
+.btn-delete-category {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    box-shadow: 0 2px 6px rgba(245, 101, 101, 0.3);
+}
+
+.btn-delete-category:hover:not(:disabled) {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+}
+
+.btn-delete-category:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+}
+
+/* --------------------------------------------------------------
+   MODAL SỬA DANH MỤC
+-------------------------------------------------------------- */
+#editCategoryModal.category-modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+    z-index: 9999;
+}
+
+#editCategoryModal.category-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.category-modal-content {
+    background: #fff;
+    border-radius: 18px;
+    width: 95%;
+    max-width: 500px;
+    overflow: hidden;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.category-modal-overlay.active .category-modal-content {
+    transform: scale(1);
+}
+
+.category-modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 25px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.category-modal-header h3 {
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.category-modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 18px;
+}
+
+.category-modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+/* Body */
+.category-modal-body {
+    padding: 30px;
+}
+
+.category-current-info {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-current-info i {
+    font-size: 24px;
+    color: #667eea;
+}
+
+.category-current-info-value {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Form trong modal */
+.category-form-group {
+    margin-bottom: 25px;
+}
+
+.category-form-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: 0.3s;
+    background: #fafafa;
+}
+
+.category-form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+/* Footer */
+.category-modal-footer {
+    background: #f8f9fa;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.category-modal-footer .btn {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+}
+
+.category-modal-footer .btn-cancel {
+    background: #e0e0e0;
+    color: #555;
+}
+
+.category-modal-footer .btn-save {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.category-modal-footer .btn-save:hover {
+    transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------
+   TOAST THÔNG BÁO
+-------------------------------------------------------------- */
+#notificationContainer {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10000;
+}
+
+.notification {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: #fff;
+    border-radius: 10px;
+    border-left: 4px solid #ccc;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateX(400px);
+    transition: 0.3s;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-success {
+    border-left-color: #48bb78;
+    background: linear-gradient(135deg, #f0fff4 0%, #fff 100%);
+}
+
+.notification-error {
+    border-left-color: #f56565;
+    background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+}
+
+/* --------------------------------------------------------------
+   TRẠNG THÁI TRỐNG
+-------------------------------------------------------------- */
+.category-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #a0aec0;
+}
+
+.category-empty-state::before {
+    content: "📂";
+    font-size: 64px;
+    display: block;
+    opacity: 0.5;
+    margin-bottom: 20px;
+}
+
+/* --------------------------------------------------------------
+   RESPONSIVE
+-------------------------------------------------------------- */
+@media (max-width: 768px) {
+    #addCategoryForm {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-edit-category,
+    .btn-delete-category {
+        width: 100%;
+    }
+}

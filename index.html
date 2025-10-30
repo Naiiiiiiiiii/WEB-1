@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giày Nam Cao Cấp - ShoeStore</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/modal.css">
+    <link rel="stylesheet" href="./css/search-overlay.css">
+    <link rel="stylesheet" href="./css/dangnhap.css">
+    <link rel="stylesheet" href="./css/cart-and-user-ui.css">
+    <link rel="stylesheet" href="./css/checkout-modal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-shoe-prints"></i>
+                ShoeStore
+            </div>
+            
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="#home">Trang chủ</a></li>
+                    <li><a href="#products">Sản phẩm</a></li>
+                    <li><a href="#brands">Thương hiệu</a></li>
+                    <li><a href="#about">Giới thiệu</a></li>
+                    <li><a href="#contact">Liên hệ</a></li>
+                </ul>
+            </nav>
+            
+            <div class="nav-icons">
+    <a href="#search" id="search-link"><i class="fas fa-search"></i></a>
+    <a href="#wishlist"><i class="fas fa-heart"></i></a>
+    <a href="#orders" id="view-orders-link" class="nav-icon-link" title="Lịch sử đơn hàng">
+        <i class="fas fa-history"></i>
+    </a>
+        <a href="#cart" class="cart-icon-wrapper nav-icon-link">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count">0</span>
+    </a>
+    <a href="#user" id="user-login-link"><i class="fas fa-user"></i></a>
+</div>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+        <div class="hero-content">
+            <div>
+                <h1>Giày Nam Cao Cấp</h1>
+                <p>Khám phá bộ sưu tập giày nam chính hãng với thiết kế hiện đại và chất lượng vượt trội</p>
+                <a href="#products" class="cta-button">Mua sắm ngay</a>
+            </div>
+            
+            <div class="slider-container">
+                <div class="slides-wrapper">
+                    <div class="slide">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=600&fit=crop" alt="Giày thể thao CA Match">
+                    </div>
+                    <div class="slide">
+                        <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&h=600&fit=crop" alt="Giày thể thao Suede Classic Unisex">
+                    </div>
+                    <div class="slide">
+                        <img src="https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=800&h=600&fit=crop" alt="GIÀY DA CÔNG SỞ GERMANO BELLESI">
+                    </div>
+                </div>
+
+                <div class="slider-controls">
+                    <button class="slider-btn prev-btn">‹</button>
+                    <button class="slider-btn next-btn">›</button>
+                </div>
+
+                <div class="slider-dots">
+                    <span class="dot active" data-slide="0"></span>
+                    <span class="dot" data-slide="1"></span>
+                    <span class="dot" data-slide="2"></span>
+                </div>
+            </div>
+        </div>
+        </section>
+
+        <section class="categories">
+            <div class="container">
+                <h2 class="section-title">Danh mục nổi bật</h2>
+                <div class="category-grid">
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-running"></i>
+                        </div>
+                        <h3>Giày thể thao</h3>
+                        <p>Năng động, thoải mái</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3>Giày công sở</h3>
+                        <p>Lịch lãm, chuyên nghiệp</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-mountain"></i>
+                        </div>
+                        <h3>Giày outdoor</h3>
+                        <p>Bền bỉ, chống nước</p>
+                    </div>
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3>Giày cao cấp</h3>
+                        <p>Sang trọng, đẳng cấp</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="products" class="products">
+            <div class="container">
+                <h2 class="section-title">Sản phẩm nổi bật</h2>
+                
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <button class="filter-btn active" data-filter="all">Tất cả</button>
+                        <button class="filter-btn" data-filter="Giày thể thao">Thể thao</button>
+                        <button class="filter-btn" data-filter="Giày công sở">Công sở</button>
+                        <button class="filter-btn" data-filter="Giày casual">Casual</button>
+                    </div>
+                    <div class="sort-group">
+                        <select class="sort-select">
+                            <option value="">Sắp xếp theo</option>
+                            <option value="price-asc">Giá tăng dần</option>
+                            <option value="price-desc">Giá giảm dần</option>
+                            <option value="newest">Mới nhất</option>
+                            <option value="best-seller">Bán chạy</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="product-grid"></div>
+
+                <div id="quick-view-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn">&times;</span>
+                        <img id="modal-img" src="" alt="Ảnh sản phẩm">
+                        <h3 id="modal-name"></h3>
+                        <div id="modal-rating"></div>
+                        <div id="modal-price"></div>
+                        <button class="add-to-cart" id="modal-add-to-cart">Thêm vào giỏ</button>
+                        <a href="./product-detail.html" id="modal-view-detail" class="view-detail-btn">Xem chi tiết</a>
+                    </div>
+                </div>
+
+                <div class="load-more">
+                    <button class="load-more-btn">Xem thêm sản phẩm</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="brands" class="brands">
+            <div class="container">
+                <h2 class="section-title">Thương hiệu đối tác</h2>
+                <div class="brand-slider">
+                    <div class="brand-item">Nike</div>
+                    <div class="brand-item">Adidas</div>
+                    <div class="brand-item">Puma</div>
+                    <div class="brand-item">Converse</div>
+                    <div class="brand-item">Vans</div>
+                    <div class="brand-item">New Balance</div>
+                </div>
+                            </div>
+        </section>
+
+        <section class="newsletter">
+                    </section>
+
+    </main>
+    <footer class="footer">
+                <div class="footer-bottom">
+            <p>&copy; 2025 ShoeStore. Tất cả quyền được bảo lưu.</p>
+        </div>
+        </div>
+    </footer>
+    
+    <div id="order-history-overlay" class="cart-overlay" style="display: none;">
+        <div class="cart-modal" style="max-width: 650px;">
+            <div class="cart-header">
+                <h2>📜 Lịch Sử Đơn Hàng</h2>
+                <button id="close-history-btn" class="close-btn">&times;</button>
+            </div>
+            <div class="order-history-content" id="history-list-container" style="max-height: 70vh; overflow-y: auto;">
+                <p class="loading-message" style="text-align: center; padding: 20px;">Đang tải...</p>
+            </div>
+        </div>
+    </div>
+        <div class="cart-overlay" id="cart-overlay">
+        <div class="cart-modal">
+            <button class="close-btn" id="close-cart-btn">&times;</button>
+            <h2>🛒 Giỏ hàng của bạn</h2>
+
+            <div class="cart-items-container" id="cart-items-container">
+                </div>
+
+            <div class="empty-cart-message" id="empty-cart-message" style="text-align: center; padding: 50px 0; display: none;">
+                <i class="fas fa-shopping-basket" style="font-size: 3rem; color: #ccc;"></i>
+                <p style="margin-top: 10px; color: #777;">Giỏ hàng của bạn chưa có sản phẩm nào.</p>
+                <p style="font-size: 0.9rem; color: #999;">Hãy quay lại trang chủ để khám phá!</p>
+            </div>
+
+            <div class="cart-summary">
+                <p>Tổng cộng: <span id="cart-total">0₫</span></p>
+                <button class="primary-btn" id="checkout-btn">TIẾN HÀNH THANH TOÁN</button>
+                <button class="secondary-btn" id="clear-cart-btn">XÓA TOÀN BỘ GIỎ HÀNG</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="order-history-overlay" class="modal-overlay" style="display: none;">
+    <div class="modal-content history-modal-content">
+        <div class="modal-header">
+            <h3>Lịch Sử Đơn Hàng Của Bạn</h3>
+            <button id="close-history-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="history-list-container">
+                </div>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="./js/cart.js"></script>
+<script type="module" src="./js/Product.js"></script>
+<script type="module" src="./js/productData.js"></script>
+<script type="module" src="./js/ProductManager.js"></script>
+<script type="module" src="./js/renderProducts.js"></script>
+<script type="module" src="./js/cart-ui.js"></script>
+<script type="module" src="./js/search-overlay.js"></script>
+
+<script type="module" src="./js/user.js"></script>
+<script type="module" src="./js/login-modal.js"></script> 
+
+<script type="module" src="./js/order-manager.js"></script>
+<script type="module" src="./js/order-history-ui.js"></script>
+<script type="module" src="./js/checkout-modal-html.js"></script>
+<script type="module" src="./js/checkout-ui.js"></script>
+
+<script type="module" src="./js/main.js"></script>
+
+</body>
+</html>

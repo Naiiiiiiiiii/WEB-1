@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết sản phẩm - ShoeStore</title>
+    <link rel="stylesheet" href="./css/product-detail.css"> 
+    <link rel="stylesheet" href="./css/search-overlay.css">
+    <link rel="stylesheet" href="./css/cart-and-user-ui.css">
+    <link rel="stylesheet" href="./css/checkout-modal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-shoe-prints"></i>
+                ShoeStore
+            </div>
+            
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="./index.html">Trang chủ</a></li>
+                    <li><a href="./index.html#products">Sản phẩm</a></li>
+                    <li><a href="./index.html#brands">Thương hiệu</a></li>
+                    <li><a href="#about">Giới thiệu</a></li>
+                    <li><a href="#contact">Liên hệ</a></li>
+                </ul>
+            </nav>
+            
+            <div class="nav-icons">
+                <a href="#cart" class="cart-icon-wrapper">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+                <a href="#" id="login-toggle" class="user-icon-wrapper">
+                    <i class="fas fa-user-circle"></i>
+                </a>
+            </div>
+            </div>
+    </header>
+
+    <main>
+        <div id="product-detail" class="product-detail">
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-shoe-prints"></i>
+                        ShoeStore
+                    </div>
+                    <p>Cửa hàng giày nam chính hãng với chất lượng cao và dịch vụ tốt nhất.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Sản phẩm</h3>
+                    <ul>
+                        <li><a href="#">Giày thể thao</a></li>
+                        <li><a href="#">Giày công sở</a></li>
+                        <li><a href="#">Giày casual</a></li>
+                        <li><a href="#">Phụ kiện</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Hỗ trợ</h3>
+                    <ul>
+                        <li><a href="#">Chính sách đổi trả</a></li>
+                        <li><a href="#">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#">Chăm sóc khách hàng</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Liên hệ</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> 123 Nguyễn Văn A, Q1, TP.HCM</a></li>
+                        <li><a href="#"><i class="fas fa-phone"></i> (028) 123 456 789</a></li>
+                        <li><a href="#"><i class="fas fa-envelope"></i> info@shoestore.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 ShoeStore. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="cart-overlay" class="cart-overlay">
+        <div class="cart-modal">
+            <button id="close-cart-btn" class="close-btn">&times;</button>
+            <h2>Giỏ hàng của bạn</h2>
+            <div id="cart-items-container" class="cart-items-container">
+                </div>
+            <div id="empty-cart-message" class="empty-cart-message" style="display: none;">
+                <i class="fas fa-shopping-basket"></i>
+                <p>Giỏ hàng của bạn đang trống.</p>
+                <a href="./index.html" class="btn-primary">Tiếp tục mua sắm</a>
+            </div>
+            <div class="cart-summary">
+                <p>Tổng cộng: <span id="cart-total">0₫</span></p>
+                <button id="clear-cart-btn" class="btn-secondary">Xóa toàn bộ</button>
+                <button id="checkout-btn" class="btn-primary">Thanh toán ngay</button>
+            </div>
+        </div>
+    </div>
+<script type="module" src="./js/Product.js"></script>
+<script type="module" src="./js/productData.js"></script>
+<script type="module" src="./js/ProductManager.js"></script> 
+
+<script type="module" src="./js/product-detail-logic.js"></script>
+<script type="module" src="./js/product-detail.js"></script> 
+
+<script type="module" src="./js/order-manager.js"></script> 
+<script type="module" src="./js/cart.js"></script>
+<script type="module" src="./js/checkout-modal-html.js"></script> 
+<script type="module" src="./js/checkout-ui.js"></script>
+<script type="module" src="./js/cart-ui.js"></script> 
+
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>

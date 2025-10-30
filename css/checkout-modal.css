@@ -1,0 +1,226 @@
+/*
+ * Checkout Modal Styles
+ * Được sử dụng bởi js/checkout-ui.js
+ */
+
+/* ================================================================= */
+/* 1. OVERLAY (LỚP PHỦ NỀN) */
+/* ================================================================= */
+
+.checkout-overlay {
+    /* Quan trọng: Cố định vị trí và phủ kín màn hình */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Làm mờ nền */
+    background-color: rgba(0, 0, 0, 0.7); 
+    
+    /* Quan trọng: Đảm bảo modal hiện trên tất cả các phần tử khác */
+    z-index: 1050; 
+    
+    /* Thiết lập ẩn/hiện ban đầu */
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    
+    /* Hiệu ứng mở/đóng */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.checkout-overlay.open {
+    /* Khi có class 'open' (do JS thêm vào), hiển thị modal */
+    opacity: 1;
+}
+
+/* ================================================================= */
+/* 2. MODAL CHÍNH (NỘI DUNG FORM) */
+/* ================================================================= */
+
+.checkout-modal {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 700px; /* Giới hạn chiều rộng trên màn hình lớn */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    position: relative;
+    max-height: 90vh; /* Giới hạn chiều cao để tránh tràn màn hình */
+    overflow-y: auto; /* Cho phép cuộn nếu nội dung dài */
+    
+    /* Hiệu ứng trượt vào/ra (Tùy chọn) */
+    transform: scale(0.95); 
+    transition: transform 0.3s ease;
+}
+
+.checkout-overlay.open .checkout-modal {
+    transform: scale(1);
+}
+
+/* ================================================================= */
+/* 3. NÚT ĐÓNG (CLOSE BUTTON) */
+/* ================================================================= */
+
+.checkout-modal .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    z-index: 1060;
+}
+
+
+/* ================================================================= */
+/* 4. CÁC BƯỚC VÀ FORM ELEMENTS */
+/* ================================================================= */
+
+.checkout-step h3 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box; 
+}
+
+/* Nút và Actions */
+.checkout-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: flex-end; 
+    gap: 10px;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    text-align: center;
+    text-decoration: none; /* Đảm bảo không có gạch chân nếu là thẻ <a> */
+}
+
+.btn-primary {
+    background-color: #007bff; 
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #f8f9fa;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+/* ================================================================= */
+/* 5. REVIEW VÀ THANH TOÁN */
+/* ================================================================= */
+
+.payment-options label {
+    display: block;
+    margin-bottom: 10px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.payment-options label:hover {
+    border-color: #007bff;
+}
+
+.review-section {
+    padding: 15px;
+    border: 1px solid #f1f1f1;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: #fcfcfc;
+}
+
+.review-section h4 {
+    margin-top: 0;
+    color: #007bff;
+    font-size: 1.1em;
+}
+
+.review-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #eee;
+    font-size: 0.95em;
+}
+
+.review-item-name {
+    flex-grow: 1;
+}
+
+.review-item-qty-price {
+    text-align: right;
+    font-weight: 500;
+}
+
+.review-total {
+    font-size: 1.3em;
+    font-weight: bold;
+    text-align: right;
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+    color: #dc3545; 
+}
+
+/* Thông báo xử lý và thành công */
+#order-processing-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #007bff;
+}
+
+#order-processing-message .fa-spinner {
+    font-size: 2em;
+}
+
+.success-step {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.success-step .fa-check-circle {
+    font-size: 4em;
+    color: #28a745;
+    margin-bottom: 20px;
+}
