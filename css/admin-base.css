@@ -3,201 +3,252 @@
    Chứa: Reset, Layout, Login, Menu, Header, Buttons, Forms & Tables chung.
    =================================================================== */
 
-/* ===============================
-   RESET & BASE (Đã sửa lỗi khoảng trắng)
-=============================== */
+/* Import CSS Variables */
+@import url('variables.css');
+
+/* ===================================================================
+   RESET & BASE STYLES
+   =================================================================== */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-primary);
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
 }
 
 body {
-  background: #f4f7f6;
-  color: #333;
-  line-height: 1.6;
+    background: var(--color-background-alt);
+    color: var(--color-text);
+    line-height: var(--line-height-relaxed);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 a {
-  text-decoration: none;
-  color: inherit;
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition-base);
 }
 
-/* ===============================
+a:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+/* ===================================================================
    LOGIN FORM
-=============================== */
+   =================================================================== */
 #loginPage {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: var(--color-secondary-gradient);
+    padding: var(--spacing-lg);
 }
 
 .form_login {
-  width: 100%;
-  max-width: 400px;
-  padding: 35px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    padding: var(--spacing-2xl);
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2xl);
 }
 
 .form_login h1 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 30px;
-  font-size: 24px;
+    text-align: center;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xl);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
 }
 
 .form_login label {
-  display: block;
-  font-weight: 600;
-  color: #555;
-  margin-bottom: 6px;
-  font-size: 14px;
+    display: block;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-xs);
+    font-size: var(--font-size-sm);
 }
 
 .form_login input[type="text"],
 .form_login input[type="password"] {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  margin-bottom: 20px;
-  font-size: 16px;
-  transition: border-color 0.3s;
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-dark);
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-base);
+    transition: var(--transition-base);
 }
 
 .form_login input:focus {
-  border-color: #667eea;
-  outline: none;
+    border-color: var(--color-secondary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .form_login button[type="submit"] {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background: #667eea;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s ease;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--color-secondary);
+    color: var(--color-white);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    transition: var(--transition-all);
 }
 
 .form_login button[type="submit"]:hover {
-  background: #5a6de5;
+    background: #5a6de5;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
-/* ===============================
-   ADMIN PANEL LAYOUT - ✅ FIXED: NO GAPS
-=============================== */
+.form_login button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+.form_login button[type="submit"]:focus {
+    outline: 2px solid var(--color-secondary);
+    outline-offset: 2px;
+}
+
+/* ===================================================================
+   ADMIN PANEL LAYOUT
+   =================================================================== */
 #adminPanel {
-  display: flex;
-  margin: 0;
-  padding: 0;
-  width: 100vw;
-  min-height: 100vh;
-  position: relative;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    min-height: 100vh;
+    position: relative;
 }
 
-/* MENU BAR - ✅ FIXED: Dính sát trái và trên */
+/* ===================================================================
+   MENU BAR (Sidebar)
+   =================================================================== */
 .menu {
-  width: 250px;
-  background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-  color: #fff;
-  margin: 0;
-  padding: 0;
-  flex-shrink: 0;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  z-index: 1000;
-  overflow-y: auto;
+    width: 250px;
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    color: var(--color-white);
+    margin: 0;
+    padding: 0;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: var(--z-sticky);
+    overflow-y: auto;
 }
 
-/* Nav Container - ✅ Loại bỏ padding không cần thiết */
+/* Scrollbar Styling for Menu */
+.menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.menu::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-sm);
+}
+
+.menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Nav Container */
 .nav-container {
-  width: 100%;
-  margin: 0;
-  padding: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
-/* Logo - ✅ Giữ padding nhưng không tạo gap */
+/* Logo */
 .logo {
-  padding: 20px;
-  font-size: 22px;
-  font-weight: 700;
-  text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin: 0;
-  background: rgba(0, 0, 0, 0.1);
+    padding: var(--spacing-lg);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0;
+    background: rgba(0, 0, 0, 0.15);
 }
 
 .logo i {
-  margin-right: 10px;
-  color: #1abc9c;
+    margin-right: var(--spacing-sm);
+    color: #1abc9c;
 }
 
 /* Nav Menu */
 .nav-menu {
-  margin: 0;
-  padding: 0;
-  width: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
 }
 
 .nav-menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
 }
 
 .nav-menu li {
-  width: 100%;
-  margin: 0;
-  padding: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-menu li a {
-  display: flex;
-  align-items: center;
-  padding: 15px 20px;
-  color: #ecf0f1;
-  font-size: 15px;
-  transition: all 0.3s ease;
-  border-left: 4px solid transparent;
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    color: #ecf0f1;
+    font-size: var(--font-size-sm);
+    transition: var(--transition-all);
+    border-left: 4px solid transparent;
+    font-weight: var(--font-weight-medium);
 }
 
 .nav-menu li a:hover,
 .nav-menu li a.active-link {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  border-left-color: #1abc9c;
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--color-white);
+    border-left-color: #1abc9c;
+}
+
+.nav-menu li a:focus {
+    outline: 2px solid #1abc9c;
+    outline-offset: -2px;
 }
 
 .nav-menu li a i {
-  margin-right: 12px;
-  width: 20px;
-  text-align: center;
-  font-size: 16px;
+    margin-right: 12px;
+    width: 20px;
+    text-align: center;
+    font-size: var(--font-size-base);
 }
 
 /* MAIN CONTENT - ✅ FIXED: Chiếm toàn bộ không gian còn lại */
