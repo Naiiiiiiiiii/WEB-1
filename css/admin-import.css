@@ -235,7 +235,7 @@
 /* ===============================
    ACTION BUTTONS (TRONG BẢNG)
 =============================== */
-.action-buttons {
+.import-slips .action-buttons {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
@@ -243,7 +243,7 @@
     align-items: center;
 }
 
-.action-buttons button {
+.import-slips .action-buttons button {
     padding: 8px 12px;
     border: none;
     border-radius: 6px;
@@ -257,7 +257,7 @@
     gap: 6px;
 }
 
-.action-buttons button i {
+.import-slips .action-buttons button i {
     font-size: 13px;
 }
 
@@ -537,12 +537,12 @@
         padding: 12px 10px;
     }
 
-    .action-buttons {
+    .import-slips .action-buttons {
         flex-direction: column;
         align-items: stretch;
     }
 
-    .action-buttons button {
+    .import-slips .action-buttons button {
         width: 100%;
         justify-content: center;
     }
@@ -593,7 +593,7 @@
         padding: 6px 10px;
     }
 
-    .action-buttons button {
+    .import-slips .action-buttons button {
         font-size: 11px;
         padding: 7px 10px;
     }
@@ -626,7 +626,7 @@
         padding: 5px 8px;
     }
 
-    .action-buttons button {
+    .import-slips .action-buttons button {
         font-size: 10px;
         padding: 6px 8px;
     }

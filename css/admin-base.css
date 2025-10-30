@@ -4,6 +4,47 @@
    =================================================================== */
 
 /* ===============================
+   CSS CUSTOM PROPERTIES / VARIABLES
+=============================== */
+:root {
+  /* Brand & semantic colors */
+  --color-primary: #667eea;
+  --color-primary-2: #764ba2;
+  --color-success: #27ae60;
+  --color-danger: #e74c3c;
+  --color-info: #3498db;
+  --color-warning: #f39c12; /* sometimes #ffc107 is used for badges */
+
+  /* Grays */
+  --gray-900: #2c3e50;
+  --gray-800: #34495e;
+  --gray-700: #555555;
+  --gray-600: #666666;
+  --gray-500: #888888;
+  --gray-400: #aaaaaa;
+  --gray-300: #dddddd;
+  --gray-200: #e8e8e8;
+  --gray-100: #f4f7f6;
+
+  /* Radius */
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-10: 10px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+
+  /* Spacing */
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+}
+
+/* ===============================
    RESET & BASE (Đã sửa lỗi khoảng trắng)
 =============================== */
 * {
@@ -546,6 +587,18 @@ textarea:focus {
 
 .btn-edit-category:hover {
     background: #38a169;
+}
+
+/* ===============================
+   FOCUS VISIBLE STYLES (ACCESSIBILITY)
+=============================== */
+.btn:focus-visible,
+button:focus-visible,
+.close-btn:focus-visible,
+.close-modal-btn:focus-visible,
+[role="button"]:focus-visible {
+  outline: 3px solid rgba(102, 126, 234, 0.55); /* primary focus ring */
+  outline-offset: 2px;
 }
 
 /* ===============================
