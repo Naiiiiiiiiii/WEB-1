@@ -659,7 +659,7 @@
 =============================== */
 @media print {
     .filter-toolbar,
-    .action-buttons,
+    .import-slips .action-buttons,
     .btn,
     .modal {
         display: none !important;
