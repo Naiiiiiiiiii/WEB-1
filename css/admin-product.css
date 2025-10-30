@@ -81,7 +81,7 @@
     opacity: 1;
 }
 
-.product-modal .modal-content {
+.modal-content {
     background: white;
     border-radius: 16px;
     width: 90%;
@@ -97,7 +97,7 @@
     transform: translateY(0);
 }
 
-.product-modal .modal-header {
+.modal-header {
     padding: 25px 30px;
     border-bottom: 2px solid #f0f0f0;
     display: flex;
@@ -107,7 +107,7 @@
     border-radius: 16px 16px 0 0;
 }
 
-.product-modal .modal-header h3 {
+.modal-header h3 {
     margin: 0;
     font-size: 22px;
     color: white;
@@ -136,7 +136,7 @@
     transform: rotate(90deg);
 }
 
-.product-modal .modal-body {
+.modal-body {
     padding: 30px;
 }
 
@@ -219,7 +219,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.product-modal .modal-footer {
+.modal-footer {
     padding: 20px 30px;
     border-top: 2px solid #f0f0f0;
     display: flex;
@@ -229,7 +229,7 @@
     border-radius: 0 0 16px 16px;
 }
 
-.product-modal .modal-footer button {
+.modal-footer button {
     padding: 12px 28px;
     border: none;
     border-radius: 8px;
@@ -239,23 +239,23 @@
     transition: all 0.2s ease;
 }
 
-.product-modal .modal-footer .btn-primary {
+.modal-footer .btn-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-.product-modal .modal-footer .btn-primary:hover {
+.modal-footer .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
 }
 
-.product-modal .modal-footer .btn-secondary {
+.modal-footer .btn-secondary {
     background: #e0e0e0;
     color: #666;
 }
 
-.product-modal .modal-footer .btn-secondary:hover {
+.modal-footer .btn-secondary:hover {
     background: #d0d0d0;
 }
 
@@ -379,7 +379,7 @@
 }
 
 /* Action Buttons */
-.products .action-buttons {
+.action-buttons {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
@@ -663,12 +663,12 @@
    Responsive Overrides
    ------------------------------------------------------------------- */
 @media (max-width: 768px) {
-    .product-modal .modal-content {
+    .modal-content {
         width: 95%;
         max-height: 95vh;
     }
     
-    .product-modal .modal-body {
+    .modal-body {
         padding: 20px;
     }
     
@@ -683,12 +683,12 @@
         display: block;
     }
     
-    .products .action-buttons {
+    .action-buttons {
         flex-direction: column;
         align-items: stretch;
     }
     
-    .products .action-buttons button {
+    .action-buttons button {
         width: 100%;
         justify-content: center;
     }
@@ -701,7 +701,7 @@
 }
 
 @media (max-width: 480px) {
-    .product-modal .modal-header h3 {
+    .modal-header h3 {
         font-size: 18px;
     }
     
