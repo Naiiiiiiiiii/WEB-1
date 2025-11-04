@@ -282,10 +282,14 @@ export function initializeProductDetailPage(productId, productManagerInstance) {
                     // Nếu người dùng CHƯA chọn size/color nào
                     if (!requiredSize && !requiredColor) {
                         sizeForCart = "Chưa chọn";
-                        colorForCart = "N/A";
+                        colorForCart = "Chưa chọn"; // Set to "Chưa chọn" instead of "N/A" for validation
                         finalPrice = product.price;
                         currentStock = 999; 
                     } else {
+                        // Set default values based on what's selected
+                        if (!requiredSize) sizeForCart = "Chưa chọn";
+                        if (!requiredColor) colorForCart = "Chưa chọn";
+                        
                         // Nếu đã chọn biến thể, tìm chính xác tồn kho và giá
                         const variant = product.variants.find(v => {
                             const matchSize = !requiredSize || (v.size && v.size.toString() === requiredSize);
@@ -295,6 +299,15 @@ export function initializeProductDetailPage(productId, productManagerInstance) {
 
                         finalPrice = (variant && variant.price !== undefined) ? variant.price : product.price;
                         currentStock = variant ? variant.stock : 0; 
+                    }
+                } else {
+                    // Non-variant product
+                    if (!sizeForCart) sizeForCart = "N/A";
+                    // Check if product has colors array
+                    if (product.colors && product.colors.length > 0 && !selectedColor) {
+                        colorForCart = "Chưa chọn"; // Require color selection
+                    } else if (!colorForCart) {
+                        colorForCart = "N/A";
                     }
                 }
 

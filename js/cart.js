@@ -335,12 +335,27 @@ window.handleCartTableEvents = handleCartTableEvents;
 
 export function checkCartBeforeCheckout() {
     const cart = getCart();
+    
+    // Check for missing size
     const missingSizeItem = cart.find(item => item.size === 'Chưa chọn');
-
     if (missingSizeItem) {
         alert(`Vui lòng chọn Kích cỡ cho sản phẩm: "${missingSizeItem.name}" trước khi thanh toán.`);
         return false;
     }
+    
+    // Check for missing color (if product has colors)
+    const missingColorItem = cart.find(item => {
+        const product = productManager.getProductById(item.id);
+        // If product has colors defined and item color is not selected, block checkout
+        return product && product.colors && product.colors.length > 0 && 
+               (item.color === 'Chưa chọn' || item.color === 'N/A' || !item.color);
+    });
+    
+    if (missingColorItem) {
+        alert(`Vui lòng chọn Màu sắc cho sản phẩm: "${missingColorItem.name}" trước khi thanh toán.`);
+        return false;
+    }
+    
     return true;
 }
 window.checkCartBeforeCheckout = checkCartBeforeCheckout;

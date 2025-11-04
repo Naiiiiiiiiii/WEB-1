@@ -25,7 +25,10 @@ function renderProductDetail(product) {
     // Chuẩn bị danh sách Size và Màu duy nhất cho nút bấm
     const variants = product.variants || [];
     const uniqueSizes = [...new Set(variants.map(v => v.size))].filter(s => s);
-    const uniqueColors = [...new Set(variants.map(v => v.color))].filter(c => c);
+    // Use product.colors array if available, otherwise fall back to variants
+    const uniqueColors = product.colors && product.colors.length > 0 
+        ? product.colors 
+        : [...new Set(variants.map(v => v.color))].filter(c => c);
     
     const hasSizes = uniqueSizes.length > 0; 
     const hasColors = uniqueColors.length > 0;
@@ -38,13 +41,21 @@ function renderProductDetail(product) {
 
     // Tạo HTML cho nút Color
     const colorOptionsHtml = uniqueColors.map(color => {
-        let displayColor = color;
-        if (color.includes('/')) {
-            displayColor = color.split('/')[0].trim();
-        }
+        // Map Vietnamese color names to CSS colors
+        const colorMap = {
+            'Trắng': 'white',
+            'Đen': 'black',
+            'Xám': 'gray',
+            'Nâu': 'brown',
+            'Xanh navy': 'navy',
+            'Đỏ': 'red',
+            'Xanh': 'blue'
+        };
+        
+        let displayColor = colorMap[color] || color.toLowerCase();
         
         return `<button type="button" class="color-option" data-color="${escapeHtml(color)}" 
-                             style="background-color: ${escapeHtml(displayColor.toLowerCase())};" 
+                             style="background-color: ${escapeHtml(displayColor)}; ${displayColor === 'white' ? 'border: 1px solid #ddd;' : ''}" 
                              title="${escapeHtml(color)}">
                            </button>`;
     }).join('');
