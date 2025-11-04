@@ -22,43 +22,48 @@ export function initializeProductDetailPage(productId, productManagerInstance) {
     function updateVariantButtonStates() {
         //  Lấy dữ liệu sản phẩm MỚI NHẤT
         product = productManagerInstance.getProductById(productId); 
-        if (!product || !product.variants || product.variants.length === 0) return;
+        if (!product) return;
+        
+        // Check if product has independent colors (not in variants)
+        const hasIndependentColors = product.colors && product.colors.length > 0;
 
         // --- Cập nhật nút Size ---
-        document.querySelectorAll('.size-option').forEach(btn => {
-            const size = btn.dataset.size;
-            
-            const variant = product.variants.find(v => {
-                const matchSize = v.size && v.size.toString() === size;
-                const matchColor = !selectedColor || (v.color && v.color.toString() === selectedColor); 
-                return matchSize && matchColor;
-            });
+        if (product.variants && product.variants.length > 0) {
+            document.querySelectorAll('.size-option').forEach(btn => {
+                const size = btn.dataset.size;
+                
+                const variant = product.variants.find(v => {
+                    const matchSize = v.size && v.size.toString() === size;
+                    const matchColor = !selectedColor || (v.color && v.color.toString() === selectedColor); 
+                    return matchSize && matchColor;
+                });
 
-            const stock = variant ? variant.stock : 0;
-            
-            if (stock <= 0) {
-                btn.disabled = true;
-                btn.classList.add('out-of-stock');
-                // Bổ sung: Nếu lựa chọn hiện tại bị hết hàng, reset nó.
-                if (btn.classList.contains('active') && size === selectedSize) {
-                    btn.classList.remove('active');
-                    selectedSize = null; 
+                const stock = variant ? variant.stock : 0;
+                
+                if (stock <= 0) {
+                    btn.disabled = true;
+                    btn.classList.add('out-of-stock');
+                    // Bổ sung: Nếu lựa chọn hiện tại bị hết hàng, reset nó.
+                    if (btn.classList.contains('active') && size === selectedSize) {
+                        btn.classList.remove('active');
+                        selectedSize = null; 
+                    }
+                } else {
+                    btn.disabled = false;
+                    btn.classList.remove('out-of-stock');
                 }
-            } else {
-                btn.disabled = false;
-                btn.classList.remove('out-of-stock');
-            }
-        });
+            });
+        }
 
         // --- Cập nhật nút Color ---
         document.querySelectorAll('.color-option').forEach(btn => {
             const color = btn.dataset.color;
             
             // If product has colors array (separate from variants), colors are always available
-            if (product.colors && product.colors.length > 0) {
+            if (hasIndependentColors) {
                 btn.disabled = false;
                 btn.classList.remove('out-of-stock');
-            } else {
+            } else if (product.variants && product.variants.length > 0) {
                 // Legacy: colors in variants
                 const variant = product.variants.find(v => {
                     const matchColor = v.color && v.color.toString() === color;
@@ -80,6 +85,10 @@ export function initializeProductDetailPage(productId, productManagerInstance) {
                     btn.disabled = false;
                     btn.classList.remove('out-of-stock');
                 }
+            } else {
+                // No variants, enable all color buttons
+                btn.disabled = false;
+                btn.classList.remove('out-of-stock');
             }
         });
     }
