@@ -54,25 +54,32 @@ export function initializeProductDetailPage(productId, productManagerInstance) {
         document.querySelectorAll('.color-option').forEach(btn => {
             const color = btn.dataset.color;
             
-            const variant = product.variants.find(v => {
-                const matchColor = v.color && v.color.toString() === color;
-                const matchSize = !selectedSize || (v.size && v.size.toString() === selectedSize); 
-                return matchColor && matchSize;
-            });
-
-            const stock = variant ? variant.stock : 0;
-            
-            if (stock <= 0) {
-                btn.disabled = true;
-                btn.classList.add('out-of-stock');
-               
-                if (btn.classList.contains('active') && color === selectedColor) {
-                    btn.classList.remove('active');
-                    selectedColor = null; 
-                }
-            } else {
+            // If product has colors array (separate from variants), colors are always available
+            if (product.colors && product.colors.length > 0) {
                 btn.disabled = false;
                 btn.classList.remove('out-of-stock');
+            } else {
+                // Legacy: colors in variants
+                const variant = product.variants.find(v => {
+                    const matchColor = v.color && v.color.toString() === color;
+                    const matchSize = !selectedSize || (v.size && v.size.toString() === selectedSize); 
+                    return matchColor && matchSize;
+                });
+
+                const stock = variant ? variant.stock : 0;
+                
+                if (stock <= 0) {
+                    btn.disabled = true;
+                    btn.classList.add('out-of-stock');
+                   
+                    if (btn.classList.contains('active') && color === selectedColor) {
+                        btn.classList.remove('active');
+                        selectedColor = null; 
+                    }
+                } else {
+                    btn.disabled = false;
+                    btn.classList.remove('out-of-stock');
+                }
             }
         });
     }
@@ -110,9 +117,13 @@ export function initializeProductDetailPage(productId, productManagerInstance) {
             const requiredColor = colorRequired ? selectedColor : null;
             
             if (requiredSize || requiredColor) {
+                // If product has separate colors array, ignore color in variant matching (stock managed by size only)
+                const hasIndependentColors = product.colors && product.colors.length > 0;
+                
                 const variant = product.variants.find(v => {
                     const matchSize = !requiredSize || (v.size && v.size.toString() === requiredSize);
-                    const matchColor = !requiredColor || (v.color && v.color.toString() === requiredColor);
+                    // Only match color if colors are in variants (not in separate colors array)
+                    const matchColor = hasIndependentColors || !requiredColor || (v.color && v.color.toString() === requiredColor);
                     return matchSize && matchColor;
                 });
 
@@ -290,10 +301,14 @@ export function initializeProductDetailPage(productId, productManagerInstance) {
                         if (!requiredSize) sizeForCart = "Chưa chọn";
                         if (!requiredColor) colorForCart = "Chưa chọn";
                         
+                        // If product has separate colors array, ignore color in variant matching
+                        const hasIndependentColors = product.colors && product.colors.length > 0;
+                        
                         // Nếu đã chọn biến thể, tìm chính xác tồn kho và giá
                         const variant = product.variants.find(v => {
                             const matchSize = !requiredSize || (v.size && v.size.toString() === requiredSize);
-                            const matchColor = !requiredColor || (v.color && v.color.toString() === requiredColor);
+                            // Only match color if colors are in variants (not in separate colors array)
+                            const matchColor = hasIndependentColors || !requiredColor || (v.color && v.color.toString() === requiredColor);
                             return matchSize && matchColor;
                         });
 
