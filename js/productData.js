@@ -28,6 +28,7 @@ export const productDataList = [
             "./img/giaythethao_CAMatch.avif",
             "./img/giaythethao_CAMatch.avif",
         ],
+        colors: ["Trắng", "Đen", "Xám"], // Color variants for sneakers
 
         variants: [
             { size: 38, stock: 10 },
@@ -64,6 +65,7 @@ export const productDataList = [
             "./img/Giày-thể-thao-Suede-Classic-Unisex.avif",
             "./img/Giày-thể-thao-Suede-Classic-Unisex.avif",
         ],
+        colors: ["Nâu", "Xanh navy", "Đỏ"], // Color variants for suede classic
 
         variants: [
             { size: 36, stock: 8 },
@@ -97,6 +99,7 @@ export const productDataList = [
         description:
             "Giày da công sở Germano Bellesi được sản xuất thủ công tại Ý, sử dụng da thật cao cấp, mang lại sự sang trọng và đẳng cấp cho phái mạnh.",
         images: ["./img/giaycongsoGERMANO.webp", "./img/giaycongsoGERMANO.webp"],
+        colors: ["Đen", "Nâu"], // Color variants for oxford/formal shoes
 
         // KHÔNG CÓ BIẾN THỂ (Quản lý tồn kho chung)
         variants: [

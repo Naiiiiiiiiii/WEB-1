@@ -118,12 +118,12 @@
     background: rgba(0, 0, 0, 0.5);
     display: none; 
     justify-content: flex-end; /* Đẩy modal sang phải */
-    z-index: 1000;
+    z-index: 10000; /* Increased z-index to avoid being covered by other overlays */
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 .cart-overlay.open {
-    display: flex;
+    display: flex !important; /* Added !important for robustness */
     opacity: 1;
 }
 

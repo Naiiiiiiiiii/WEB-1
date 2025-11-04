@@ -42,13 +42,23 @@ function createCartItemRow(item) {
     // 3. Dùng 'item.price' thay vì 'item.unitPrice'
     // 4. Dùng 'item.itemIdentifier' trong data-set để quản lý thay đổi
     // 5. Dùng 'item.price' để tính subtotal
+    // Format color display - hide if N/A or show warning if not selected
+    let colorDisplay = '';
+    if (item.color && item.color !== 'N/A') {
+        if (item.color === 'Chưa chọn') {
+            colorDisplay = `<p><small>Màu sắc: <span style="color: #dc3545;">${item.color} ⚠️</span></small></p>`;
+        } else {
+            colorDisplay = `<p><small>Màu sắc: ${item.color}</small></p>`;
+        }
+    }
+    
     row.innerHTML = `
         <img src="${item.img}" alt="${item.name}" class="item-img">
         <div class="item-details">
             <h4 class="item-name">${item.name}</h4>
             <div class="item-meta">
                 <p><small>Kích cỡ: ${renderSizeSelector(item)}</small></p>
-                <p><small>Màu sắc: ${item.color}</small></p>
+                ${colorDisplay}
             </div>
             <p class="item-price">${formatCurrency(item.price)}</p>
         </div>
@@ -157,12 +167,14 @@ function openCartModal() {
     if (!cartOverlay) initializeCartDom();
     renderCart();
     cartOverlay.classList.add('open');
+    cartOverlay.style.display = 'flex'; // Set display style for robustness
     document.body.style.overflow = 'hidden'; 
 }
 
 function closeCartModal() {
     if (!cartOverlay) initializeCartDom();
     cartOverlay.classList.remove('open');
+    cartOverlay.style.display = 'none'; // Explicitly set display to none
     document.body.style.overflow = 'auto'; 
 }
 

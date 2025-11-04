@@ -92,7 +92,7 @@ function handleAddToCartClick(e) {
     
     // Thiết lập size mặc định là 'Chưa chọn' để người dùng có thể cập nhật trong giỏ hàng
     const size = 'Chưa chọn'; 
-    const color = null; // Mặc định là null/N/A
+    const color = 'Chưa chọn'; // Set to 'Chưa chọn' for color validation flow
     const quantity = 1;
     
     if (window.addToCart) {

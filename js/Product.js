@@ -12,8 +12,9 @@ export class Product {
         this.img = data.img || data.imageUrl; 
         this.images = data.images || [];
 
-        // === Thuộc tính Biến thể (CHỈ SIZE) ===
-        this.variants = data.variants || []; 
+        // === Thuộc tính Biến thể (SIZE & COLOR) ===
+        this.variants = data.variants || [];
+        this.colors = data.colors || []; // Optional colors array 
 
         // === Thuộc tính giá (Cơ sở) ===
         this.price = data.price; 

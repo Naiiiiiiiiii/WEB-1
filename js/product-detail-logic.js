@@ -22,55 +22,71 @@ export function initializeProductDetailPage(productId, productManagerInstance) {
     function updateVariantButtonStates() {
         //  Lấy dữ liệu sản phẩm MỚI NHẤT
         product = productManagerInstance.getProductById(productId); 
-        if (!product || !product.variants || product.variants.length === 0) return;
+        if (!product) return;
+        
+        // Check if product has independent colors (not in variants)
+        const hasIndependentColors = product.colors && product.colors.length > 0;
 
         // --- Cập nhật nút Size ---
-        document.querySelectorAll('.size-option').forEach(btn => {
-            const size = btn.dataset.size;
-            
-            const variant = product.variants.find(v => {
-                const matchSize = v.size && v.size.toString() === size;
-                const matchColor = !selectedColor || (v.color && v.color.toString() === selectedColor); 
-                return matchSize && matchColor;
-            });
+        if (product.variants && product.variants.length > 0) {
+            document.querySelectorAll('.size-option').forEach(btn => {
+                const size = btn.dataset.size;
+                
+                const variant = product.variants.find(v => {
+                    const matchSize = v.size && v.size.toString() === size;
+                    const matchColor = !selectedColor || (v.color && v.color.toString() === selectedColor); 
+                    return matchSize && matchColor;
+                });
 
-            const stock = variant ? variant.stock : 0;
-            
-            if (stock <= 0) {
-                btn.disabled = true;
-                btn.classList.add('out-of-stock');
-                // Bổ sung: Nếu lựa chọn hiện tại bị hết hàng, reset nó.
-                if (btn.classList.contains('active') && size === selectedSize) {
-                    btn.classList.remove('active');
-                    selectedSize = null; 
+                const stock = variant ? variant.stock : 0;
+                
+                if (stock <= 0) {
+                    btn.disabled = true;
+                    btn.classList.add('out-of-stock');
+                    // Bổ sung: Nếu lựa chọn hiện tại bị hết hàng, reset nó.
+                    if (btn.classList.contains('active') && size === selectedSize) {
+                        btn.classList.remove('active');
+                        selectedSize = null; 
+                    }
+                } else {
+                    btn.disabled = false;
+                    btn.classList.remove('out-of-stock');
                 }
-            } else {
-                btn.disabled = false;
-                btn.classList.remove('out-of-stock');
-            }
-        });
+            });
+        }
 
         // --- Cập nhật nút Color ---
         document.querySelectorAll('.color-option').forEach(btn => {
             const color = btn.dataset.color;
             
-            const variant = product.variants.find(v => {
-                const matchColor = v.color && v.color.toString() === color;
-                const matchSize = !selectedSize || (v.size && v.size.toString() === selectedSize); 
-                return matchColor && matchSize;
-            });
+            // If product has colors array (separate from variants), colors are always available
+            if (hasIndependentColors) {
+                btn.disabled = false;
+                btn.classList.remove('out-of-stock');
+            } else if (product.variants && product.variants.length > 0) {
+                // Legacy: colors in variants
+                const variant = product.variants.find(v => {
+                    const matchColor = v.color && v.color.toString() === color;
+                    const matchSize = !selectedSize || (v.size && v.size.toString() === selectedSize); 
+                    return matchColor && matchSize;
+                });
 
-            const stock = variant ? variant.stock : 0;
-            
-            if (stock <= 0) {
-                btn.disabled = true;
-                btn.classList.add('out-of-stock');
-               
-                if (btn.classList.contains('active') && color === selectedColor) {
-                    btn.classList.remove('active');
-                    selectedColor = null; 
+                const stock = variant ? variant.stock : 0;
+                
+                if (stock <= 0) {
+                    btn.disabled = true;
+                    btn.classList.add('out-of-stock');
+                   
+                    if (btn.classList.contains('active') && color === selectedColor) {
+                        btn.classList.remove('active');
+                        selectedColor = null; 
+                    }
+                } else {
+                    btn.disabled = false;
+                    btn.classList.remove('out-of-stock');
                 }
             } else {
+                // No variants, enable all color buttons
                 btn.disabled = false;
                 btn.classList.remove('out-of-stock');
             }
@@ -110,9 +126,13 @@ export function initializeProductDetailPage(productId, productManagerInstance) {
             const requiredColor = colorRequired ? selectedColor : null;
             
             if (requiredSize || requiredColor) {
+                // If product has separate colors array, ignore color in variant matching (stock managed by size only)
+                const hasIndependentColors = product.colors && product.colors.length > 0;
+                
                 const variant = product.variants.find(v => {
                     const matchSize = !requiredSize || (v.size && v.size.toString() === requiredSize);
-                    const matchColor = !requiredColor || (v.color && v.color.toString() === requiredColor);
+                    // Only match color if colors are in variants (not in separate colors array)
+                    const matchColor = hasIndependentColors || !requiredColor || (v.color && v.color.toString() === requiredColor);
                     return matchSize && matchColor;
                 });
 
@@ -282,19 +302,36 @@ export function initializeProductDetailPage(productId, productManagerInstance) {
                     // Nếu người dùng CHƯA chọn size/color nào
                     if (!requiredSize && !requiredColor) {
                         sizeForCart = "Chưa chọn";
-                        colorForCart = "N/A";
+                        colorForCart = "Chưa chọn"; // Set to "Chưa chọn" instead of "N/A" for validation
                         finalPrice = product.price;
                         currentStock = 999; 
                     } else {
+                        // Set default values based on what's selected
+                        if (!requiredSize) sizeForCart = "Chưa chọn";
+                        if (!requiredColor) colorForCart = "Chưa chọn";
+                        
+                        // If product has separate colors array, ignore color in variant matching
+                        const hasIndependentColors = product.colors && product.colors.length > 0;
+                        
                         // Nếu đã chọn biến thể, tìm chính xác tồn kho và giá
                         const variant = product.variants.find(v => {
                             const matchSize = !requiredSize || (v.size && v.size.toString() === requiredSize);
-                            const matchColor = !requiredColor || (v.color && v.color.toString() === requiredColor);
+                            // Only match color if colors are in variants (not in separate colors array)
+                            const matchColor = hasIndependentColors || !requiredColor || (v.color && v.color.toString() === requiredColor);
                             return matchSize && matchColor;
                         });
 
                         finalPrice = (variant && variant.price !== undefined) ? variant.price : product.price;
                         currentStock = variant ? variant.stock : 0; 
+                    }
+                } else {
+                    // Non-variant product
+                    if (!sizeForCart) sizeForCart = "N/A";
+                    // Check if product has colors array
+                    if (product.colors && product.colors.length > 0 && !selectedColor) {
+                        colorForCart = "Chưa chọn"; // Require color selection
+                    } else if (!colorForCart) {
+                        colorForCart = "N/A";
                     }
                 }
 
