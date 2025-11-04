@@ -36,27 +36,33 @@ function createCartItemRow(item) {
     const row = document.createElement('div');
     row.className = 'cart-item';
     
+    // SỬA LỖI:
+    // 1. Dùng 'item.img' thay vì 'item.product.images[0]'
+    // 2. Dùng 'item.name' thay vì 'item.product.name'
+    // 3. Dùng 'item.price' thay vì 'item.unitPrice'
+    // 4. Dùng 'item.itemIdentifier' trong data-set để quản lý thay đổi
+    // 5. Dùng 'item.price' để tính subtotal
     row.innerHTML = `
-        <img src="${item.product.images[0]}" alt="${item.product.name}" class="item-img">
+        <img src="${item.img}" alt="${item.name}" class="item-img">
         <div class="item-details">
-            <h4 class="item-name">${item.product.name}</h4>
+            <h4 class="item-name">${item.name}</h4>
             <div class="item-meta">
                 <p><small>Kích cỡ: ${renderSizeSelector(item)}</small></p>
                 <p><small>Màu sắc: ${item.color}</small></p>
             </div>
-            <p class="item-price">${formatCurrency(item.unitPrice)}</p>
+            <p class="item-price">${formatCurrency(item.price)}</p>
         </div>
         <div class="item-controls">
             <div class="quantity-control">
-                <button class="quantity-decrease" data-product-id="${item.productId}" data-size="${item.size}" data-color="${item.color}">-</button>
-                <input type="number" class="item-quantity" value="${item.quantity}" min="1" data-product-id="${item.productId}" data-size="${item.size}" data-color="${item.color}">
-                <button class="quantity-increase" data-product-id="${item.productId}" data-size="${item.size}" data-color="${item.color}">+</button>
+                <button class="quantity-decrease" data-identifier="${item.itemIdentifier}">-</button>
+                <input type="number" class="item-quantity" value="${item.quantity}" min="1" data-identifier="${item.itemIdentifier}">
+                <button class="quantity-increase" data-identifier="${item.itemIdentifier}">+</button>
             </div>
-            <button class="item-remove" data-product-id="${item.productId}" data-size="${item.size}" data-color="${item.color}">
+            <button class="item-remove" data-identifier="${item.itemIdentifier}">
                 <i class="fas fa-trash-alt"></i>
             </button>
         </div>
-        <div class="item-subtotal">${formatCurrency(item.quantity * item.unitPrice)}</div>
+        <div class="item-subtotal">${formatCurrency(item.quantity * item.price)}</div>
     `;
 
     // Gắn sự kiện tăng/giảm số lượng
@@ -72,9 +78,10 @@ function createCartItemRow(item) {
 
 function handleQuantityChange(e, delta) {
     const target = e.target;
-    const productId = target.dataset.productId;
-    const size = target.dataset.size;
-    const color = target.dataset.color;
+    // SỬA LỖI: Lấy 'itemIdentifier' từ 'data-identifier'
+    const itemIdentifier = target.dataset.identifier;
+    if (!itemIdentifier) return;
+
     let newQuantity;
 
     if (delta !== 0) {
@@ -92,23 +99,25 @@ function handleQuantityChange(e, delta) {
         }
     }
     
-    updateCartItemQuantity(productId, size, color, newQuantity);
-    renderCart();
-    updateCartCount();
+    // SỬA LỖI: Gọi hàm updateCartItemQuantity với 2 tham số (theo file cart.js)
+    updateCartItemQuantity(itemIdentifier, newQuantity);
+    
+    // Các hàm render/update count đã được gọi bên trong 'updateCartItemQuantity' từ cart.js
 }
 
 function handleRemoveItem(e) {
     const target = e.target.closest('.item-remove');
     if (!target) return;
     
-    const productId = target.dataset.productId;
-    const size = target.dataset.size;
-    const color = target.dataset.color;
+    // SỬA LỖI: Lấy 'itemIdentifier' từ 'data-identifier'
+    const itemIdentifier = target.dataset.identifier;
+    if (!itemIdentifier) return;
     
     if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?")) {
-        removeCartItem(productId, size, color);
-        renderCart(); 
-        updateCartCount(); 
+        // SỬA LỖI: Gọi hàm removeCartItem với 1 tham số (theo file cart.js)
+        removeCartItem(itemIdentifier);
+        
+        // Các hàm render/update count đã được gọi bên trong 'removeCartItem' từ cart.js
     }
 }
 

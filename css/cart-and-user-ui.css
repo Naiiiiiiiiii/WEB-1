@@ -3,6 +3,11 @@
  * Chứa CSS cho:
  * 1. User/Login/Logout UI (Header).
  * 2. Cart Modal/Overlay UI (Hiển thị giỏ hàng).
+ *
+ * ĐÃ ĐƯỢC SỬA LỖI:
+ * - Loại bỏ toàn bộ code CSS bị trùng lặp.
+ * - Cập nhật các selectors để khớp với HTML do cart-ui.js tạo ra.
+ * - Tinh chỉnh Flexbox layout của .cart-item để tránh vỡ/tràn chữ.
  */
 
 /* =========================================================================
@@ -57,20 +62,17 @@
 }
 
 /* -------------------------------------------------------------------------
-   🔥 BỔ SUNG CSS CẦN THIẾT CHO BIẾN ĐẾM GIỎ HÀNG (Đã được thêm vào)
+   🔥 CSS BIẾN ĐẾM GIỎ HÀNG
    ------------------------------------------------------------------------- */
-/* 1. Thiết lập thẻ cha (cart-icon-wrapper) để định vị tuyệt đối cho số đếm */
 .cart-icon-wrapper {
-    position: relative; /* RẤT QUAN TRỌNG: Giúp .cart-count định vị đúng */
+    position: relative;
     display: inline-block;
 }
-
-/* 2. Định nghĩa kiểu dáng và vị trí của số đếm */
 .cart-count {
     position: absolute;
-    top: -5px;          /* Đẩy lên phía trên */
-    right: -5px;        /* Đẩy sang phải */
-    background: #ff6b35;/* Màu nổi bật */
+    top: -5px;          
+    right: -5px;        
+    background: #ff6b35;
     color: white;
     font-size: 0.8rem;
     padding: 2px 6px;
@@ -80,7 +82,6 @@
     line-height: 1.2;
     z-index: 10;
 }
-
 /* Animation cho Giỏ hàng */
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
@@ -104,7 +105,7 @@
 
 
 /* =========================================================================
-   2. CSS CART MODAL/OVERLAY (Từ cart-ui.js)
+   2. CSS CART MODAL/OVERLAY (ĐÃ DỌN DẸP VÀ SỬA LỖI)
    ========================================================================= */
 
 /* Overlay */
@@ -114,29 +115,31 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.5);
     display: none; 
     justify-content: flex-end; /* Đẩy modal sang phải */
-    align-items: flex-start;
     z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.cart-overlay.open {
+    display: flex;
+    opacity: 1;
 }
 
 /* Modal */
 .cart-modal {
     width: 100%;
-    max-width: 450px; 
+    max-width: 500px; /* Tăng chiều rộng 1 chút để chứa 4 cột */
     height: 100%;
     background: white;
     padding: 20px;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
-    position: relative;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
     transform: translateX(100%); /* Bắt đầu từ ngoài màn hình */
-    transition: transform 0.3s ease-out;
+    transition: transform 0.3s ease;
     display: flex;
     flex-direction: column;
 }
-
-/* Trạng thái mở */
 .cart-overlay.open .cart-modal {
     transform: translateX(0); /* Trượt vào */
 }
@@ -158,82 +161,131 @@
     color: #888;
 }
 
-/* Chi tiết sản phẩm */
+/* -------------------------------------------------------------------------
+   🔥 PHẦN HIỂN THỊ ITEM ĐÃ SỬA LỖI HOÀN TOÀN
+   ------------------------------------------------------------------------- */
 .cart-items-container {
     flex-grow: 1; 
     overflow-y: auto;
     margin-bottom: 20px;
+    padding-right: 10px;
 }
+
 .cart-item {
     display: flex;
-    align-items: center;
-    gap: 15px;
+    align-items: flex-start; /* Căn lề trên */
+    gap: 10px;
     padding: 15px 0;
     border-bottom: 1px solid #f5f5f5;
 }
+
+/* Cột 1: Hình ảnh */
 .item-img {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
     object-fit: cover;
     border-radius: 5px;
-}
-.item-details {
-    flex-grow: 1;
-}
-.item-name {
-    font-weight: bold;
-    margin: 0;
-}
-.item-variant {
-    font-size: 0.8rem;
-    color: #666;
-    margin: 2px 0;
-}
-.item-price {
-    font-size: 0.9rem;
-    color: #ff6b35;
-    font-weight: 500;
+    flex-shrink: 0; /* Không co lại */
 }
 
-/* Controls */
+/* Cột 2: Thông tin (Tên, size, màu, giá) */
+.item-details {
+    flex-grow: 1; /* Tự động co giãn */
+    min-width: 0; /* QUAN TRỌNG: Cho phép thu nhỏ khi cần */
+}
+.item-name {
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    font-size: 15px;
+    line-height: 1.3;
+}
+/* Sửa: Target đúng .item-meta do JS tạo ra */
+.item-meta {
+    font-size: 13px;
+    color: #555;
+}
+.item-meta p {
+    margin: 2px 0;
+}
+/* Sửa: Target đúng .item-price do JS tạo ra */
+.item-price {
+    font-size: 14px;
+    color: #ff6b35; /* Màu giá nổi bật */
+    font-weight: 500;
+    margin-top: 5px;
+}
+
+/* Cột 3: Điều khiển (Số lượng, Xóa) */
+/* Sửa: Target đúng .item-controls do JS tạo ra */
 .item-controls {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
+    flex-direction: column; /* Xếp dọc */
+    align-items: center; /* Căn giữa */
+    width: 90px;
+    flex-shrink: 0; /* Không co lại */
 }
-.quantity-controls {
+/* Sửa: Target đúng .quantity-control (số ít) do JS tạo ra */
+.quantity-control {
     display: flex;
     align-items: center;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
-.qty-btn {
+/* Sửa: Target đúng .quantity-decrease/increase do JS tạo ra */
+.quantity-decrease,
+.quantity-increase {
     background: #f7f7f7;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
 }
-.item-qty {
-    width: 40px;
+/* Sửa: Target đúng .item-quantity do JS tạo ra */
+.item-quantity {
+    width: 30px;
     text-align: center;
     border: none;
+    outline: none;
+    font-size: 14px;
+    padding: 5px 0;
 }
-.item-total-price {
-    font-size: 0.95rem;
-    font-weight: bold;
+.item-quantity::-webkit-inner-spin-button,
+.item-quantity::-webkit-outer-spin-button {
+    -webkit-appearance: none;
     margin: 0;
 }
-.remove-item-btn {
+/* Sửa: Target đúng .item-remove do JS tạo ra */
+.item-remove {
     background: none;
     border: none;
-    color: #dc3545;
-    font-size: 1.5rem;
+    color: #aaa;
+    font-size: 16px;
     cursor: pointer;
-    margin-left: 10px;
+    padding: 0;
+    margin-top: 8px; /* Đẩy nút xóa xuống dưới */
+    transition: color 0.2s;
+}
+.item-remove:hover {
+    color: #dc3545;
 }
 
-/* Summary */
+/* Cột 4: Thành tiền */
+/* Sửa: Target đúng .item-subtotal do JS tạo ra */
+.item-subtotal {
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+    width: 90px;
+    flex-shrink: 0; /* Không co lại */
+    text-align: right;
+    padding-top: 5px; /* Căn cho thẳng hàng với tên SP */
+}
+
+
+/* ==================================== */
+/* 3. CART SUMMARY (Phần tổng tiền) */
+/* ==================================== */
 .cart-summary {
     border-top: 2px solid #333;
     padding-top: 15px;
@@ -246,201 +298,6 @@
 }
 .primary-btn, .secondary-btn {
     width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-}
-.primary-btn {
-    background: #ff6b35;
-    color: white;
-    border: none;
-}
-.secondary-btn {
-    background: #ccc;
-    color: #333;
-    border: none;
-}
-/* Trạng thái giỏ hàng trống */
-.cart-overlay.empty .cart-summary {
-    display: none;
-}
-
-/* ==================================== */
-/* 1. CART OVERLAY & MODAL STRUCTURE */
-/* ==================================== */
-.cart-overlay {
-    /* Đảm bảo modal phủ toàn màn hình */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    display: none; /* Mặc định ẩn */
-    justify-content: flex-end; /* Đẩy modal sang phải */
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.cart-overlay.open {
-    display: flex;
-    opacity: 1;
-}
-
-.cart-modal {
-    background-color: #fff;
-    width: 100%;
-    max-width: 400px; /* Chiều rộng cố định */
-    height: 100%;
-    padding: 20px;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-.cart-overlay.open .cart-modal {
-    transform: translateX(0); /* Trượt vào */
-}
-
-/* ==================================== */
-/* 2. CART ITEMS (Sửa lỗi hiển thị Size) */
-/* ==================================== */
-.cart-items-container {
-    flex-grow: 1;
-    overflow-y: auto; /* Cho phép cuộn khi quá nhiều sản phẩm */
-    padding-right: 10px;
-}
-
-.cart-item {
-    display: flex; /*  Dùng Flexbox để sắp xếp ngang */
-    align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #eee;
-    gap: 10px; 
-    position: relative;
-}
-
-.cart-item .item-img {
-    width: 60px; 
-    height: 60px;
-    object-fit: cover;
-    border-radius: 4px;
-    flex-shrink: 0;
-}
-
-.cart-item .item-details {
-    flex-grow: 1; /* Cho phép chiếm không gian chính */
-    min-width: 120px;
-}
-
-.cart-item .item-name {
-    font-weight: 600;
-    margin: 0 0 3px 0;
-    font-size: 15px;
-    line-height: 1.2;
-}
-
-/* 🔥 Đảm bảo phần tử chứa SIZE hiển thị và có style */
-.cart-item .item-variant { 
-    font-size: 13px;
-    color: #555;
-    margin: 0;
-    font-style: italic;
-    display: block; 
-}
-
-.cart-item .item-price {
-    font-size: 14px;
-    color: #888;
-    margin: 3px 0 0 0;
-}
-
-/* ==================================== */
-/* 3. CART CONTROLS */
-/* ==================================== */
-.item-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    width: 90px;
-    flex-shrink: 0;
-}
-
-.quantity-controls {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-bottom: 5px;
-}
-
-.qty-btn {
-    background: none;
-    border: none;
-    padding: 5px 8px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 16px;
-    line-height: 1;
-}
-
-.item-qty {
-    width: 30px;
-    text-align: center;
-    border: none;
-    outline: none;
-    font-size: 14px;
-    padding: 5px 0;
-}
-
-.item-total-price {
-    font-size: 16px;
-    font-weight: bold;
-    color: #ff6b35; /* Màu nổi bật */
-    margin: 0;
-}
-
-/* Nút xóa */
-.remove-item-btn {
-    position: absolute;
-    top: 5px;
-    right: 0;
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #aaa;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.remove-item-btn:hover {
-    color: #e74c3c;
-}
-/* ==================================== */
-/* 4. CART SUMMARY */
-/* ==================================== */
-.cart-summary {
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-}
-
-.cart-summary p {
-    font-size: 1.1rem;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-}
-
-.cart-summary .primary-btn, 
-.cart-summary .secondary-btn {
-    width: 100%;
     padding: 12px;
     margin-top: 10px;
     border: none;
@@ -448,13 +305,11 @@
     cursor: pointer;
     font-weight: 600;
 }
-
-.cart-summary .primary-btn {
-    background-color: #ff6b35;
+.primary-btn {
+    background: #ff6b35;
     color: white;
 }
-
-.cart-summary .secondary-btn {
-    background-color: #f1f3f5;
+.secondary-btn {
+    background: #f1f3f5;
     color: #495057;
 }
