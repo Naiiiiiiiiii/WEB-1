@@ -14,7 +14,14 @@ export const CHECKOUT_OVERLAY_HTML = `
                     </div>
                     <div class="form-group">
                         <label for="phone">Điện thoại:</label>
-                        <input type="tel" id="phone" required>
+                        <input 
+    type="tel" 
+    id="phone" 
+    required 
+    pattern="0[0-9]{9}" 
+    title="Số điện thoại phải bắt đầu bằng 0 và có tổng cộng 10 chữ số. (Ví dụ: 0912345678)"
+    maxlength="10" 
+>
                     </div>
                     <div class="form-group">
                         <label for="address">Địa chỉ cụ thể:</label>
