@@ -500,3 +500,37 @@
     width: 100%;
   }
 }
+/* --- PATCH: Categories - bảng cuộn ngang, dễ đọc trên mobile --- */
+@media (max-width: 768px) {
+  /* Bảng giữ bề rộng nội dung để container cuộn ngang */
+  .category-table {
+    min-width: 100%;
+    width: max-content;
+  }
+
+  /* Giữ mỗi ô 1 dòng + ellipsis (đỡ vỡ bố cục) */
+  .category-table th,
+  .category-table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 320px;
+  }
+
+  /* Cột hành động: cho phép xuống dòng và xếp dọc nút */
+  .category-table td:last-child {
+    white-space: normal;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .action-buttons > * {
+    width: 100%;
+  }
+}

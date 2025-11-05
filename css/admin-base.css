@@ -1137,3 +1137,83 @@ textarea:focus {
     page-break-inside: avoid;
   }
 }
+/* --- PATCH: Bảng cuộn ngang + giữ 1 dòng cho nội dung, trừ cột nút --- */
+
+/* Hỗ trợ wrap nút hành động trên mọi kích thước để tránh đè */
+.action-buttons {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  /* 1) Cho section chứa bảng cuộn ngang khi bảng rộng hơn màn hình */
+  .main-content section {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 2) Để bảng có thể rộng hơn container (khi có nhiều cột), container sẽ cuộn ngang */
+  .userTable,
+  #ordersTable,
+  #inventoryTable,
+  .price-table {
+    min-width: 100%;
+    width: max-content; /* giữ bố cục bảng, không bóp cột gây xuống dòng khó đọc */
+  }
+
+  /* 3) Mặc định: giữ nội dung mỗi ô 1 dòng để dễ đọc, không bị gãy dòng lộn xộn */
+  .userTable th,
+  .userTable td,
+  #ordersTable th,
+  #ordersTable td,
+  #inventoryTable th,
+  #inventoryTable td,
+  .price-table th,
+  .price-table td {
+    white-space: nowrap;
+    /* Nếu có chuỗi rất dài, cho phép bể ra scroll ngang thay vì tràn vỡ layout */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 340px; /* giảm “siêu dài” trên mobile, vẫn nhìn rõ và scroll được */
+  }
+
+  /* 4) Riêng cột hành động (thường là cột cuối): cho phép xuống dòng,
+        đồng thời xếp dọc các nút để không đè nhau */
+  .userTable td:last-child,
+  #ordersTable td:last-child,
+  #inventoryTable td:last-child,
+  .price-table td:last-child {
+    white-space: normal;
+  }
+
+  .userTable .action-buttons,
+  #ordersTable .action-buttons,
+  #inventoryTable .action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .userTable .action-buttons > *,
+  #ordersTable .action-buttons > *,
+  #inventoryTable .action-buttons > * {
+    width: 100%;
+  }
+
+  /* 5) Bảo toàn ý nghĩa .nowrap cho các cột cần giữ 1 dòng (ID, giá, ngày...) */
+  .nowrap {
+    white-space: nowrap !important;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+/* Optional utility: chủ động gán vào span trong ô để cắt bớt và hiện dấu ... */
+.ellipsis {
+  display: inline-block;
+  max-width: 280px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}

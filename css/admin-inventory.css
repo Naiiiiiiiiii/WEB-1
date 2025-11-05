@@ -311,3 +311,42 @@
   background-color: #e8fce8 !important;
   transition: background-color 1.2s ease;
 }
+/* --- PATCH: Inventory - bảng cuộn ngang, không bóp cột --- */
+@media (max-width: 768px) {
+  /* Cho phép bảng rộng hơn container để cuộn ngang */
+  #inventoryTable {
+    min-width: 100%;
+    width: max-content;
+  }
+
+  /* Dễ đọc: 1 dòng + ellipsis (thay vì word-break gây khó đọc) */
+  #inventoryTable th,
+  #inventoryTable td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 320px;
+  }
+
+  /* Cột hành động (thường là cuối) cho phép xuống dòng và nút xếp dọc */
+  #inventoryTable td:last-child {
+    white-space: normal;
+  }
+
+  .action-buttons,
+  .btn-group,
+  .inventory-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .btn-view-movements,
+  .action-buttons > *,
+  .inventory-actions > * {
+    width: 100%;
+    justify-content: center;
+  }
+}

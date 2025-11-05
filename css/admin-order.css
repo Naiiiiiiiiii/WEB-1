@@ -2,181 +2,201 @@
 
 /* Định dạng Bảng Đơn Hàng */
 #ordersTable {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    font-size: 0.9rem;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 0.9rem;
 }
 
 #ordersTable th,
 #ordersTable td {
-    border: 1px solid #ddd;
-    padding: 10px 12px;
-    text-align: left;
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+  text-align: left;
 }
 
 #ordersTable th {
-    background-color: #f4f6f8;
-    color: #333;
-    font-weight: 600;
+  background-color: #f4f6f8;
+  color: #333;
+  font-weight: 600;
 }
 
 #ordersTable tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+  background-color: #f9f9f9;
 }
 
 #ordersTable tbody tr:hover {
-    background-color: #f1f1f1;
+  background-color: #f1f1f1;
 }
 
 #ordersTable .action-buttons {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-start;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
 }
 
 /* Định dạng Panel Chi Tiết Đơn Hàng */
 #orderDetailBox {
-    background: #fdfdfd;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-top: 30px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background: #fdfdfd;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 30px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 #orderDetailBox h3 {
-    margin-top: 0;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-    color: #0056b3;
+  margin-top: 0;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  color: #0056b3;
 }
 
 /* Grid layout cho chi tiết */
 .order-detail-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
 .detail-section h4 {
-    color: #333;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
+  color: #333;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
 }
 
 #orderDetailMeta {
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: #555;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #555;
 }
 
 #orderDetailMeta strong {
-    display: inline-block;
-    min-width: 120px;
-    color: #000;
+  display: inline-block;
+  min-width: 120px;
+  color: #000;
 }
 
 #orderDetailItems ul {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
 }
 
 #orderDetailItems li {
-    background: #f9f9f9;
-    border: 1px solid #eee;
-    padding: 10px;
-    margin-bottom: 8px;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #orderDetailItems .item-info {
-    font-weight: 600;
+  font-weight: 600;
 }
 #orderDetailItems .item-info span {
-    font-weight: normal;
-    color: #444;
-    font-size: 0.9rem;
-    margin-left: 10px;
+  font-weight: normal;
+  color: #444;
+  font-size: 0.9rem;
+  margin-left: 10px;
 }
 
 #orderDetailItems .item-price {
-    font-weight: 600;
-    color: #d9534f;
+  font-weight: 600;
+  color: #d9534f;
 }
 
 /* Phần Cập nhật Trạng thái */
 #orderStatusUpdateForm {
-    margin-top: 15px;
-    background: #f4f6f8;
-    padding: 15px;
-    border-radius: 5px;
+  margin-top: 15px;
+  background: #f4f6f8;
+  padding: 15px;
+  border-radius: 5px;
 }
 
 #orderStatusUpdateForm .field {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 #orderStatusUpdateForm label {
-    font-weight: 600;
-    margin-right: 10px;
+  font-weight: 600;
+  margin-right: 10px;
 }
 
 #orderStatusUpdateSelect {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    min-width: 200px;
-    font-size: 0.95rem;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  min-width: 200px;
+  font-size: 0.95rem;
 }
 
 /* Trạng thái đơn hàng (badges) */
 .status-badge {
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    text-transform: capitalize;
-    display: inline-block;
-    min-width: 100px;
-    text-align: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+  display: inline-block;
+  min-width: 100px;
+  text-align: center;
 }
 
-.status-new { /* Mới đặt / Đang chờ xử lý */
-    background-color: #e6f7ff;
-    color: #0056b3;
-    border: 1px solid #b3e0ff;
+.status-new {
+  /* Mới đặt / Đang chờ xử lý */
+  background-color: #e6f7ff;
+  color: #0056b3;
+  border: 1px solid #b3e0ff;
 }
 
-.status-processed { /* Đã xử lý */
-    background-color: #fffbe6;
-    color: #d46b08;
-    border: 1px solid #ffe58f;
+.status-processed {
+  /* Đã xử lý */
+  background-color: #fffbe6;
+  color: #d46b08;
+  border: 1px solid #ffe58f;
 }
 
-.status-delivered { /* Đã giao */
-    background-color: #f6ffed;
-    color: #389e0d;
-    border: 1px solid #b7eb8f;
+.status-delivered {
+  /* Đã giao */
+  background-color: #f6ffed;
+  color: #389e0d;
+  border: 1px solid #b7eb8f;
 }
 
-.status-canceled { /* Đã hủy */
-    background-color: #fff1f0;
-    color: #d9534f;
-    border: 1px solid #ffccc7;
+.status-canceled {
+  /* Đã hủy */
+  background-color: #fff1f0;
+  color: #d9534f;
+  border: 1px solid #ffccc7;
 }
 
 /* Loading/Empty state */
 #ordersTable tbody .empty-row td {
-    text-align: center;
-    padding: 40px;
-    color: #777;
-    font-size: 1.1rem;
+  text-align: center;
+  padding: 40px;
+  color: #777;
+  font-size: 1.1rem;
+}
+/* --- PATCH: tránh đè nút trong cột hành động + thân thiện mobile --- */
+#ordersTable .action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap; /* tránh tràn, đè */
+}
+
+@media (max-width: 768px) {
+  #ordersTable .action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #ordersTable .action-buttons > * {
+    width: 100%;
+  }
 }
