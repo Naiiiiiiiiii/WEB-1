@@ -562,40 +562,64 @@
         padding: 20px 15px;
     }
 
+    /* Filter toolbar - grid layout without horizontal scroll */
     .filter-toolbar {
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
         gap: 15px;
+        overflow-x: visible;
     }
 
     .filter-toolbar .field {
         width: 100%;
     }
 
+    /* Table wrapper for horizontal scroll */
     .table-responsive {
         border-radius: 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
+    /* Enable horizontal scroll for import table */
     .import-slips-table {
+        display: table;
+        width: max-content;
+        min-width: 100%;
         font-size: 12px;
     }
 
     .import-slips-table thead th,
     .import-slips-table tbody td {
         padding: 10px 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .import-slips-table thead th i {
         display: none; /* Ẩn icon trên mobile để tiết kiệm không gian */
     }
 
-    .status-badge {
-        font-size: 10px;
-        padding: 6px 10px;
+    /* Action buttons - stack vertically */
+    .import-slips-table .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 140px;
+        white-space: normal;
     }
 
     .action-buttons button {
         font-size: 11px;
         padding: 7px 10px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .status-badge {
+        font-size: 10px;
+        padding: 6px 10px;
     }
 
     .import-modal .modal-content {
@@ -614,6 +638,11 @@
 @media (max-width: 480px) {
     .import-slips h2 {
         font-size: 18px;
+    }
+
+    /* Single column for filter toolbar */
+    .filter-toolbar {
+        grid-template-columns: 1fr;
     }
 
     .import-slips-table thead th,

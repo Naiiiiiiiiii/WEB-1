@@ -490,13 +490,57 @@
     align-items: stretch;
   }
 
+  /* Enable horizontal scroll for category table */
+  .category-table {
+    display: table;
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .category-table th,
+  .category-table td {
+    white-space: nowrap;
+    padding: 10px 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Keep ID and Name columns readable */
+  .category-table th:nth-child(1),
+  .category-table td:nth-child(1) {
+    min-width: 60px;
+  }
+
+  .category-table th:nth-child(2),
+  .category-table td:nth-child(2) {
+    max-width: 200px;
+  }
+
+  /* Action buttons - stack vertically */
   .action-buttons {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
+    gap: 6px;
+    min-width: 120px;
+    white-space: normal;
   }
 
   .btn-edit-category,
   .btn-delete-category {
     width: 100%;
+    justify-content: center;
+  }
+
+  /* Modal adjustments */
+  .category-modal-content {
+    max-width: 95%;
+    margin: 10px;
+  }
+
+  .category-modal-header,
+  .category-modal-body,
+  .category-modal-footer {
+    padding: 20px 15px;
   }
 }

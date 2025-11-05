@@ -355,6 +355,54 @@ function handleLogout(e) {
     window.location.reload();
 }
 
+// MOBILE NAVIGATION TOGGLE
+function setupMobileNavToggle() {
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    const adminNav = document.getElementById('adminNav');
+    
+    if (!mobileNavToggle || !adminNav) return;
+
+    // Toggle menu on button click
+    mobileNavToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        adminNav.classList.toggle('active');
+        
+        // Update ARIA attribute
+        const isExpanded = adminNav.classList.contains('active');
+        mobileNavToggle.setAttribute('aria-expanded', isExpanded);
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (adminNav.classList.contains('active')) {
+            const isClickInsideNav = adminNav.contains(e.target);
+            const isClickOnToggle = mobileNavToggle.contains(e.target);
+            
+            if (!isClickInsideNav && !isClickOnToggle) {
+                adminNav.classList.remove('active');
+                mobileNavToggle.setAttribute('aria-expanded', 'false');
+            }
+        }
+    });
+
+    // Close menu on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && adminNav.classList.contains('active')) {
+            adminNav.classList.remove('active');
+            mobileNavToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    // Close menu after selecting a navigation item
+    const navLinks = adminNav.querySelectorAll('a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            adminNav.classList.remove('active');
+            mobileNavToggle.setAttribute('aria-expanded', 'false');
+        });
+    });
+}
+
 // KHỞI CHẠY (DOMContentLoaded)
 document.addEventListener('DOMContentLoaded', () => {
     // Khởi tạo các module admin ngay từ đầu để gắn sự kiện DOM và chuẩn bị dữ liệu
@@ -370,6 +418,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (DOM.logoutBtn) {
         DOM.logoutBtn.addEventListener('click', handleLogout);
     }
+    
+    // Initialize mobile navigation toggle
+    setupMobileNavToggle();
     
     displayAdminPanel();
 });
