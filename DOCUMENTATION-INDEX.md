@@ -328,7 +328,7 @@ Nếu gặp vấn đề:
 
 ## 📈 Cập nhật
 
-Tài liệu này được cập nhật lần cuối: **2025-11-05**
+Tài liệu này được duy trì và cập nhật thường xuyên.
 
 Nếu thấy thiếu sót hoặc có đóng góp, vui lòng tạo Pull Request!
 

@@ -713,7 +713,8 @@ function saveCart(cart) {
 
 ### 1. Input Validation
 ```javascript
-// Validate email
+// Validate email (simplified example)
+// Note: For production, use a more robust validation library or comprehensive regex
 function isValidEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);

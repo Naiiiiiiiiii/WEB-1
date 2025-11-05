@@ -742,7 +742,7 @@ Mạng lưới server phân phối content nhanh hơn.
 - **UI** - User Interface
 - **UX** - User Experience
 - **CRUD** - Create, Read, Update, Delete
-- **MVC** - Model-View-Controller
+- **MVC** - Model-View-Controller (Pattern chia ứng dụng thành Model, View, Controller)
 - **SPA** - Single Page Application
 - **PWA** - Progressive Web App
 - **SEO** - Search Engine Optimization
