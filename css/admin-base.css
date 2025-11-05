@@ -138,6 +138,7 @@ a {
   width: 100%;
   margin: 0;
   padding: 0;
+  position: relative;
 }
 
 /* Logo - ✅ Giữ padding nhưng không tạo gap */
@@ -161,6 +162,9 @@ a {
   margin: 0;
   padding: 0;
   width: 100%;
+  position: static;
+  max-height: none;
+  overflow: visible;
 }
 
 .nav-menu ul {
@@ -1027,7 +1031,6 @@ textarea:focus {
 
   /* Mobile nav menu - vertical layout */
   .nav-menu {
-    display: none; /* Hidden by default */
     position: absolute;
     top: 100%;
     left: 0;
@@ -1041,8 +1044,8 @@ textarea:focus {
   }
 
   .nav-menu.active {
-    display: block;
     max-height: 500px;
+    overflow-y: auto;
   }
 
   .nav-menu ul {
