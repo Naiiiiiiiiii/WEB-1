@@ -311,3 +311,73 @@
   background-color: #e8fce8 !important;
   transition: background-color 1.2s ease;
 }
+
+/* ===============================
+   RESPONSIVE DESIGN
+=============================== */
+@media (max-width: 768px) {
+  /* Enable horizontal scroll for inventory table */
+  #inventoryTable {
+    display: table;
+    width: max-content;
+    min-width: 100%;
+  }
+
+  #inventoryTable th,
+  #inventoryTable td {
+    white-space: nowrap;
+    padding: 10px 8px;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Adjust column widths for mobile */
+  #inventoryTable th:nth-child(1),
+  #inventoryTable td:nth-child(1) {
+    min-width: 60px;
+  }
+
+  #inventoryTable th:nth-child(2),
+  #inventoryTable td:nth-child(2) {
+    max-width: 180px;
+  }
+
+  /* Action buttons - stack vertically */
+  #inventoryTable .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 120px;
+    white-space: normal;
+  }
+
+  .btn-view-movements,
+  .btn-edit-stock {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Filter form adjustments */
+  .filter-form {
+    grid-template-columns: 1fr;
+  }
+
+  /* Summary container - 2 columns on mobile */
+  .summary-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  /* Single column for summary on very small screens */
+  .summary-container {
+    grid-template-columns: 1fr;
+  }
+
+  #inventoryTable th,
+  #inventoryTable td {
+    font-size: 12px;
+    padding: 8px 6px;
+  }
+}

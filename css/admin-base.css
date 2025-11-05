@@ -934,6 +934,55 @@ textarea:focus {
 }
 
 /* ===============================
+   MOBILE NAVIGATION TOGGLE
+=============================== */
+.mobile-nav-toggle {
+  display: none; /* Hidden by default on desktop */
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 1001;
+}
+
+.mobile-nav-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ===============================
+   TABLE RESPONSIVE WRAPPER
+=============================== */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrapper table {
+  min-width: max-content;
+  width: 100%;
+}
+
+/* Keep table cells on one line with ellipsis */
+.table-wrapper table td:not(.action-buttons),
+.table-wrapper table th:not(.action-buttons) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* ===============================
    RESPONSIVE DESIGN (CHUNG)
 =============================== */
 
@@ -956,38 +1005,71 @@ textarea:focus {
 
 /* Mobile */
 @media (max-width: 768px) {
+  /* Show hamburger button on mobile */
+  .mobile-nav-toggle {
+    display: flex;
+  }
+
   #adminPanel {
     flex-direction: column;
   }
 
   .menu {
-    position: static;
+    position: relative;
     width: 100%;
     height: auto;
     box-shadow: none;
   }
 
+  .nav-container {
+    position: relative;
+  }
+
+  /* Mobile nav menu - vertical layout */
+  .nav-menu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .nav-menu.active {
+    display: block;
+    max-height: 500px;
+  }
+
   .nav-menu ul {
     display: flex;
-    overflow-x: auto;
+    flex-direction: column;
     padding: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    -webkit-overflow-scrolling: touch;
+    border-bottom: none;
   }
 
   .nav-menu li {
-    flex-shrink: 0;
+    width: 100%;
+    flex-shrink: 1;
   }
 
   .nav-menu li a {
-    padding: 12px 20px;
-    border-left: none !important;
-    white-space: nowrap;
+    padding: 15px 20px;
+    border-left: 4px solid transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: normal;
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
   .nav-menu li a.active-link {
-    border-bottom: 3px solid #1abc9c;
-    border-left: none !important;
+    border-left-color: #1abc9c !important;
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .main-content {
@@ -998,6 +1080,7 @@ textarea:focus {
 
   .main-content section {
     padding: 15px;
+    overflow-x: hidden;
   }
 
   .header {
@@ -1010,20 +1093,31 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
+  /* Section toolbar - 2 column grid that becomes 1 column on smaller screens */
   .section-toolbar,
   .actions {
-    flex-direction: column;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    overflow-x: visible;
   }
 
-  .field {
+  .section-toolbar .field,
+  .actions .field {
     width: 100%;
     min-width: unset;
   }
 
+  .section-toolbar .btn,
+  .actions .btn {
+    width: 100%;
+  }
+
   .filter-form {
-    flex-direction: column;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    overflow-x: visible;
   }
 
   .filter-form .input-group {
@@ -1040,26 +1134,40 @@ textarea:focus {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  /* Table Responsive */
+  /* Table Responsive - Enable horizontal scroll */
   .userTable,
   #ordersTable,
   #inventoryTable {
+    display: table;
+    width: max-content;
+    min-width: 100%;
     font-size: 13px;
   }
 
   .userTable td,
+  .userTable th,
   #ordersTable td,
-  #inventoryTable td {
+  #ordersTable th,
+  #inventoryTable td,
+  #inventoryTable th {
     padding: 10px 8px;
+    white-space: nowrap;
   }
 
+  /* Action buttons column - allow wrapping and stack vertically */
   .userTable td:last-child,
   #ordersTable td:last-child,
-  #inventoryTable td:last-child {
+  #inventoryTable td:last-child,
+  .action-buttons {
+    display: flex;
     flex-direction: column;
+    gap: 6px;
     align-items: stretch;
+    white-space: normal;
+    min-width: 120px;
   }
 
+  .action-buttons button,
   .btn-reset,
   .btn-lock,
   .btn-unlock,
@@ -1067,6 +1175,7 @@ textarea:focus {
   .btn-delete-category,
   .btn-view-movements {
     width: 100%;
+    justify-content: center;
   }
 
   .modal-content {
@@ -1111,6 +1220,13 @@ textarea:focus {
   input[type="date"],
   select {
     font-size: 13px;
+  }
+
+  /* Single column layout for toolbars on very small screens */
+  .section-toolbar,
+  .actions,
+  .filter-form {
+    grid-template-columns: 1fr;
   }
 }
 

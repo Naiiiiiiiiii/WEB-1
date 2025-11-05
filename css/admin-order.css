@@ -180,3 +180,39 @@
     color: #777;
     font-size: 1.1rem;
 }
+
+/* ===============================
+   RESPONSIVE DESIGN
+=============================== */
+@media (max-width: 768px) {
+    /* Enable horizontal scroll for orders table */
+    #ordersTable {
+        display: table;
+        width: max-content;
+        min-width: 100%;
+    }
+
+    #ordersTable th,
+    #ordersTable td {
+        white-space: nowrap;
+        padding: 10px 8px;
+    }
+
+    /* Action buttons - stack vertically */
+    #ordersTable .action-buttons {
+        flex-direction: column;
+        gap: 6px;
+        min-width: 120px;
+    }
+
+    #ordersTable .action-buttons button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Order detail grid - single column on mobile */
+    .order-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
