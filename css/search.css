@@ -1,6 +1,5 @@
 
 
-/* Phần chính trang tìm kiếm */
 .search-main {
     padding-top: 100px;
     min-height: 100vh;
@@ -8,7 +7,6 @@
     padding-bottom: 60px;
 }
 
-/* Phần đầu trang tìm kiếm */
 .search-header {
     text-align: center;
     margin-bottom: 3rem;
@@ -36,7 +34,6 @@
     margin-top: 0.5rem;
 }
 
-/* Container ô tìm kiếm */
 .search-box-container {
     display: flex;
     gap: 1rem;
@@ -134,7 +131,6 @@
     background: linear-gradient(45deg, #ff6b35, #f7931e);
 }
 
-/* Bảng tìm kiếm nâng cao */
 .advanced-panel {
     background: white;
     border-radius: 20px;
@@ -209,7 +205,6 @@
     box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
 }
 
-/* Ô nhập giá */
 .price-inputs {
     display: flex;
     align-items: center;
@@ -274,7 +269,6 @@
     border-color: #ff6b35;
 }
 
-/* Các nút thao tác lọc */
 .filter-actions {
     display: flex;
     gap: 1rem;
@@ -319,7 +313,6 @@
     transform: translateY(-2px);
 }
 
-/* Kết quả tìm kiếm */
 .search-results {
     margin-top: 3rem;
 }
@@ -360,7 +353,6 @@
     50% { transform: scale(1.05); }
 }
 
-/* Biểu tượng loading */
 .loading-spinner {
     text-align: center;
     padding: 4rem 0;
@@ -383,7 +375,6 @@
     color: #7f8c8d;
 }
 
-/* Không có kết quả */
 .no-results {
     text-align: center;
     padding: 4rem 0;
@@ -410,7 +401,6 @@
     font-size: 1rem;
 }
 
-/* Trạng thái active cho icon navbar */
 .nav-icons a.active {
     color: #ff6b35;
     background: rgba(255, 107, 53, 0.1);
@@ -418,7 +408,6 @@
     padding: 8px;
 }
 
-/* View Detail Buttons - Styles cho nút xem chi tiết */
 .product-overlay .view-detail {
     display: inline-block;
     padding: 0.6rem 1.2rem;
@@ -439,9 +428,6 @@
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-
-
-/* Tablet - 768px */
 @media (max-width: 768px) {
     .search-main {
         padding-top: 80px;
@@ -466,7 +452,7 @@
 
     .advanced-panel.active {
         padding: 1.5rem;
-        max-height: 700px; /* Tăng height cho mobile */
+        max-height: 700px; 
     }
 
     .price-inputs {
@@ -491,7 +477,6 @@
     }
 }
 
-/* Mobile - 480px */
 @media (max-width: 480px) {
     .search-header {
         padding: 1rem 0;
@@ -535,7 +520,7 @@
     }
 
     .advanced-panel.active {
-        max-height: 800px; /* Tăng thêm cho mobile */
+        max-height: 800px; 
     }
 
     .price-presets {

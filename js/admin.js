@@ -12,23 +12,18 @@ import { initPriceAdmin, renderPriceList } from './price-admin.js';
 import { getOrders } from './order-manager.js';
 import { initOrderAdmin, loadAndRenderOrders } from './order-admin.js';
 
-
-// KHỞI TẠO CÁC MANAGER
 const userManager = new UserManager();
 const productManager = new ProductManager();
 const inventoryModule = setupInventoryModule(productManager, categoryManager);
 
-// Export để các module khác sử dụng
 export { userManager, productManager, categoryManager, importManager };
 
-// Gắn vào window để inventory module sử dụng
 if (inventoryModule && inventoryModule.hienThiDanhSachTonKho) {
     window.renderInventoryTable = inventoryModule.hienThiDanhSachTonKho; 
 }
 
-// CÁC PHẦN TỬ GIAO DIỆN CHÍNH (DOM Cache)
 export const DOM = {
-    // Layout & Login
+
     loginPage: document.getElementById('loginPage'),
     adminPanel: document.getElementById('adminPanel'),
     formDangNhap: document.getElementById('formDangNhap'),
@@ -39,36 +34,31 @@ export const DOM = {
     sections: document.querySelectorAll('.main-content section'),
     navLinks: document.querySelectorAll('.nav-menu a'),
 
-    // Dashboard
     countAccount: document.getElementById('countAccount'),
     countProducts: document.getElementById('countProducts'),
     countOrders: document.getElementById('countOrders'),
     
-    // User Management
+
     userTableBody: document.getElementById('userTableBody'),
     adminOrderModal: document.getElementById('adminOrderModal'),
     adminOrderModalBody: document.getElementById('adminOrderModalBody'),
 
-    // Product Management
     productTableBody: document.getElementById('productTableBody'),
     addProductBtn: document.getElementById('addProductBtn'),
     productModal: document.getElementById('productModal'),
     productModalForm: document.getElementById('productModalForm'),
     
-    // Category Management
+
     categoryTableBody: document.getElementById('categoryTableBody'),
     addCategoryForm: document.getElementById('addCategoryForm'),
     
-    // Inventory Management
+
     inventoryTableBody: document.getElementById('inventoryTableBody'),
 
-    // Import Slips Management
     importSlipsTableBody: document.getElementById('importSlipsTableBody'),
 
-    // Price Management
     priceTableBody: document.getElementById('priceTableBody'),
 
-    // Order Management 
     orderFilterFrom: document.getElementById('orderFilterFrom'),
     orderFilterTo: document.getElementById('orderFilterTo'),
     orderFilterStatus: document.getElementById('orderFilterStatus'),
@@ -84,7 +74,6 @@ export const DOM = {
     orderStatusUpdateBtn: document.getElementById('orderStatusUpdateBtn'),
 };
 
-// CHUYỂN TRANG / ĐIỀU HƯỚNG
 function hideAllSections() {
     DOM.sections.forEach(section => {
         section.style.display = 'none';
@@ -105,7 +94,6 @@ function setupNavigation() {
                 targetSection.style.display = 'block';
                 e.target.classList.add('active');
 
-                // Khởi tạo module khi tab được click
                 if (targetId === 'index') {
                     updateGeneralStats();
                 }
@@ -131,7 +119,7 @@ function setupNavigation() {
                         initOrderAdmin();
                         window.orderAdminInitialized = true;
                     }
-                    loadAndRenderOrders(); // Tải danh sách khi click tab
+                    loadAndRenderOrders();
                 }
                 else if (targetId === 'inventory') {
                     if (inventoryModule && inventoryModule.initializeInventoryTab) {
@@ -162,7 +150,6 @@ function setupNavigation() {
     }
 }
 
-// CẬP NHẬT THỐNG KÊ TỔNG QUAN
 export function updateGeneralStats() {
     if (DOM.countAccount) {
         DOM.countAccount.textContent = `Số tài khoản hiện có: ${userManager.users.length}`;
@@ -185,16 +172,12 @@ export function updateGeneralStats() {
     }
 }
 
-// LOGIC QUẢN LÝ USER
-
-/** Cập nhật số lượng tài khoản hiển thị */
 function updateSoLuongTaiKhoan() {
     if (DOM.countAccount) {
         DOM.countAccount.textContent = `Số tài khoản hiện có: ${userManager.users.length}`;
     }
 }
 
-/** Hiển thị danh sách user trong bảng */
 function hienThiDanhSachUser() {
     if (!DOM.userTableBody) return;
 
@@ -230,7 +213,6 @@ function hienThiDanhSachUser() {
     ganSuKienNut();
 }
 
-/** Gắn sự kiện cho các nút Reset, Xóa, Xem đơn hàng */
 function ganSuKienNut() {
     const resetBtns = document.querySelectorAll('.btn-reset');
     const deleteBtns = document.querySelectorAll('.btn-delete');
@@ -249,7 +231,6 @@ function ganSuKienNut() {
     }));
 }
 
-/** Hiển thị đơn hàng chi tiết của một user */
 function hienThiDonHangCuaUser(username) {
     const user = userManager.users.find(u => u.tenDangNhap === username);
     if (!user) {
@@ -275,7 +256,6 @@ function hienThiDonHangCuaUser(username) {
     alert(orderSummary + '\nXem chi tiết trong Console (F12)');
 }
 
-/** Reset mật khẩu của user */
 function resetMatKhau(index) {
     const user = userManager.users[index];
     if (!user) return;
@@ -287,7 +267,6 @@ function resetMatKhau(index) {
     alert(`Mật khẩu của ${user.hoTen} đã được reset thành 123456`);
 }
 
-/** Xóa tài khoản user */
 function xoaTaiKhoan(index) {
     const user = userManager.users[index];
     if (!user) return;
@@ -302,15 +281,11 @@ function xoaTaiKhoan(index) {
     alert(`Xóa tài khoản ${user.hoTen} thành công!`);
 }
 
-/** Khởi tạo module Quản lý User */
 function initializeUserManagement() {
     updateSoLuongTaiKhoan();
     hienThiDanhSachUser();
 }
 
-// LOGIC LOGIN / LOGOUT
-
-/** Kiểm tra và hiển thị giao diện Admin nếu đã đăng nhập */
 function displayAdminPanel() {
     const user = userManager.layAdminHienTai();
     
@@ -329,7 +304,6 @@ function displayAdminPanel() {
     }
 }
 
-/** Xử lý form đăng nhập */
 function handleLogin(e) {
     e.preventDefault();
     const tenDangNhap = DOM.usernameInput.value.trim();
@@ -348,16 +322,14 @@ function handleLogin(e) {
     }
 }
 
-/** Xử lý đăng xuất */
 function handleLogout(e) {
     e.preventDefault();
     userManager.xoaAdminHienTai();
     window.location.reload();
 }
 
-// KHỞI CHẠY (DOMContentLoaded)
 document.addEventListener('DOMContentLoaded', () => {
-    // Khởi tạo các module admin ngay từ đầu để gắn sự kiện DOM và chuẩn bị dữ liệu
+
     initProductAdmin();
     initCategoryAdmin();
     initImportAdmin();

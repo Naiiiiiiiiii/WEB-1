@@ -1,25 +1,20 @@
-/**
- * renderProducts.js
- */
-import { ProductManager } from "./ProductManager.js"; // Import ProductManager
+
+import { ProductManager } from "./ProductManager.js";
 
 console.log("LOG 1: renderProducts.js loaded.");
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Khởi tạo ProductManager VÀ LẤY DỮ LIỆU
+
   const productManager = new ProductManager();
-  // Lấy các sản phẩm được phép hiển thị cho khách hàng
+
   const allProducts = productManager.getVisibleProducts();
 
   console.log("LOG 2: All Products loaded (visible only):", allProducts);
 
-  // --- Helpers ---
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
-  /**
-   Chuyển đổi ký tự HTML đặc biệt để chống XSS.
-   */
+  
   function escapeHtml(str = "") {
     return String(str)
       .replace(/&/g, "&amp;")
@@ -29,13 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/'/g, "&#039;");
   }
 
-  // --- Elements ---
   const productGrid = $(".product-grid");
   const filterBtns = $$(".filter-btn");
   const sortSelect = $(".sort-select");
   const loadMoreBtn = $(".load-more-btn");
 
-  // modal elements
   const modal = $("#quick-view-modal");
   const modalImg = $("#modal-img");
   const modalName = $("#modal-name");
@@ -44,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalAddBtn = $("#modal-add-to-cart");
   const modalViewDetail = $("#modal-view-detail");
 
-  // Phần tử chứa bộ chọn size trong modal (Cần có ID này trong HTML)
   const modalOptionsContainer = $("#modal-options-container");
 
   if (!productGrid) {
@@ -54,14 +46,12 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // --- State (Giữ nguyên) ---
   let currentCategory = "all";
   let currentSort = "";
   let perPage = 6;
   let currentPage = 1;
   let filtered = allProducts.slice();
 
-  // --- Create product card (ĐÃ FIX LỖI GIÁ KÉP TRÊN GRID) ---
   function createProductCard(product) {
     const card = document.createElement("div");
     card.className = "product-card";
@@ -83,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentPrice = (product.price || 0).toLocaleString("vi-VN");
     let priceHtml = `<span class="current-price">${currentPrice} VNĐ</span>`;
 
-    // Nếu có giá cũ và đang khuyến mãi, thêm giá cũ vào
     if (product.oldPrice && product.isOnSale()) {
       const oldPrice = (product.oldPrice || 0).toLocaleString("vi-VN");
       priceHtml = `<span class="current-price">${currentPrice} VNĐ</span> <span class="old-price">${oldPrice} VNĐ</span>`;
@@ -118,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return card;
   }
 
-  // --- Render functions  ---
   function renderList() {
     productGrid.innerHTML = "";
     const end = perPage * currentPage;
@@ -179,13 +167,11 @@ document.addEventListener("DOMContentLoaded", () => {
     renderList();
   }
 
-  // --- Quick view (modal)  ---
   function openQuickView(productId) {
     const id = Number(productId);
     const product = productManager.getProductById(id);
     if (!product || !modal) return;
 
-    // Điền thông tin vào modal
     if (modalImg) {
       modalImg.src = product.img || "./img/default.avif";
       modalImg.alt = product.name;
@@ -199,12 +185,10 @@ document.addEventListener("DOMContentLoaded", () => {
       })</span>`;
     }
 
-    // Logic hiển thị giá trong Modal (FIX LỖI KÉP THỨ 2)
     if (modalPrice) {
       const currentPrice = (product.price || 0).toLocaleString("vi-VN");
       let priceHtml = `<strong>${currentPrice} VNĐ</strong>`;
 
-      // Nếu có giá cũ và đang khuyến mãi, thêm giá cũ vào
       if (product.oldPrice && product.isOnSale()) {
         const oldPrice = (product.oldPrice || 0).toLocaleString("vi-VN");
         priceHtml += ` <span class="old-price">${oldPrice} VNĐ</span>`;
@@ -212,9 +196,8 @@ document.addEventListener("DOMContentLoaded", () => {
       modalPrice.innerHTML = priceHtml;
     }
 
-    //LOGIC HIỂN THỊ CHỌN SIZE TRONG MODAL
     if (modalOptionsContainer) {
-      // Dữ liệu size (Bạn có thể thay đổi tùy theo kho hàng)
+
       const sizeOptions = [39, 40, 41, 42, 43]
         .map((size) => `<option value="${size}">EU ${size}</option>`)
         .join("");
@@ -236,7 +219,6 @@ document.addEventListener("DOMContentLoaded", () => {
       modalViewDetail.href = `./product-detail.html?id=${id}`;
     }
 
-    // show modal
     modal.classList.add("open");
     modal.style.display = "flex";
     modal.setAttribute("aria-hidden", "false");
@@ -247,13 +229,10 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.classList.remove("open");
     modal.style.display = "none";
     modal.setAttribute("aria-hidden", "true");
-    // Dọn dẹp HTML size khi đóng modal
+
     if (modalOptionsContainer) modalOptionsContainer.innerHTML = "";
   }
 
-  // --- Event listeners  ---
-
-  // 1. Xem nhanh (Quick View)
   productGrid.addEventListener("click", (e) => {
     const qv = e.target.closest(".quick-view");
     if (qv) {
@@ -263,7 +242,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 2. Filter buttons
   filterBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       filterBtns.forEach((b) => b.classList.remove("active"));
@@ -273,7 +251,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 3. Sort dropdown
   if (sortSelect) {
     sortSelect.addEventListener("change", (e) => {
       currentSort = e.target.value;
@@ -281,7 +258,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 4. Load more button
   if (loadMoreBtn) {
     loadMoreBtn.addEventListener("click", () => {
       currentPage++;
@@ -289,7 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 5. Close modal
   const closeBtn = modal ? modal.querySelector(".close-btn") : null;
   if (closeBtn) {
     closeBtn.addEventListener("click", closeQuickView);
@@ -300,29 +275,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 6. Thêm vào giỏ từ modal
   if (modalAddBtn) {
     modalAddBtn.addEventListener("click", function () {
       const id = Number(this.dataset.id);
       const product = productManager.getProductById(id);
 
-      // LOGIC LẤY SIZE VÀ BẮT BUỘC CHỌN SIZE
       const sizeSelector = document.getElementById("modal-shoe-size");
       const selectedSize = sizeSelector ? sizeSelector.value : null;
 
       if (!selectedSize || selectedSize === "") {
         alert("Vui lòng chọn kích cỡ giày.");
-        return; // Ngăn chặn nếu chưa chọn size
+        return;
       }
 
-      // Giả định hàm addToCart toàn cục tồn tại (trong main.js)
       if (product && window.addToCart) {
         window.addToCart(
           product.id,
           product.name,
           product.price,
           product.img,
-          selectedSize, // Dùng size đã chọn
+          selectedSize,
           "N/A",
           1
         );
@@ -331,7 +303,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Init (Khởi tạo ban đầu) ---
   (function init() {
     if (!Array.isArray(allProducts) || allProducts.length === 0) {
       productGrid.innerHTML = '<p class="no-products">Không có sản phẩm.</p>';
@@ -339,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    applyFilters(); // Lần render đầu tiên
+    applyFilters();
     console.log("LOG 5: Initialization complete. Products should be rendered.");
   })();
 });

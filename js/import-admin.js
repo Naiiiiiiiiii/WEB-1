@@ -1,19 +1,13 @@
-// File: js/import-admin.js - Logic Giao diện Quản lý Nhập hàng
+
 
 import { importManager } from './ImportSlip.js';
 import { productManager } from './ProductManager.js';
 
-// ============================================================
-// DOM ELEMENTS
-// ============================================================
 let DOM = {};
 
-/**
- * Khởi tạo DOM cache
- */
 function initDOM() {
     DOM = {
-        // Form thêm phiếu nhập
+
         addImportSlipForm: document.getElementById('addImportSlipForm'),
         importProductSelect: document.getElementById('importSlipProductSelect'),
         importQuantity: document.getElementById('importSlipQuantity'),
@@ -23,10 +17,8 @@ function initDOM() {
         importSupplier: document.getElementById('importSlipSupplier'),
         importNote: document.getElementById('importSlipNote'),
 
-        // Bảng danh sách phiếu nhập
         importSlipsTableBody: document.getElementById('importSlipsTableBody'),
 
-        // Bộ lọc
         filterStatus: document.getElementById('importFilterStatus'),
         filterProductName: document.getElementById('importFilterName'),
         filterFromDate: document.getElementById('importFilterFrom'),
@@ -34,7 +26,6 @@ function initDOM() {
         filterApplyBtn: document.getElementById('importFilterApply'),
         filterResetBtn: document.getElementById('importFilterReset'),
 
-        // Modal sửa phiếu
         editModal: document.getElementById('editImportSlipModal'),
         editForm: document.getElementById('editImportSlipForm'),
         editSlipNumber: document.getElementById('editSlipNumber'),
@@ -49,13 +40,6 @@ function initDOM() {
     };
 }
 
-// ============================================================
-// KHỞI TẠO MODULE
-// ============================================================
-
-/**
- * Khởi tạo module Import Admin
- */
 export function initImportAdmin() {
     initDOM();
     setupEventListeners();
@@ -63,21 +47,16 @@ export function initImportAdmin() {
     renderImportSlipsList();
 }
 
-/**
- * Gắn các sự kiện
- */
 function setupEventListeners() {
-    // Form thêm phiếu nhập
+
     if (DOM.addImportSlipForm) {
         DOM.addImportSlipForm.addEventListener('submit', handleAddImportSlip);
     }
 
-    // Thay đổi sản phẩm -> Hiện/ẩn trường Size
     if (DOM.importProductSelect) {
         DOM.importProductSelect.addEventListener('change', handleProductChange);
     }
 
-    // Bộ lọc
     if (DOM.filterApplyBtn) {
         DOM.filterApplyBtn.addEventListener('click', handleFilter);
     }
@@ -86,7 +65,6 @@ function setupEventListeners() {
         DOM.filterResetBtn.addEventListener('click', handleResetFilter);
     }
 
-    // Modal sửa phiếu
     if (DOM.closeEditModalBtn) {
         DOM.closeEditModalBtn.addEventListener('click', closeEditModal);
     }
@@ -99,7 +77,6 @@ function setupEventListeners() {
         DOM.editForm.addEventListener('submit', handleUpdateImportSlip);
     }
 
-    // Đóng modal khi click bên ngoài
     if (DOM.editModal) {
         DOM.editModal.addEventListener('click', (e) => {
             if (e.target === DOM.editModal) {
@@ -109,13 +86,6 @@ function setupEventListeners() {
     }
 }
 
-// ============================================================
-// LOAD DỮ LIỆU VÀO SELECT
-// ============================================================
-
-/**
- * Load danh sách sản phẩm vào dropdown
- */
 function loadProductsToSelect() {
     if (!DOM.importProductSelect) return;
 
@@ -132,9 +102,6 @@ function loadProductsToSelect() {
     });
 }
 
-/**
- * Xử lý khi thay đổi sản phẩm
- */
 function handleProductChange() {
     const selectedOption = DOM.importProductSelect.options[DOM.importProductSelect.selectedIndex];
     const hasVariants = selectedOption?.dataset.hasVariants === 'true';
@@ -151,13 +118,6 @@ function handleProductChange() {
     }
 }
 
-// ============================================================
-// THÊM PHIẾU NHẬP MỚI
-// ============================================================
-
-/**
- * Xử lý form thêm phiếu nhập
- */
 function handleAddImportSlip(e) {
     e.preventDefault();
 
@@ -168,7 +128,6 @@ function handleAddImportSlip(e) {
     const supplier = DOM.importSupplier.value.trim();
     const note = DOM.importNote.value.trim();
 
-    // Validate
     if (!productId || quantity <= 0 || importPrice <= 0) {
         alert('Vui lòng nhập đầy đủ thông tin hợp lệ!');
         return;
@@ -180,13 +139,11 @@ function handleAddImportSlip(e) {
         return;
     }
 
-    // Kiểm tra size nếu sản phẩm có biến thể
     if (product.variants && product.variants.length > 0 && !size) {
         alert('Vui lòng chọn Size cho sản phẩm này!');
         return;
     }
 
-    // Tạo phiếu nhập
     const newSlip = importManager.addSlip({
         productId,
         productName: product.name,
@@ -207,13 +164,6 @@ function handleAddImportSlip(e) {
     }
 }
 
-// ============================================================
-// HIỂN THỊ DANH SÁCH PHIẾU NHẬP
-// ============================================================
-
-/**
- * Render danh sách phiếu nhập
- */
 export function renderImportSlipsList(slips = null) {
     if (!DOM.importSlipsTableBody) return;
 
@@ -292,42 +242,28 @@ export function renderImportSlipsList(slips = null) {
         DOM.importSlipsTableBody.appendChild(row);
     });
 
-    // Gắn sự kiện cho các nút
     attachSlipActionListeners();
 }
 
-/**
- * Gắn sự kiện cho các nút trong bảng
- */
 function attachSlipActionListeners() {
-    // Nút Sửa
+
     document.querySelectorAll('.btn-edit-slip').forEach(btn => {
         btn.addEventListener('click', () => handleEditSlip(btn.dataset.id));
     });
 
-    // Nút Hoàn thành
     document.querySelectorAll('.btn-complete-slip').forEach(btn => {
         btn.addEventListener('click', () => handleCompleteSlip(btn.dataset.id));
     });
 
-    // Nút Xóa
     document.querySelectorAll('.btn-delete-slip').forEach(btn => {
         btn.addEventListener('click', () => handleDeleteSlip(btn.dataset.id));
     });
 
-    // Nút Xem
     document.querySelectorAll('.btn-view-slip').forEach(btn => {
         btn.addEventListener('click', () => handleViewSlip(btn.dataset.id));
     });
 }
 
-// ============================================================
-// SỬA PHIẾU NHẬP
-// ============================================================
-
-/**
- * Mở modal sửa phiếu nhập
- */
 function handleEditSlip(slipId) {
     const slip = importManager.getSlipById(slipId);
     if (!slip || !slip.canEdit()) {
@@ -335,7 +271,6 @@ function handleEditSlip(slipId) {
         return;
     }
 
-    // Điền dữ liệu vào form
     DOM.editSlipNumber.textContent = slip.slipNumber;
     DOM.editProductName.textContent = slip.productName;
     DOM.editQuantity.value = slip.quantity;
@@ -344,16 +279,11 @@ function handleEditSlip(slipId) {
     DOM.editSupplier.value = slip.supplier || '';
     DOM.editNote.value = slip.note || '';
 
-    // Lưu ID đang sửa
     DOM.editForm.dataset.editingId = slipId;
 
-    // Hiển thị modal
     DOM.editModal.style.display = 'flex';
 }
 
-/**
- * Xử lý cập nhật phiếu nhập
- */
 function handleUpdateImportSlip(e) {
     e.preventDefault();
 
@@ -375,22 +305,12 @@ function handleUpdateImportSlip(e) {
     }
 }
 
-/**
- * Đóng modal sửa phiếu
- */
 function closeEditModal() {
     DOM.editModal.style.display = 'none';
     DOM.editForm.reset();
     delete DOM.editForm.dataset.editingId;
 }
 
-// ============================================================
-// HOÀN THÀNH PHIẾU NHẬP
-// ============================================================
-
-/**
- * Hoàn thành phiếu nhập và cập nhật tồn kho
- */
 function handleCompleteSlip(slipId) {
     const slip = importManager.getSlipById(slipId);
     if (!slip) {
@@ -408,14 +328,12 @@ function handleCompleteSlip(slipId) {
 
     if (!confirm(confirmMsg)) return;
 
-    // Hoàn thành phiếu
     const result = importManager.completeSlip(slipId);
     if (!result.success) {
         alert(`❌ ${result.message}`);
         return;
     }
 
-    // Cập nhật tồn kho trong ProductManager
     const updateSuccess = productManager.processProductImport(
         slip.productId,
         slip.quantity,
@@ -428,7 +346,7 @@ function handleCompleteSlip(slipId) {
         alert(`✅ Hoàn thành phiếu nhập ${slip.slipNumber} thành công!\n✅ Đã cập nhật tồn kho.`);
         renderImportSlipsList();
         
-        // Cập nhật bảng tồn kho nếu đang mở
+
         if (typeof window.renderInventoryTable === 'function') {
             window.renderInventoryTable();
         }
@@ -437,13 +355,6 @@ function handleCompleteSlip(slipId) {
     }
 }
 
-// ============================================================
-// XÓA PHIẾU NHẬP
-// ============================================================
-
-/**
- * Xóa phiếu nhập (chỉ phiếu nháp)
- */
 function handleDeleteSlip(slipId) {
     const slip = importManager.getSlipById(slipId);
     if (!slip) {
@@ -463,13 +374,6 @@ function handleDeleteSlip(slipId) {
     }
 }
 
-// ============================================================
-// XEM CHI TIẾT PHIẾU NHẬP
-// ============================================================
-
-/**
- * Xem chi tiết phiếu nhập đã hoàn thành
- */
 function handleViewSlip(slipId) {
     const slip = importManager.getSlipById(slipId);
     if (!slip) {
@@ -513,13 +417,6 @@ ${slip.note ? `\n─────────────────────
     alert(details);
 }
 
-// ============================================================
-// LỌC & TÌM KIẾM
-// ============================================================
-
-/**
- * Xử lý lọc danh sách
- */
 function handleFilter() {
     const filters = {
         status: DOM.filterStatus.value,
@@ -532,9 +429,6 @@ function handleFilter() {
     renderImportSlipsList(results);
 }
 
-/**
- * Reset bộ lọc
- */
 function handleResetFilter() {
     DOM.filterStatus.value = 'ALL';
     DOM.filterProductName.value = '';

@@ -1,9 +1,5 @@
 
-/**
- * user.js - Định nghĩa User Model và UserManager (CRUD Users).
- */
 
-// Định nghĩa class User (Model)
 class User {
     constructor(hoTen, tenDangNhap, email, matKhau, orders = [], isLocked = false) {
         this.hoTen = hoTen;
@@ -14,33 +10,30 @@ class User {
         this.isLocked = isLocked; 
     }
 
-    // Kiểm tra mật khẩu
     kiemTraMatKhau(matKhauNhap) {
         return this.matKhau === matKhauNhap;
     }
 }
 
-// Quản lý danh sách User với LocalStorage (Controller)
 class UserManager {
     constructor() {
         this.STORAGE_KEY = 'users_shoestore'; 
-        this.CURRENT_USER_KEY = 'nguoiDungHienTai'; // Key Dành cho End User
-        this.ADMIN_USER_KEY = 'nguoiDungAdmin';    // 🔑 Key MỚI Dành cho Admin
+        this.CURRENT_USER_KEY = 'nguoiDungHienTai';
+        this.ADMIN_USER_KEY = 'nguoiDungAdmin';
         this.users = this.taiDanhSachUser();
         
-        // Chạy lưu mẫu lần đầu nếu cần
+
         if(this.users.length > 2 && !localStorage.getItem(this.STORAGE_KEY)) {
              this.luuDanhSachUser();
         }
     }
 
-    // Tải danh sách user từ LocalStorage
     taiDanhSachUser() {
         try {
             const data = localStorage.getItem(this.STORAGE_KEY);
             if (data) {
                 const usersData = JSON.parse(data);
-                // Xử lý tương thích ngược: isLocked mặc định là false nếu không tồn tại
+
                 return usersData.map(u => new User(
                     u.hoTen, 
                     u.tenDangNhap, 
@@ -54,7 +47,7 @@ class UserManager {
             console.error('Lỗi khi tải danh sách user:', error);
         }
         
-        // Dữ liệu đơn hàng MẪU cho Admin
+
         const adminOrders = [
             {
                 id: 'ORD-2025-001',
@@ -72,14 +65,13 @@ class UserManager {
             }
         ];
         
-        // Tạo tài khoản admin mặc định
+
         return [
             new User("Admin ShoeStore", "admin", "admin@shoestore.com", "Admin123", adminOrders, false),
             new User("Người Dùng Thử", "testuser", "test@user.com", "123456", [], false)
         ];
     }
 
-    // Lưu danh sách user vào LocalStorage
     luuDanhSachUser() {
         try {
             const usersData = this.users.map(u => ({
@@ -98,9 +90,7 @@ class UserManager {
         }
     }
     
-    // =========================================================
-    // HÀM QUẢN LÝ SESSION END USER (Giữ nguyên CURRENT_USER_KEY)
-    // =========================================================
+
     luuUserHienTai(user) {
         try {
             const userData = {
@@ -129,9 +119,6 @@ class UserManager {
         return null;
     }
 
-    // =========================================================
-    // HÀM QUẢN LÝ SESSION ADMIN (Sử dụng ADMIN_USER_KEY)
-    // =========================================================
     luuAdminHienTai(user) {
         try {
             const userData = {
@@ -161,20 +148,13 @@ class UserManager {
         localStorage.removeItem(this.ADMIN_USER_KEY);
     }
     
-    // =========================================================
-    // HÀM CRUD & LOGIC
-    // =========================================================
 
-    /**
-     *  Thêm phương thức kiểm tra tồn tại Tên đăng nhập
-     */
+    
     tonTaiTenDangNhap(tenDangNhap) {
         return this.users.some(user => user.tenDangNhap.toLowerCase() === tenDangNhap.toLowerCase());
     }
 
-    /**
-     *  Thêm phương thức kiểm tra tồn tại Email
-     */
+    
     tonTaiEmail(email) {
         return this.users.some(user => user.email.toLowerCase() === email.toLowerCase());
     }
@@ -200,7 +180,7 @@ class UserManager {
             
             this.luuDanhSachUser();
             
-            // Cập nhật user hiện tại trong LocalStorage (nếu là user đang đăng nhập)
+
             const currentUser = this.layUserHienTai();
             if (currentUser && currentUser.tenDangNhap === updatedUser.tenDangNhap) {
                 this.luuUserHienTai(this.users[index]);
@@ -235,9 +215,6 @@ class UserManager {
         return user ? (user.orders || []) : [];
     }
 
-    // =========================================================
-    // PHƯƠNG THỨC ADMIN
-    // =========================================================
     getAllUsers() {
         return this.users.filter(u => u.tenDangNhap !== 'admin'); 
     }
@@ -259,7 +236,7 @@ class UserManager {
             user.isLocked = isLocked;
             this.luuDanhSachUser();
             
-            // Nếu người dùng hiện tại đang đăng nhập bị khóa, buộc đăng xuất
+
             const currentUser = this.layUserHienTai();
             if (currentUser && currentUser.tenDangNhap === username && isLocked) {
                 localStorage.removeItem(this.CURRENT_USER_KEY); 
@@ -272,24 +249,16 @@ class UserManager {
 
 export { User, UserManager };
 
-
-// =======================================================
-// HÀM GLOBAL KIỂM TRA ĐĂNG NHẬP
-// =======================================================
-
 const userManagerInstance = new UserManager();
 window.userManager = userManagerInstance; 
 
-/**
- * Lấy thông tin người dùng hiện tại đang đăng nhập (End User).
- */
 function kiemTraDangNhap() {
     const user = userManagerInstance.layUserHienTai();
     if (user) {
         const fullUser = userManagerInstance.users.find(u => u.tenDangNhap === user.tenDangNhap);
         if (fullUser && fullUser.isLocked) {
             localStorage.removeItem(userManagerInstance.CURRENT_USER_KEY);
-            return null; // Trả về null nếu bị khóa
+            return null;
         }
     }
     return user;

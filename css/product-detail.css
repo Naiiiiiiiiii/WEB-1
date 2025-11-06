@@ -1,6 +1,5 @@
-/* =============================================== */
-/* 1. RESET AND BASE STYLES */
-/* =============================================== */
+
+
 * {
     margin: 0;
     padding: 0;
@@ -20,9 +19,6 @@ body {
     padding: 0 2rem;
 }
 
-/* =============================================== */
-/* 2. HEADER STYLES */
-/* =============================================== */
 .header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: 1rem 0;
@@ -96,9 +92,6 @@ body {
     font-weight: bold;
 }
 
-/* =============================================== */
-/* 3. PRODUCT DETAIL LAYOUT & CONTENT */
-/* =============================================== */
 main {
     display: flex;
     justify-content: center;
@@ -112,7 +105,6 @@ main {
     padding: 0 2rem; 
 }
 
-/*  two-column grid: .product-detail-content */
 .product-detail-content {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -125,7 +117,6 @@ main {
     margin-bottom: 3rem; 
 }
 
-/* --- Left Column: Gallery --- */
 .product-gallery {
     display: flex;
     flex-direction: column;
@@ -153,7 +144,7 @@ main {
     display: flex;
     gap: 0.5rem;
 }
-/* Thumbnail styles for future thumbnail integration */
+
 .thumbnail {
     width: 70px;
     height: 70px;
@@ -169,7 +160,6 @@ main {
     border-color: #667eea;
 }
 
-/* --- Right Column: Summary --- */
 .product-summary {
     display: flex;
     flex-direction: column;
@@ -189,7 +179,6 @@ main {
     margin-bottom: 1.5rem;
 }
 
-/* Price Section */
 .price-section {
     display: flex;
     align-items: center;
@@ -212,7 +201,6 @@ main {
     text-decoration: line-through;
 }
 
-/* Variant Selection (.variant-selection) */
 .variant-selection {
     margin-bottom: 1.5rem;
 }
@@ -233,7 +221,6 @@ main {
     margin-bottom: 1.5rem;
 }
 
-/* Size Options */
 .size-option {
     min-width: 50px;
     height: 40px;
@@ -261,7 +248,6 @@ main {
     border-color: #667eea;
 }
 
-/* Color Options */
 .color-option {
     width: 35px;
     height: 35px;
@@ -271,7 +257,7 @@ main {
     transition: all 0.2s ease;
     display: inline-block;
     position: relative;
-    /* Background color is set via JS */
+    
 }
 
 .color-option:hover {
@@ -284,7 +270,6 @@ main {
     transform: scale(1.1);
 }
 
-/* Stock Status */
 #product-stock-status {
     padding: 0.5rem 0;
     font-weight: 600;
@@ -292,18 +277,17 @@ main {
 }
 
 .status-warning {
-    color: #ff9800; /* Vui lòng chọn (Orange) */
+    color: #ff9800; 
 }
 
 .status-available {
-    color: #4CAF50; /* Còn hàng (Green) */
+    color: #4CAF50; 
 }
 
 .status-out-of-stock {
-    color: #F44336; /* Hết hàng (Red) */
+    color: #F44336; 
 }
 
-/* Quantity Control */
 .quantity-control {
     display: flex;
     align-items: center;
@@ -336,7 +320,7 @@ main {
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
-    /* Disable default number arrows */
+    
     appearance: none;
     -moz-appearance: textfield; 
 }
@@ -346,7 +330,6 @@ main {
     margin: 0;
 }
 
-/* Add to Cart Button */
 .add-to-cart-btn {
     width: 100%;
     padding: 1rem 1.5rem;
@@ -380,7 +363,6 @@ main {
     box-shadow: none;
 }
 
-/* --- Full Description Section --- */
 .product-description-full {
     background: white;
     padding: 2rem;
@@ -402,9 +384,6 @@ main {
     line-height: 1.7;
 }
 
-/* =============================================== */
-/* 4. FOOTER STYLES */
-/* =============================================== */
 .footer {
     background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
     color: white;
@@ -466,11 +445,8 @@ main {
     color: rgba(255,255,255,0.6);
 }
 
-/* =============================================== */
-/* 5. RESPONSIVE DESIGN */
-/* =============================================== */
 @media (max-width: 992px) {
-    /* Chuyển sang bố cục 1 cột sớm hơn */
+    
     .product-detail-content {
         grid-template-columns: 1fr;
         gap: 2rem;
@@ -553,7 +529,7 @@ main {
 }
 
 .size-option {
-    /* Thiết lập cơ bản cho nút size */
+    
     padding: 8px 15px;
     border: 1px solid #ccc;
     background-color: #f8f8f8;
@@ -567,19 +543,17 @@ main {
 }
 
 .size-option:hover {
-    border-color: #0056b3; /* Hover */
+    border-color: #0056b3; 
 }
 
-/* TRẠNG THÁI ACTIVE: NÚT ĐANG ĐƯỢC CHỌN */
 .size-option.active {
-    border: 2px solid #007bff; /* Viền xanh nổi bật */
-    background-color: #e6f0ff; /* Nền xanh nhạt */
+    border: 2px solid #007bff; 
+    background-color: #e6f0ff; 
     color: #007bff;
     font-weight: bold;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); /* Tạo bóng nhẹ */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); 
 }
 
-/* Size Options */
 .size-option {
     min-width: 50px;
     height: 40px;
@@ -594,7 +568,7 @@ main {
     justify-content: center;
     padding: 0 1rem;
     user-select: none;
-    color: #2d3748; /* Thêm màu chữ mặc định */
+    color: #2d3748; 
 }
 
 .size-option:hover {
@@ -608,7 +582,6 @@ main {
     border-color: #667eea;
 }
 
-/* Color Options */
 .color-option {
     width: 35px;
     height: 35px;
@@ -630,8 +603,6 @@ main {
     transform: scale(1.1);
 }
 
-
-/* Cho cả Size và Color */
 .size-option[disabled],
 .color-option[disabled],
 .size-option.out-of-stock,
@@ -645,20 +616,18 @@ main {
     box-shadow: none !important;
 }
 
-/* Thêm hiệu ứng gạch ngang cho nút Size */
 .size-option.out-of-stock {
     text-decoration: line-through; 
     color: #a0aec0 !important;
 }
 
-/* Thêm dấu X cho nút Color */
 .color-option.out-of-stock::after {
-    content: "✖"; /* Dấu X */
+    content: "✖"; 
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: rgba(255, 0, 0, 0.7); /* Màu đỏ mờ */
+    color: rgba(255, 0, 0, 0.7); 
     font-size: 14px;
     font-weight: bold;
     line-height: 1; 

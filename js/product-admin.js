@@ -1,15 +1,8 @@
-// File: js/product-admin.js - Quản lý Sản phẩm (CRUD Đầy đủ với Modal)
-import { productManager, categoryManager, DOM, updateGeneralStats } from './admin.js';
 
-// =========================================================
-// QUẢN LÝ MODAL
-// =========================================================
+import { productManager, categoryManager, DOM, updateGeneralStats } from './admin.js';
 
 let currentEditingProductId = null;
 
-/**
- * Hiển thị modal thêm sản phẩm
- */
 export function showAddProductModal() {
     const modal = document.getElementById('productModal');
     const modalTitle = document.getElementById('productModalTitle');
@@ -17,25 +10,22 @@ export function showAddProductModal() {
     
     if (!modal || !form) return;
     
-    // Reset form và state
+
     form.reset();
     currentEditingProductId = null;
     modalTitle.textContent = '➕ Thêm Sản phẩm Mới';
     
-    // Load categories vào dropdown
+
     loadCategoriesToModalSelect();
     
-    // Hiển thị modal
+
     modal.style.display = 'flex';
     setTimeout(() => modal.classList.add('show'), 10);
     
-    // Focus vào field đầu tiên
+
     document.getElementById('modalProductName')?.focus();
 }
 
-/**
- * Hiển thị modal sửa sản phẩm với dữ liệu đã điền sẵn
- */
 export function showEditProductModal(productId) {
     const product = productManager.getProductById(productId);
     if (!product) {
@@ -49,31 +39,28 @@ export function showEditProductModal(productId) {
     
     if (!modal || !form) return;
     
-    // Set state
+
     currentEditingProductId = productId;
     modalTitle.textContent = '✏️ Sửa Sản phẩm';
     
-    // Load categories
+
     loadCategoriesToModalSelect();
     
-    // Điền dữ liệu vào form
+
     document.getElementById('modalProductName').value = product.name;
     document.getElementById('modalProductCategory').value = product.categoryId;
     document.getElementById('modalProductPrice').value = product.price;
     document.getElementById('modalProductDescription').value = product.description;
     document.getElementById('modalProductImage').value = product.img;
     
-    // Hiển thị preview ảnh nếu có
+
     updateImagePreview(product.img);
     
-    // Hiển thị modal
+
     modal.style.display = 'flex';
     setTimeout(() => modal.classList.add('show'), 10);
 }
 
-/**
- * Đóng modal
- */
 export function closeProductModal() {
     const modal = document.getElementById('productModal');
     if (!modal) return;
@@ -85,9 +72,6 @@ export function closeProductModal() {
     }, 300);
 }
 
-/**
- * Cập nhật preview ảnh
- */
 function updateImagePreview(imageUrl) {
     const preview = document.getElementById('imagePreview');
     const previewImg = document.getElementById('previewImg');
@@ -107,19 +91,12 @@ function updateImagePreview(imageUrl) {
     }
 }
 
-// =========================================================
-// XỬ LÝ FORM
-// =========================================================
-
-/**
- * Xử lý submit form (Thêm hoặc Sửa)
- */
 export function handleProductFormSubmit(e) {
     e.preventDefault();
     
     const form = e.target;
     
-    // Lấy dữ liệu từ form
+
     const productData = {
         name: form.querySelector('#modalProductName').value.trim(),
         categoryId: form.querySelector('#modalProductCategory').value,
@@ -128,12 +105,12 @@ export function handleProductFormSubmit(e) {
         img: form.querySelector('#modalProductImage').value.trim(), 
     };
     
-    // Validation
+
     if (!validateProductData(productData)) {
         return;
     }
     
-    // Xử lý thêm hoặc sửa
+
     if (currentEditingProductId) {
         handleUpdateProduct(currentEditingProductId, productData);
     } else {
@@ -141,9 +118,6 @@ export function handleProductFormSubmit(e) {
     }
 }
 
-/**
- * Validate dữ liệu sản phẩm
- */
 function validateProductData(data) {
     if (!data.name) {
         showNotification('⚠️ Vui lòng nhập tên sản phẩm!', 'error');
@@ -184,15 +158,12 @@ function validateProductData(data) {
     return true;
 }
 
-/**
- * Xử lý thêm sản phẩm mới
- */
 function handleAddProduct(productData) {
-    // Thêm initialStock = 0 khi tạo mới (sẽ nhập kho sau)
+
     const newProductData = {
         ...productData,
         initialStock: 0,
-        variants: [], // Mặc định không có biến thể
+        variants: [],
     };
     
     const newProduct = productManager.addProduct(newProductData);
@@ -207,9 +178,6 @@ function handleAddProduct(productData) {
     }
 }
 
-/**
- * Xử lý cập nhật sản phẩm
- */
 function handleUpdateProduct(productId, productData) {
     const product = productManager.getProductById(productId);
     if (!product) {
@@ -228,18 +196,11 @@ function handleUpdateProduct(productId, productData) {
     }
 }
 
-// =========================================================
-// HIỂN THỊ DANH SÁCH SẢN PHẨM
-// =========================================================
-
-/**
- * Render danh sách sản phẩm
- */
 export function renderProductList() {
     if (!DOM.productTableBody) return;
     DOM.productTableBody.innerHTML = '';
     
-    const products = productManager.getAllProducts(true); // Bao gồm cả sản phẩm ẩn
+    const products = productManager.getAllProducts(true);
     
     if (products.length === 0) {
         DOM.productTableBody.innerHTML = `
@@ -304,13 +265,10 @@ export function renderProductList() {
         DOM.productTableBody.appendChild(row);
     });
     
-    // Gắn sự kiện
+
     setupProductEventListeners();
 }
 
-/**
- * Hiển thị chi tiết sản phẩm (Read-only modal)
- */
 function showProductDetail(productId) {
     const product = productManager.getProductById(productId);
     if (!product) {
@@ -378,7 +336,7 @@ function showProductDetail(productId) {
     
     setTimeout(() => overlay.classList.add('show'), 10);
     
-    // Click overlay để đóng
+
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
             overlay.classList.remove('show');
@@ -387,13 +345,6 @@ function showProductDetail(productId) {
     });
 }
 
-// =========================================================
-// XỬ LÝ CÁC HÀNH ĐỘNG
-// =========================================================
-
-/**
- * Xử lý ẩn/hiện sản phẩm
- */
 function handleToggleProduct(e) {
     e.preventDefault();
     const productId = e.currentTarget.dataset.id;
@@ -420,9 +371,6 @@ function handleToggleProduct(e) {
     }
 }
 
-/**
- * Xử lý xóa sản phẩm
- */
 function handleDeleteProduct(e) {
     e.preventDefault();
     const productId = e.currentTarget.dataset.id;
@@ -448,17 +396,12 @@ function handleDeleteProduct(e) {
     }
 }
 
-// =========================================================
-//tiên ÍCH HỖ TRỢ
-// =========================================================
-
-
 function loadCategoriesToModalSelect() {
     const selectElement = document.getElementById('modalProductCategory');
     if (!selectElement) return;
     
     selectElement.innerHTML = '<option value="">-- Chọn Danh mục --</option>';
-    const categories = categoryManager.getAllCategories(); // Chỉ lấy danh mục đang hoạt động
+    const categories = categoryManager.getAllCategories();
     
     categories.forEach(cat => {
         const option = document.createElement('option');
@@ -467,7 +410,6 @@ function loadCategoriesToModalSelect() {
         selectElement.appendChild(option);
     });
 }
-
 
 export function loadCategoriesToSelect(selectElementId, selectedId = null) {
     const selectElement = document.getElementById(selectElementId);
@@ -487,9 +429,6 @@ export function loadCategoriesToSelect(selectElementId, selectedId = null) {
     });
 }
 
-/**
- * Hiển thị thông báo
- */
 function showNotification(message, type = 'info') {
     let container = document.getElementById('notificationContainer');
     if (!container) {
@@ -517,58 +456,52 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-/**
- * Gắn sự kiện cho các nút trong bảng
- */
 function setupProductEventListeners() {
-    // Nút Xem chi tiết
+
     document.querySelectorAll('.btn-view-product').forEach(btn => {
         btn.addEventListener('click', (e) => {
             showProductDetail(e.currentTarget.dataset.id);
         });
     });
     
-    // Nút Sửa
+
     document.querySelectorAll('.btn-edit-product').forEach(btn => {
         btn.addEventListener('click', (e) => {
             showEditProductModal(e.currentTarget.dataset.id);
         });
     });
     
-    // Nút Ẩn/Hiện
+
     document.querySelectorAll('.btn-toggle-product').forEach(btn => {
         btn.addEventListener('click', handleToggleProduct);
     });
     
-    // Nút Xóa
+
     document.querySelectorAll('.btn-delete-product').forEach(btn => {
         btn.addEventListener('click', handleDeleteProduct);
     });
 }
 
-/**
- * Khởi tạo module Product Admin
- */
 export function initProductAdmin() {
-    // Nút mở modal thêm sản phẩm
+
     const addProductBtn = document.getElementById('addProductBtn');
     if (addProductBtn) {
         addProductBtn.addEventListener('click', showAddProductModal);
     }
     
-    // Form submit trong modal
+
     const modalForm = document.getElementById('productModalForm');
     if (modalForm) {
         modalForm.addEventListener('submit', handleProductFormSubmit);
     }
     
-    // Nút đóng modal
+
     const closeModalBtns = document.querySelectorAll('.close-modal-btn, .cancel-modal-btn');
     closeModalBtns.forEach(btn => {
         btn.addEventListener('click', closeProductModal);
     });
     
-    // Click overlay để đóng modal
+
     const modal = document.getElementById('productModal');
     if (modal) {
         modal.addEventListener('click', (e) => {
@@ -578,7 +511,7 @@ export function initProductAdmin() {
         });
     }
     
-    // Preview ảnh khi thay đổi URL
+
     const imageInput = document.getElementById('modalProductImage');
     if (imageInput) {
         imageInput.addEventListener('input', (e) => {
@@ -586,10 +519,9 @@ export function initProductAdmin() {
         });
     }
     
-    // Render danh sách ban đầu
+
     renderProductList();
 }
 
-// Export để sử dụng trong admin.js và các module khác
 window.loadCategoriesToSelect = loadCategoriesToSelect;
 export { setupProductEventListeners };

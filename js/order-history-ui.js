@@ -1,19 +1,16 @@
 
 
-// IMPORT CÁC HÀM CẦN THIẾT TỪ order-manager.js
 import { getUserOrders, cancelOrder } from './order-manager.js'; 
-// IMPORT HÀM KIỂM TRA ĐĂNG NHẬP TỪ user.js
+
 const kiemTraDangNhap = window.kiemTraDangNhap || (() => null);
 
 let historyOverlay = null;
 let historyContainer = null;
 
-// Hàm tiện ích: Format tiền tệ (Giả sử đã được gán global)
 const formatCurrency = window.formatCurrency || function(amount) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 };
 
-// Hàm tiện ích: Format ngày
 function formatDate(isoString) {
     if (!isoString) return 'N/A';
     try {
@@ -24,9 +21,8 @@ function formatDate(isoString) {
     }
 }
 
-// Khởi tạo các phần tử DOM
 function initializeHistoryDom() {
-    // Chỉ khởi tạo nếu các phần tử chưa được gán
+
     if (!historyOverlay) {
         historyOverlay = document.getElementById('order-history-overlay');
         historyContainer = document.getElementById('history-list-container');
@@ -38,7 +34,7 @@ function initializeHistoryDom() {
         closeBtn.addEventListener('click', closeOrderHistoryModal);
     }
     
-    // Sự kiện đóng modal khi click ra ngoài
+
     if (historyOverlay) {
         historyOverlay.removeEventListener('click', handleOverlayClick);
         historyOverlay.addEventListener('click', handleOverlayClick);
@@ -50,10 +46,6 @@ function handleOverlayClick(e) {
         closeOrderHistoryModal();
     }
 }
-
-// ---------------------------------------------------------------
-// RENDER UI
-// ---------------------------------------------------------------
 
 function renderOrderDetails(order) {
     let itemsHtml = order.items.map(item => `
@@ -80,7 +72,7 @@ function createOrderCard(order) {
     const moreItems = order.items.length > 3 ? ` và ${order.items.length - 3} sản phẩm khác` : '';
     
     const statusLower = order.status ? order.status.toLowerCase().trim() : 'unknown';
-    // Trạng thái không thể hủy
+
     const isNotCancelable = (statusLower === 'đã hủy' || statusLower === 'đã giao hàng' || statusLower === 'đã hoàn thành' || statusLower !== 'đang chờ xử lý');
     const statusText = order.status || 'Chưa rõ';
     
@@ -106,9 +98,6 @@ function createOrderCard(order) {
     `;
 }
 
-/**
- * Hiển thị lịch sử đơn hàng của người dùng hiện tại
- */
 export function renderOrderHistory() {
     if (!historyContainer) {
         initializeHistoryDom();
@@ -139,32 +128,26 @@ export function renderOrderHistory() {
             historyHtml += createOrderCard(order);
         });
         historyContainer.innerHTML = historyHtml;
-        // Gắn lại sự kiện cho các nút mới
+
         attachHistoryEvents(orders); 
     }
     
-    // Hiển thị Modal
+
     if (historyOverlay) {
         historyOverlay.style.display = 'flex';
         requestAnimationFrame(() => historyOverlay.classList.add('open'));
     }
 }
 
-
-// ---------------------------------------------------------------
-// SỰ KIỆN VÀ HÀNH ĐỘNG
-// ---------------------------------------------------------------
-
 function attachHistoryEvents(orders) {
-    // 1. Gắn sự kiện Xem chi tiết
+
     document.querySelectorAll('.view-details-btn').forEach(btn => {
-        btn.removeEventListener('click', handleViewDetails); // Ngăn lặp sự kiện
+        btn.removeEventListener('click', handleViewDetails);
         btn.addEventListener('click', handleViewDetails);
     });
 
-    // 2. Gắn sự kiện Hủy đơn
     document.querySelectorAll('.cancel-order-btn').forEach(btn => {
-        btn.removeEventListener('click', handleCancelOrder); // Ngăn lặp sự kiện
+        btn.removeEventListener('click', handleCancelOrder);
         btn.addEventListener('click', handleCancelOrder);
     });
 }
@@ -186,31 +169,24 @@ function handleCancelOrder(e) {
     
     if (confirm(`Bạn có chắc muốn hủy đơn hàng ${orderId}? Đơn hàng chỉ có thể hủy nếu đang ở trạng thái "Đang chờ xử lý".`)) {
         
-        // GỌI HÀM ĐÃ CHUYỂN SANG order-manager.js
+
         const success = cancelOrder(orderId); 
         
         if (success) {
             alert(`✅ Hủy đơn hàng ${orderId} thành công.`);
-            renderOrderHistory(); // Render lại UI sau khi hủy
+            renderOrderHistory();
         } else {
             alert(`❌ Không thể hủy đơn hàng ${orderId}. Vui lòng kiểm tra trạng thái đơn hàng.`);
         }
     }
 }
 
-/**
- * Đóng Modal lịch sử đơn hàng
- */
 export function closeOrderHistoryModal() {
     if (historyOverlay) {
         historyOverlay.classList.remove('open');
         setTimeout(() => historyOverlay.style.display = 'none', 300);
     }
 }
-
-// ---------------------------------------------------------------
-// KHỞI TẠO
-// ---------------------------------------------------------------
 
 document.addEventListener('DOMContentLoaded', initializeHistoryDom);
 window.renderOrderHistory = renderOrderHistory;

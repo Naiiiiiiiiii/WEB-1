@@ -1,18 +1,13 @@
-// File: js/user-admin.js (Quản lý Tài khoản Khách hàng)
+
 import { userManager, DOM, updateGeneralStats } from './admin.js';
 
-// =========================================================
-// HÀM QUẢN LÝ TÀI KHOẢN
-// =========================================================
-
-/** Hiển thị danh sách tài khoản */
 export function renderUserList() {
     if (!DOM.userTableBody) return;
     DOM.userTableBody.innerHTML = '';
     const users = userManager.getAllUsers();
 
     users.forEach(user => {
-        // Chỉ hiện thị tài khoản không phải Admin (admin không tự khóa/reset)
+
         if (user.tenDangNhap === 'admin') return; 
 
         const totalOrders = user.orders ? user.orders.length : 0;
@@ -39,9 +34,8 @@ export function renderUserList() {
     });
 }
 
-/** Gán sự kiện cho các nút Reset/Khóa/Mở khóa */
 export function setupUserAdminEventListeners() {
-    // Xóa listener cũ trước khi thêm listener mới
+
     DOM.userTableBody.querySelectorAll('.btn-reset').forEach(btn => {
         btn.removeEventListener('click', handleResetPassword);
         btn.addEventListener('click', handleResetPassword);
@@ -58,7 +52,6 @@ export function setupUserAdminEventListeners() {
     });
 }
 
-/** Xử lý reset mật khẩu */
 function handleResetPassword(e) {
     e.preventDefault();
     const username = e.currentTarget.dataset.username;
@@ -72,21 +65,18 @@ function handleResetPassword(e) {
     }
 }
 
-/** Xử lý khóa tài khoản */
 function handleLockUser(e) {
     e.preventDefault();
     const username = e.currentTarget.dataset.username;
-    updateUserStatus(username, true); // Khóa
+    updateUserStatus(username, true);
 }
 
-/** Xử lý mở khóa tài khoản */
 function handleUnlockUser(e) {
     e.preventDefault();
     const username = e.currentTarget.dataset.username;
-    updateUserStatus(username, false); // Mở khóa
+    updateUserStatus(username, false);
 }
 
-/** Xử lý khóa/mở khóa tài khoản */
 function updateUserStatus(username, isLocked) {
     const action = isLocked ? 'khóa' : 'mở khóa';
     if (!confirm(`Bạn có muốn ${action} tài khoản ${username}?`)) return;
@@ -96,7 +86,7 @@ function updateUserStatus(username, isLocked) {
     if (success) {
         alert(`${action.charAt(0).toUpperCase() + action.slice(1)} tài khoản ${username} thành công!`);
         renderUserList();
-        updateGeneralStats(); // Cập nhật số liệu chung 
+        updateGeneralStats();
     } else {
         alert("Lỗi: Không thể thực hiện hành động này.");
     }

@@ -1,6 +1,5 @@
 import { UserManager } from './user.js';
 
-
 document.addEventListener('DOMContentLoaded', () => {
 
     const userManager = new UserManager();
@@ -12,9 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // -------------------------------------------------------------
-    // CẬP NHẬT HÀM HIỂN THỊ DANH SÁCH USER
-    // -------------------------------------------------------------
     function hienThiDanhSachUser() {
         const tbody = document.getElementById('userTableBody');
         if (!tbody) return;
@@ -22,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tbody.innerHTML = '';
 
         userManager.users.forEach((user, index) => {
-            // Đếm số lượng đơn hàng (giả sử mỗi user có một mảng 'orders')
+
             const orderCount = (user.orders && user.orders.length) || 0; 
             
             const row = document.createElement('tr');
@@ -43,13 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ganSuKienNut();
     }
 
-    // -------------------------------------------------------------
-    // CẬP NHẬT GÁN SỰ KIỆN NÚT
-    // -------------------------------------------------------------
     function ganSuKienNut() {
         const resetBtns = document.querySelectorAll('.btn-reset');
         const deleteBtns = document.querySelectorAll('.btn-delete');
-        const viewOrderBtns = document.querySelectorAll('.btn-view-orders'); // NÚT MỚI
+        const viewOrderBtns = document.querySelectorAll('.btn-view-orders');
 
         resetBtns.forEach(btn => btn.addEventListener('click', () => {
             resetMatKhau(btn.getAttribute('data-index'));
@@ -59,15 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
             xoaTaiKhoan(btn.getAttribute('data-index'));
         }));
 
-        // GÁN SỰ KIỆN CHO NÚT XEM ĐƠN HÀNG
         viewOrderBtns.forEach(btn => btn.addEventListener('click', () => {
             hienThiDonHangCuaUser(btn.getAttribute('data-username'));
         }));
     }
 
-    // -------------------------------------------------------------
-    // HÀM HIỂN THỊ ĐƠN HÀNG CHO ADMIN
-    // -------------------------------------------------------------
     function hienThiDonHangCuaUser(username) {
         const user = userManager.users.find(u => u.tenDangNhap === username);
         if (!user) {
@@ -82,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (orders.length === 0) {
             orderListHtml += `<p class="alert alert-info">Người dùng này chưa có đơn hàng nào.</p>`;
         } else {
-            // Bắt đầu tạo bảng/danh sách đơn hàng
+
             orders.forEach(order => {
                 const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0);
                 orderListHtml += `
@@ -105,8 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        // Hiện thông tin bằng alert hoặc ) là một modal Admin riêng
-        // Tạm dùng alert/console log cho đơn giản:
+
         console.log(`Lịch sử đơn hàng của ${username}:`, orders);
         alert(`Kiểm tra console (F12) để xem chi tiết đơn hàng của ${username}.`);
         
@@ -131,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
         alert("Xóa tài khoản thành công!");
     }
 
-    // Khởi tạo
     updateSoLuongTaiKhoan();
     hienThiDanhSachUser();
 });

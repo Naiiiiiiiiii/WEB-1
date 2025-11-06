@@ -1,23 +1,14 @@
-/**
- * search-overlay.js - TÌM KIẾM DẠNG OVERLAY TRÊN TRANG CHỦ
- */
 
-// =========================================================================
-// 0. IMPORT MODULES VÀ KHỞI TẠO DỮ LIỆU
-// =========================================================================
+
 import { ProductManager } from "./ProductManager.js";
 
 const productManager = new ProductManager();
-// Lấy tất cả sản phẩm có thể hiển thị
+
 const products = productManager.getVisibleProducts();
 
-// Dùng IIFE để đóng gói toàn bộ logic
 (function () {
   "use strict";
 
-  // =========================================================================
-  // 1. HTML OVERLAY (Không thay đổi)
-  // =========================================================================
   const SEARCH_OVERLAY_HTML = `
 		<div id="search-overlay" class="search-overlay">
 			<div class="search-overlay-content">
@@ -115,10 +106,6 @@ const products = productManager.getVisibleProducts();
 		</div>
 	`;
 
-  // =========================================================================
-  // 2. KHỞI TẠO
-  // =========================================================================
-
   let elements = {};
   let searchTimeout = null;
   let currentFilters = {
@@ -128,27 +115,23 @@ const products = productManager.getVisibleProducts();
     maxPrice: null,
   };
 
-  // Inject overlay vào body khi DOM loaded
   function injectOverlay() {
-    if (document.getElementById("search-overlay")) return; // Đã tồn tại
+    if (document.getElementById("search-overlay")) return;
 
-    // 1. Tạo một DOMParser để chuyển chuỗi HTML thành các phần tử DOM
     const parser = new DOMParser();
     const doc = parser.parseFromString(SEARCH_OVERLAY_HTML, "text/html");
 
-    // Lấy phần tử overlay chính
     const overlayElement = doc.body.firstElementChild;
 
     if (overlayElement) {
-      // 2. CHÈN TRỰC TIẾP VÀO BODY
+
       document.body.appendChild(overlayElement);
     }
 
-    // Gán elements
     elements = {
       overlay: document.getElementById("search-overlay"),
       closeBtn: document.querySelector(".search-close"),
-      // ... (Giữ nguyên phần gán elements còn lại)
+
       searchInput: document.getElementById("overlaySearchInput"),
       clearBtn: document.getElementById("overlayClearBtn"),
       advancedToggle: document.getElementById("overlayAdvancedToggle"),
@@ -166,28 +149,21 @@ const products = productManager.getVisibleProducts();
       presetBtns: document.querySelectorAll(".overlay-preset-btn"),
     };
 
-    // Kiểm tra và setup lại sự kiện
     setupEventListeners();
   }
 
-  // =========================================================================
-  // 3. OPEN/CLOSE OVERLAY
-  // =========================================================================
-
   function openSearchOverlay() {
-    // Chỉ inject nếu chưa có (tránh gọi inject nhiều lần nếu đã có)
+
     if (!elements.overlay || !document.getElementById("search-overlay")) {
-      // Re-inject và setup lại nếu chưa tồn tại
+
       injectOverlay();
     }
 
     elements.overlay.classList.add("active");
-    document.body.style.overflow = "hidden"; // Prevent scroll
+    document.body.style.overflow = "hidden";
 
-    // Focus vào ô tìm kiếm
     setTimeout(() => elements.searchInput.focus(), 100);
 
-    // Load initial results
     performSearch();
   }
 
@@ -198,10 +174,6 @@ const products = productManager.getVisibleProducts();
     document.body.style.overflow = "";
   }
 
-  // =========================================================================
-  // 4. SEARCH LOGIC (Giống search.js)
-  // =========================================================================
-
   function escapeHtml(str = "") {
     return String(str)
       .replace(/&/g, "&amp;")
@@ -211,10 +183,7 @@ const products = productManager.getVisibleProducts();
       .replace(/'/g, "&#039;");
   }
 
-  /**
-   * @description Tạo HTML cho một thẻ sản phẩm.
-   * @param {Product} product - Instance của Product class
-   */
+  
   function createProductCard(product) {
     const badgeText = product.getBadgeText();
     const badgeHtml = product.badge
@@ -229,7 +198,6 @@ const products = productManager.getVisibleProducts();
         )}" class="product-img">`
       : `<i class="fas fa-shoe-prints product-icon"></i>`;
 
-    // Sử dụng phương thức của Product class
     const priceHtml =
       product.oldPrice && product.isOnSale()
         ? `<span class="current-price">${product.getFormattedPrice()}</span> <span class="old-price">${product.getFormattedOldPrice()}</span>`
@@ -271,10 +239,9 @@ const products = productManager.getVisibleProducts();
     const maxPrice = currentFilters.maxPrice;
 
     return products.filter((product) => {
-      // Tiêu chí 1: Tên sản phẩm
+
       const nameMatch = product.name.toLowerCase().includes(keyword);
 
-      // Tiêu chí 2: Danh mục
       const productCategoryName = (
         product.category ??
         productManager.getCategoryName?.(product.categoryId) ??
@@ -285,13 +252,12 @@ const products = productManager.getVisibleProducts();
         .trim();
 
       const categoryMatch = !category || productCategoryName === category;
-      // Tiêu chí 3: Khoảng giá (lấy giá hiện tại)
+
       const productPrice = product.price;
       const priceMatch =
         (minPrice === null || productPrice >= minPrice) &&
         (maxPrice === null || productPrice <= maxPrice);
 
-      // Tìm kiếm nâng cao là sự kết hợp của tất cả tiêu chí
       return nameMatch && categoryMatch && priceMatch;
     });
   }
@@ -305,12 +271,11 @@ const products = productManager.getVisibleProducts();
       elements.noResults.style.display = "block";
     } else {
       elements.noResults.style.display = "none";
-      // Không nên dùng map.join() cho số lượng lớn, nhưng với overlay thì tạm chấp nhận được
+
       const html = filteredProducts.map(createProductCard).join("");
       elements.searchResults.innerHTML = html;
     }
 
-    // Gắn lại sự kiện 'Thêm vào giỏ' và 'Xem chi tiết' sau khi render
     attachProductEventListeners();
   }
 
@@ -320,7 +285,7 @@ const products = productManager.getVisibleProducts();
     elements.noResults.style.display = "none";
 
     clearTimeout(searchTimeout);
-    // Dùng setTimeout để debounce search input
+
     searchTimeout = setTimeout(() => {
       const filteredProducts = filterProducts();
       renderResults(filteredProducts);
@@ -345,7 +310,7 @@ const products = productManager.getVisibleProducts();
     const isHidden =
       elements.advancedPanel.style.display === "none" ||
       !elements.advancedPanel.style.display;
-    // Dùng classList.toggle('open') và CSS transition sẽ đẹp hơn, nhưng ta dùng display cho nhanh
+
     elements.advancedPanel.style.display = isHidden ? "block" : "none";
   }
 
@@ -354,11 +319,9 @@ const products = productManager.getVisibleProducts();
     const minVal = parseFloat(elements.minPriceInput.value);
     const maxVal = parseFloat(elements.maxPriceInput.value);
 
-    // Đảm bảo giá trị là null nếu không hợp lệ
     currentFilters.minPrice = isNaN(minVal) ? null : minVal;
     currentFilters.maxPrice = isNaN(maxVal) ? null : maxVal;
 
-    // Ẩn panel sau khi áp dụng (tùy chọn)
     elements.advancedPanel.style.display = "none";
     performSearch();
   }
@@ -369,7 +332,7 @@ const products = productManager.getVisibleProducts();
     elements.maxPriceInput.value = "";
     elements.searchInput.value = "";
     elements.clearBtn.style.display = "none";
-    // Ẩn panel nếu đang mở
+
     elements.advancedPanel.style.display = "none";
 
     currentFilters = {
@@ -382,16 +345,16 @@ const products = productManager.getVisibleProducts();
   }
 
   function attachProductEventListeners() {
-    // Sử dụng Event Delegation trên container kết quả
+
     elements.searchResults.removeEventListener(
       "click",
       searchResultsClickHandler
-    ); // Remove để tránh trùng lặp
+    );
     elements.searchResults.addEventListener("click", searchResultsClickHandler);
   }
 
   function searchResultsClickHandler(e) {
-    // Xử lý nút Thêm vào giỏ
+
     const add = e.target.closest(".add-to-cart");
     if (add) {
       e.preventDefault();
@@ -400,15 +363,13 @@ const products = productManager.getVisibleProducts();
       const product = productManager.getProductById(id);
 
       if (product && typeof window.addToCart === "function") {
-        // CÁCH GỌI addToCart:
-        // 1. Chỉ truyền 6 tham số (vì đã bỏ 'color' khỏi cart.js)
-        // 2. Dùng 'OS' (One Size) hoặc 40 làm size mặc định
+
         window.addToCart(
           product.id,
           product.name,
           product.price,
           product.img,
-          "OS", // <-- Dùng size mặc định (ví dụ: 'OS' hoặc '40')
+          "OS",
           1
         );
         add.classList.add("added");
@@ -421,18 +382,15 @@ const products = productManager.getVisibleProducts();
       return;
     }
 
-    // **XỬ LÝ NÚT QUICK VIEW (XEM CHI TIẾT)**
     const view = e.target.closest(".quick-view");
     if (view) {
-      // Ngăn trình duyệt chuyển hướng ngay lập tức để đóng overlay mượt mà hơn
+
       e.preventDefault();
 
       const detailUrl = view.getAttribute("href");
 
-      // 1. Đóng Overlay
       closeSearchOverlay();
 
-      // 2. Chuyển hướng đến trang chi tiết sản phẩm sau khi đóng overlay hoàn tất (50ms)
       setTimeout(() => {
         if (detailUrl) {
           window.location.href = detailUrl;
@@ -442,10 +400,6 @@ const products = productManager.getVisibleProducts();
       return;
     }
   }
-
-  // =========================================================================
-  // 5. EVENT LISTENERS
-  // =========================================================================
 
   function setupEventListeners() {
     elements.closeBtn.addEventListener("click", closeSearchOverlay);
@@ -465,7 +419,6 @@ const products = productManager.getVisibleProducts();
     elements.applyBtn.addEventListener("click", applyFilters);
     elements.resetBtn.addEventListener("click", resetFilters);
 
-    // Price presets
     elements.presetBtns.forEach((btn) => {
       btn.addEventListener("click", function () {
         elements.minPriceInput.value = this.dataset.min;
@@ -475,12 +428,8 @@ const products = productManager.getVisibleProducts();
     });
   }
 
-  // =========================================================================
-  // 6. GẮNG SỰ KIỆN CHO ICON SEARCH TRÊN HEADER
-  // =========================================================================
-
   function initSearchIcon() {
-    // Tìm icon search trong header
+
     const searchLink = document.querySelector('.nav-icons a[href*="search"]');
 
     if (searchLink) {
@@ -491,19 +440,13 @@ const products = productManager.getVisibleProducts();
     }
   }
 
-  // =========================================================================
-  // 7. AUTO INIT
-  // =========================================================================
-
-  // Đảm bảo chạy sau khi DOM đã load
   document.addEventListener("DOMContentLoaded", () => {
     injectOverlay();
     initSearchIcon();
-    // Sau khi inject, ẩn panel nâng cao mặc định
+
     if (elements.advancedPanel) elements.advancedPanel.style.display = "none";
   });
 
-  // Export hàm public (có thể dùng trong các file khác để mở overlay)
   window.openSearchOverlay = openSearchOverlay;
   window.closeSearchOverlay = closeSearchOverlay;
 })();
