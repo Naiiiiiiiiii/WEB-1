@@ -365,21 +365,21 @@ function setupMobileNavToggle() {
     // Toggle menu on button click
     mobileNavToggle.addEventListener('click', (e) => {
         e.stopPropagation();
-        adminNav.classList.toggle('active');
+        adminNav.classList.toggle('open');
         
         // Update ARIA attribute
-        const isExpanded = adminNav.classList.contains('active');
+        const isExpanded = adminNav.classList.contains('open');
         mobileNavToggle.setAttribute('aria-expanded', isExpanded);
     });
 
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
-        if (adminNav.classList.contains('active')) {
+        if (adminNav.classList.contains('open')) {
             const isClickInsideNav = adminNav.contains(e.target);
             const isClickOnToggle = mobileNavToggle.contains(e.target);
             
             if (!isClickInsideNav && !isClickOnToggle) {
-                adminNav.classList.remove('active');
+                adminNav.classList.remove('open');
                 mobileNavToggle.setAttribute('aria-expanded', 'false');
             }
         }
@@ -387,8 +387,8 @@ function setupMobileNavToggle() {
 
     // Close menu on Escape key
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && adminNav.classList.contains('active')) {
-            adminNav.classList.remove('active');
+        if (e.key === 'Escape' && adminNav.classList.contains('open')) {
+            adminNav.classList.remove('open');
             mobileNavToggle.setAttribute('aria-expanded', 'false');
         }
     });
@@ -397,7 +397,7 @@ function setupMobileNavToggle() {
     const navLinks = adminNav.querySelectorAll('a');
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
-            adminNav.classList.remove('active');
+            adminNav.classList.remove('open');
             mobileNavToggle.setAttribute('aria-expanded', 'false');
         });
     });
