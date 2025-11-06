@@ -1,17 +1,10 @@
-// File: js/profile-order-history.js - Module hiển thị lịch sử đơn hàng trên trang Hồ sơ
 
-// Lấy các hàm cần thiết từ các module khác (Giả định chúng được gắn vào window)
-const getOrders = window.getOrders; // Từ order-manager.js
-const getCurrentUsername = window.getCurrentUsername; // Từ cart.js hoặc user-manager.js
 
-// Khai báo biến DOM
+const getOrders = window.getOrders;
+const getCurrentUsername = window.getCurrentUsername;
+
 let orderHistoryContainer = null;
 const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-
-// =========================================================================
-// HÀM LỌC VÀ HIỂN THỊ ĐƠN HÀNG
-// =========================================================================
-
 
 function getOrdersForCurrentUser() {
     const username = getCurrentUsername();
@@ -19,23 +12,19 @@ function getOrdersForCurrentUser() {
         return [];
     }
     
-    // Lấy tất cả đơn hàng đã lưu
+
     const allOrders = getOrders(); 
 
-    // Lọc đơn hàng dựa trên thông tin người dùng lưu trong orderDataCache.shippingInfo
     
     
     const userOrders = allOrders.filter(order => {
         return true; 
     });
 
-    // Sắp xếp đơn hàng mới nhất lên đầu
     userOrders.sort((a, b) => new Date(b.id.replace('ORD-', '') * 1) - new Date(a.id.replace('ORD-', '') * 1));
     
     return userOrders;
 }
-
-
 
 function createOrderItemsHtml(items) {
     return items.map(item => `
@@ -50,9 +39,6 @@ function createOrderItemsHtml(items) {
     `).join('');
 }
 
-/**
- * Tạo HTML cho một thẻ đơn hàng
- */
 function createOrderCardHtml(order) {
     const totalItems = order.items.reduce((sum, item) => sum + (parseInt(item.quantity) || 0), 0);
     const orderItemsHtml = createOrderItemsHtml(order.items);
@@ -91,9 +77,6 @@ function createOrderCardHtml(order) {
     `;
 }
 
-/**
- * Hiển thị toàn bộ lịch sử đơn hàng của người dùng hiện tại
- */
 export function renderOrderHistory() {
     if (!orderHistoryContainer) {
         orderHistoryContainer = document.getElementById('order-history-container');
@@ -114,19 +97,14 @@ export function renderOrderHistory() {
     const orderHtml = userOrders.map(createOrderCardHtml).join('');
     orderHistoryContainer.innerHTML = orderHtml;
     
-    // Gắn sự kiện cho các nút "Xem Chi Tiết"
+
     attachToggleEventListeners();
 }
 window.renderOrderHistory = renderOrderHistory;
 
-
-// =========================================================================
-// GẮN SỰ KIỆN VÀ KHỞI TẠO
-// =========================================================================
-
 function attachToggleEventListeners() {
     document.querySelectorAll('.toggle-items-btn').forEach(button => {
-        // Loại bỏ sự kiện cũ nếu có để tránh trùng lặp khi render lại
+
         button.removeEventListener('click', handleToggleDetails); 
         button.addEventListener('click', handleToggleDetails);
     });
@@ -147,10 +125,7 @@ function handleToggleDetails(e) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Chỉ render khi người dùng đang ở trang Hồ sơ hoặc khi được gọi từ logic Profile.
-    // DÒNG NÀY CÓ THỂ CẦN ĐƯỢC CHUYỂN VÀO LOGIC QUẢN LÝ PROFILE CỦA BẠN.
-    // Ví dụ: Khi người dùng click vào tab "Lịch sử mua hàng".
-    // Tạm thời gọi để hiển thị nếu container tồn tại
+
     if (document.getElementById('order-history-container')) {
         renderOrderHistory();
     }

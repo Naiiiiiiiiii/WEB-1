@@ -1,9 +1,5 @@
-/* ===================================================================
-   FILE: inventory.css - Style cho module Quản lý Tồn kho
-   Chứa: Style cho Báo cáo Tồn kho, Phiếu nhập và Modal Lịch sử giao dịch.
-   =================================================================== */
 
-/* Low Stock Warning (Đã chuyển từ admin.css cũ) */
+
 .table-warning {
   background-color: #fff3cd !important;
 }
@@ -18,7 +14,6 @@
   font-weight: 500;
 }
 
-/* Button View Movements */
 .btn-view-movements {
   background: #667eea;
   color: white;
@@ -28,7 +23,6 @@
   background: #5a6de5;
 }
 
-/* Filter Form in Modal (Đã chuyển từ admin.css cũ) */
 .filter-form {
   display: flex;
   gap: 15px;
@@ -55,7 +49,6 @@
   color: #34495e;
 }
 
-/* Summary Container (Đã chuyển từ admin.css cũ) */
 .summary-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -128,7 +121,6 @@
   color: #3498db;
 }
 
-/* Responsive Overrides cho Inventory */
 @media (max-width: 768px) {
   .filter-form {
     flex-direction: column;
@@ -141,9 +133,6 @@
   }
 }
 
-/* ===================================================================
-   INVENTORY TABLE - BẢNG QUẢN LÝ TỒN KHO
-   =================================================================== */
 #inventoryTable {
   width: 100%;
   border-collapse: collapse;
@@ -178,7 +167,6 @@
   background: #fff8f8;
 }
 
-/* ----- Căn chỉnh từng cột ----- */
 #inventoryTable th:nth-child(1),
 #inventoryTable td:nth-child(1) {
   width: 7%;
@@ -226,7 +214,6 @@
   width: 7%;
 }
 
-/* ----- Trạng thái tồn kho ----- */
 .stock-status-low {
   color: #e74c3c;
   font-weight: 700;
@@ -237,7 +224,6 @@
   font-weight: 600;
 }
 
-/* ----- Badge trạng thái ----- */
 .status-badge {
   display: inline-flex;
   justify-content: center;
@@ -261,7 +247,6 @@
   color: #666;
 }
 
-/* ----- Nút hành động ----- */
 .action-buttons {
   display: flex;
   justify-content: center;
@@ -306,20 +291,19 @@
   transform: translateY(-2px);
 }
 
-/* ----- Hiệu ứng cập nhật ----- */
 #inventoryTable tr.updated td {
   background-color: #e8fce8 !important;
   transition: background-color 1.2s ease;
 }
-/* --- PATCH: Inventory - bảng cuộn ngang, không bóp cột --- */
+
 @media (max-width: 768px) {
-  /* Cho phép bảng rộng hơn container để cuộn ngang */
+  
   #inventoryTable {
     min-width: 100%;
     width: max-content;
   }
 
-  /* Dễ đọc: 1 dòng + ellipsis (thay vì word-break gây khó đọc) */
+  
   #inventoryTable th,
   #inventoryTable td {
     white-space: nowrap;
@@ -328,7 +312,7 @@
     max-width: 320px;
   }
 
-  /* Cột hành động (thường là cuối) cho phép xuống dòng và nút xếp dọc */
+  
   #inventoryTable td:last-child {
     white-space: normal;
   }

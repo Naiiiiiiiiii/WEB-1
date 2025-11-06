@@ -1,13 +1,9 @@
-// File: js/order-manager.js
+
 
 const ORDER_STORAGE_KEY = "orders";
 
-// Import productManager instance để xử lý tồn kho
 import { productManager } from "./ProductManager.js";
 
-/**
- * Lấy danh sách tất cả đơn hàng đã lưu.
- */
 export function getOrders() {
   try {
     const ordersString = localStorage.getItem(ORDER_STORAGE_KEY);
@@ -18,17 +14,12 @@ export function getOrders() {
   }
 }
 
-//  Lấy đơn hàng đã lọc cho trang Admin
-/**
- * Lấy danh sách đơn hàng đã lọc (cho Admin).
- */
 export function getFilteredOrders(filters = {}) {
   let orders = getOrders();
   const { status, startDate, endDate } = filters;
 
-  // 1. Lọc theo trạng thái
   if (status && status !== "all") {
-    // Xử lý các trạng thái đồng nghĩa
+
     if (status === "new") {
       orders = orders.filter(
         (o) =>
@@ -46,13 +37,12 @@ export function getFilteredOrders(filters = {}) {
         (o) => o.status.toLowerCase().trim() === "đã giao"
       );
     }
-    // Bạn có thể mở rộng thêm các case khác nếu cần
+
   }
 
-  // 2. Lọc theo ngày bắt đầu
   if (startDate) {
     try {
-      const start = new Date(startDate).setHours(0, 0, 0, 0); // Bắt đầu ngày
+      const start = new Date(startDate).setHours(0, 0, 0, 0);
       orders = orders.filter((o) => {
         const orderDate = new Date(o.date).setHours(0, 0, 0, 0);
         return orderDate >= start;
@@ -62,10 +52,9 @@ export function getFilteredOrders(filters = {}) {
     }
   }
 
-  // 3. Lọc theo ngày kết thúc
   if (endDate) {
     try {
-      const end = new Date(endDate).setHours(23, 59, 59, 999); // Kết thúc ngày
+      const end = new Date(endDate).setHours(23, 59, 59, 999);
       orders = orders.filter((o) => {
         const orderDate = new Date(o.date);
         return orderDate <= end;
@@ -75,7 +64,6 @@ export function getFilteredOrders(filters = {}) {
     }
   }
 
-  // 4. Sắp xếp mới nhất lên đầu
   orders.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
@@ -83,18 +71,13 @@ export function getFilteredOrders(filters = {}) {
   return orders;
 }
 
-/**
- * Lấy lịch sử đơn hàng của một người dùng cụ thể, sắp xếp theo ngày mới nhất.
- */
 export function getUserOrders(userId) {
   if (!userId) return [];
 
   const allOrders = getOrders();
 
-  // 1. Lọc theo userId
   const userOrders = allOrders.filter((order) => order.userId === userId);
 
-  // 2. Sắp xếp
   userOrders.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
@@ -102,11 +85,8 @@ export function getUserOrders(userId) {
   return userOrders;
 }
 
-/**
- * Lưu đơn hàng mới vào localStorage.
- */
 export function placeOrder(orderData) {
-  // Kiểm tra dữ liệu đầu vào
+
   if (
     !orderData ||
     !Array.isArray(orderData.items) ||
@@ -117,7 +97,6 @@ export function placeOrder(orderData) {
     return false;
   }
 
-  // 1) PRE-CHECK: Không được thay đổi kho trong bước này
   const insufficient = [];
   for (const item of orderData.items) {
     const product = productManager.getProductById(item.id);
@@ -170,7 +149,7 @@ export function placeOrder(orderData) {
   }
 
   if (insufficient.length > 0) {
-    // Thông báo ngắn gọn (để UX tốt)
+
     const lines = insufficient
       .slice(0, 3)
       .map((x) => {
@@ -190,7 +169,6 @@ export function placeOrder(orderData) {
     return false;
   }
 
-  // 2) TRỪ KHO (atomic theo client-side): giờ mới trừ kho cho từng item
   for (const item of orderData.items) {
     const isVariant = item.size && item.size !== "N/A";
     const ok = productManager.decreaseStock(
@@ -199,7 +177,7 @@ export function placeOrder(orderData) {
       isVariant ? item.size : null
     );
     if (!ok) {
-      // Trong thực tế cần rollback. Ở client-side đơn giản, ta cảnh báo và dừng.
+
       alert(
         `Có lỗi khi trừ kho: ${item.name}${
           isVariant ? ` (Size ${item.size})` : ""
@@ -209,7 +187,6 @@ export function placeOrder(orderData) {
     }
   }
 
-  // 3) LƯU ĐƠN HÀNG
   const orders = getOrders();
   const orderId = `ORD-${Date.now()}`;
   const newOrder = {
@@ -228,7 +205,6 @@ export function placeOrder(orderData) {
       JSON.stringify(orders.concat(newOrder))
     );
 
-    // Cập nhật giao diện
     if (window.renderInventoryTable) window.renderInventoryTable();
     if (window.updateProductStockUI) window.updateProductStockUI();
     if (window.clearCart) window.clearCart();
@@ -242,21 +218,15 @@ export function placeOrder(orderData) {
   }
 }
 
-// Đảm bảo checkout-ui dùng đúng placeOrder này
 window.placeOrder = placeOrder;
-
-//  Cập nhật trạng thái đơn hàng (cho Admin)
 
 export function updateOrderStatus(orderId, newStatus) {
   if (!orderId || !newStatus) return false;
 
-  // Nếu trạng thái mới là "Hủy", chúng ta gọi hàm cancelOrder
-  // vì nó chứa logic hoàn tồn kho.
   if (newStatus.toLowerCase().trim() === "đã hủy") {
     return cancelOrder(orderId);
   }
 
-  // Đối với các trạng thái khác (Đã xử lý, Đã giao, v.v.)
   const orders = getOrders();
   const orderIndex = orders.findIndex((o) => o.id === orderId);
 
@@ -267,7 +237,6 @@ export function updateOrderStatus(orderId, newStatus) {
 
   const orderToUpdate = orders[orderIndex];
 
-  // Nếu đơn đã bị hủy thì không cho đổi trạng thái khác
   if (orderToUpdate.status.toLowerCase().trim() === "đã hủy") {
     console.warn(
       `Đơn hàng ${orderId} đã bị hủy. Không thể thay đổi trạng thái.`
@@ -275,14 +244,12 @@ export function updateOrderStatus(orderId, newStatus) {
     return false;
   }
 
-  // Cập nhật trạng thái mới
   orderToUpdate.status = newStatus;
 
   try {
     localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orders));
     console.log(`Đơn hàng ${orderId} đã cập nhật trạng thái: ${newStatus}`);
 
-    // Cập nhật lại danh sách đơn hàng của người dùng (nếu đang ở trang order history)
     if (window.renderOrderHistory) {
       window.renderOrderHistory();
     }
@@ -294,9 +261,6 @@ export function updateOrderStatus(orderId, newStatus) {
   }
 }
 
-/**
- * Hủy đơn hàng (Chỉ cho phép nếu trạng thái là 'Đang chờ xử lý').
- */
 export function cancelOrder(orderId) {
   const orders = getOrders();
   const orderIndex = orders.findIndex((o) => o.id === orderId);
@@ -309,10 +273,8 @@ export function cancelOrder(orderId) {
   const orderToCancel = orders[orderIndex];
   const currentStatus = orderToCancel.status.toLowerCase().trim();
 
-  // Chỉ hủy nếu chưa bị hủy
   if (currentStatus !== "đã hủy") {
-    // BƯỚC 1: HOÀN LẠI TỒN KHO
-    // (Chỉ hoàn kho nếu đơn hàng chưa bị hủy trước đó)
+
     orderToCancel.items.forEach((item) => {
       const isIncreased = productManager.increaseStock(
         item.id,
@@ -326,13 +288,11 @@ export function cancelOrder(orderId) {
       }
     });
 
-    // BƯỚC 2: CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG
-    orderToCancel.status = "Đã hủy"; // Cập nhật trạng thái
+    orderToCancel.status = "Đã hủy";
 
     try {
       localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orders));
 
-      // CẬP NHẬT GIAO DIỆN TỒN KHO TỨC THỜI
       if (window.renderInventoryTable) {
         window.renderInventoryTable();
       }
@@ -340,7 +300,6 @@ export function cancelOrder(orderId) {
         window.updateProductStockUI();
       }
 
-      // Cập nhật lại danh sách đơn hàng (nếu đang ở trang order history)
       if (window.renderOrderHistory) {
         window.renderOrderHistory();
       }
@@ -352,11 +311,10 @@ export function cancelOrder(orderId) {
     }
   } else {
     console.log(`Đơn hàng ${orderId} đã ở trạng thái 'Đã hủy'.`);
-    return true; // Vẫn trả về true vì mục tiêu đã đạt được
+    return true;
   }
 }
 
-// EXPORT HÀM RA GLOBAL WINDOW
 window.placeOrder = placeOrder;
 window.getOrders = getOrders;
 window.getUserOrders = getUserOrders;

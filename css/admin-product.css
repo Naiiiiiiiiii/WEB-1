@@ -1,9 +1,5 @@
-/* ===================================================================
-   FILE: admin-product.css - Style cho module Quản lý Sản phẩm
-   Bao gồm: Modal, Table, Notifications, Product Detail
-   =================================================================== */
 
-/* Product Section Header */
+
 .products h2 {
   position: relative;
   padding-bottom: 15px;
@@ -22,9 +18,6 @@
   border-radius: 2px;
 }
 
-/* -------------------------------------------------------------------
-   Add Product Button (Thay thế Form cũ)
-   ------------------------------------------------------------------- */
 .products .section-toolbar {
   margin-bottom: 30px;
 }
@@ -58,9 +51,6 @@
   transform: translateY(0);
 }
 
-/* -------------------------------------------------------------------
-   MODAL - Product Add/Edit
-   ------------------------------------------------------------------- */
 .product-modal {
   display: none;
   position: fixed;
@@ -199,7 +189,6 @@
   font-style: italic;
 }
 
-/* Image Preview trong Modal */
 .image-preview-container {
   margin-top: 10px;
   display: none;
@@ -259,9 +248,6 @@
   background: #d0d0d0;
 }
 
-/* -------------------------------------------------------------------
-   Product Table - Enhanced 
-   ------------------------------------------------------------------- */
 #productTableBody tr {
   transition: all 0.2s ease;
 }
@@ -281,7 +267,6 @@
   opacity: 0.85;
 }
 
-/* Product ID Column */
 .product-id {
   font-weight: 700;
   color: #667eea;
@@ -291,7 +276,6 @@
   border-left: 3px solid #667eea;
 }
 
-/* Product Name với Thumbnail */
 .product-name-wrapper {
   display: flex;
   align-items: center;
@@ -313,14 +297,12 @@
   font-size: 14px;
 }
 
-/* Category Column */
 .category-name {
   color: #546e7a;
   font-size: 13px;
   font-weight: 500;
 }
 
-/* Price Column */
 .price-cell {
   font-weight: 700;
   color: #27ae60;
@@ -329,7 +311,6 @@
   white-space: nowrap;
 }
 
-/* Stock Column */
 .stock-cell {
   font-weight: 700;
   font-size: 16px;
@@ -356,7 +337,6 @@
   }
 }
 
-/* Status Badge */
 .status-badge {
   display: inline-block;
   padding: 6px 14px;
@@ -379,7 +359,6 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Action Buttons */
 .action-buttons {
   display: flex;
   gap: 6px;
@@ -462,9 +441,6 @@
   box-shadow: 0 4px 10px rgba(245, 101, 101, 0.4);
 }
 
-/* -------------------------------------------------------------------
-   Product Detail Modal (Read-only)
-   ------------------------------------------------------------------- */
 .product-detail-overlay {
   position: fixed;
   top: 0;
@@ -600,9 +576,6 @@
   text-align: justify;
 }
 
-/* -------------------------------------------------------------------
-   Notification System (Toast)
-   ------------------------------------------------------------------- */
 .notification-container {
   position: fixed;
   top: 80px;
@@ -660,9 +633,6 @@
   white-space: pre-line;
 }
 
-/* -------------------------------------------------------------------
-   Responsive Overrides
-   ------------------------------------------------------------------- */
 @media (max-width: 768px) {
   .modal-content {
     width: 95%;
@@ -724,21 +694,21 @@
     font-size: 13px;
   }
 }
-/* --- PATCH: Products - bảng cuộn ngang, dễ đọc trên mobile --- */
+
 @media (max-width: 768px) {
-  /* Cho section sản phẩm có thể cuộn ngang khi bảng rộng */
+  
   .products {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Bất kỳ bảng nào trong .products sẽ giữ bề rộng nội dung để tránh bóp cột */
+  
   .products table {
     min-width: 100%;
     width: max-content;
   }
 
-  /* Giữ nội dung 1 dòng + ellipsis để dễ đọc, tránh gãy dòng lộn xộn */
+  
   .products table th,
   .products table td {
     white-space: nowrap;
@@ -747,7 +717,7 @@
     max-width: 340px;
   }
 
-  /* Cột hành động: cho phép xuống dòng và xếp dọc nút */
+  
   .products table td:last-child {
     white-space: normal;
   }

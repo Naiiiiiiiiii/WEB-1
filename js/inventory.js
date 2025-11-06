@@ -1,37 +1,30 @@
-/**
- * js/inventory.js (Tên hàm export giữ nguyên: setupInventoryModule)
- */
+
 export function setupInventoryModule(productManager, categoryManager) {
     
-    // =========================================================
-    // 1. CÁC PHẦN TỬ GIAO DIỆN
-    // =========================================================
+
     const inventoryTableBody = document.getElementById('inventoryTableBody');
     const addImportForm = document.getElementById('addImportForm');
     const productSelect = document.getElementById('importProductSelect');
     const sizeInputGroup = document.getElementById('importSizeInputGroup'); 
     const sizeInput = document.getElementById('importSize'); 
     
-    // PHẦN TỬ DÀNH CHO BÁO CÁO TỒN KHO
+
     const lowStockAlertsContainer = document.querySelector('.section-toolbar'); 
     const stockMovementModal = document.getElementById('stockMovementModal');
     const movementFilterForm = document.getElementById('movementFilterForm');
     const closeMovementModalBtn = document.getElementById('closeMovementModal'); 
     const closeMovementModalFooterBtn = document.getElementById('closeMovementModalFooter'); 
 
-    //  CÁC PHẦN TỬ TÓM TẮT BÁO CÁO 
     const summaryStartStock = document.getElementById('summaryStartStock');
     const summaryTotalIn = document.getElementById('summaryTotalIn');
     const summaryTotalOut = document.getElementById('summaryTotalOut');
     const summaryEndStock = document.getElementById('summaryEndStock');
 
-
     const LOW_STOCK_THRESHOLD = 5;
 
-    // KIỂM TRA TỒN TẠI TẤT CẢ PHẦN TỬ QUAN TRỌNG
     if (!inventoryTableBody || !addImportForm || !productSelect || !sizeInputGroup || !sizeInput || !stockMovementModal || !movementFilterForm || !closeMovementModalBtn || !closeMovementModalFooterBtn || !summaryStartStock || !summaryTotalIn || !summaryTotalOut || !summaryEndStock) {
         console.error("LỖI KHỞI TẠO INVENTORY MODULE: Thiếu một hoặc nhiều phần tử HTML cần thiết. Kiểm tra ID.");
-        // Ghi rõ các ID bị thiếu để dễ debug hơn
+
         if (!summaryStartStock) console.error("Thiếu #summaryStartStock");
         if (!summaryTotalIn) console.error("Thiếu #summaryTotalIn");
         if (!summaryTotalOut) console.error("Thiếu #summaryTotalOut");
@@ -39,14 +32,7 @@ export function setupInventoryModule(productManager, categoryManager) {
         return { initializeInventoryTab: () => {}, hienThiDanhSachTonKho: () => {} };
     }
 
-
-    // =========================================================
-    // 2. HÀM TRA CỨU & BÁO CÁO
-    // =========================================================
-
-    /**
-     Tính toán lịch sử nhập - xuất - tồn của một sản phẩm trong khoảng thời gian.
-     */
+    
     function calculateStockMovement(productId, startDate, endDate) {
         const product = productManager.getProductById(productId);
         if (!product) {
@@ -60,7 +46,7 @@ export function setupInventoryModule(productManager, categoryManager) {
         let totalOut = 0;
         const logEntries = [];
         
-        // 1. Thu thập và tính toán Log Nhập (Imports)
+
         product.imports.forEach(item => {
             const itemDate = new Date(item.date);
             if (itemDate >= start && itemDate <= end) {
@@ -76,7 +62,7 @@ export function setupInventoryModule(productManager, categoryManager) {
             }
         });
         
-        // 2. Thu thập và tính toán Log Xuất (Sales)
+
         product.sales.forEach(item => {
             const itemDate = new Date(item.date);
             if (itemDate >= start && itemDate <= end) {
@@ -85,14 +71,13 @@ export function setupInventoryModule(productManager, categoryManager) {
                 logEntries.push({
                     date: itemDate,
                     type: 'Xuất',
-                    quantity: -qty, // Số âm
+                    quantity: -qty,
                     note: `Xuất bán` + (item.variantSize ? ` (Size: ${item.variantSize})` : ''),
                     costPrice: product.costPrice 
                 });
             }
         });
 
-        // 3. Tính Tồn Cuối Kỳ và Tồn Đầu Kỳ
         const endStock = product.getCurrentStock(); 
         const startStock = endStock - (totalIn - totalOut);
         
@@ -148,9 +133,6 @@ export function setupInventoryModule(productManager, categoryManager) {
         }
     }
 
-
-    // =========================================================
-    // 3. HÀM HIỂN THỊ & LOAD DATA
     
     function loadProductsToSelect() {
         productSelect.innerHTML = '<option value="">-- Chọn Sản phẩm --</option>';
@@ -197,10 +179,6 @@ export function setupInventoryModule(productManager, categoryManager) {
         
         ganSuKienTonKho();
     }
-
-
-    // =========================================================
-    // 4. HÀM XỬ LÝ SỰ KIỆN
 
     function handleProductSelectChange() {
         const productId = productSelect.value;
@@ -272,9 +250,7 @@ export function setupInventoryModule(productManager, categoryManager) {
         document.getElementById('movementLogTableBody').innerHTML = '<tr><td colspan="5" class="center">Vui lòng chọn khoảng thời gian để xem chi tiết.</td></tr>';
     }
 
-    /**
-     Xử lý sự kiện lọc ngày và hiển thị báo cáo Nhập-Xuất-Tồn 
-     */
+    
     function handleMovementFilter(e) {
         if (e) e.preventDefault();
         
@@ -290,7 +266,7 @@ export function setupInventoryModule(productManager, categoryManager) {
 
         const data = calculateStockMovement(productId, startDate, endDate);
         
-        // SỬ DỤNG BIẾN ĐƯỢC KHAI BÁO Ở ĐẦU FILE 
+
         summaryStartStock.textContent = data.startStock;
         summaryTotalIn.textContent = data.totalIn;
         summaryTotalOut.textContent = data.totalOut;
@@ -322,53 +298,48 @@ export function setupInventoryModule(productManager, categoryManager) {
         logTableBody.innerHTML = logHtml;
     }
 
-
     function handleViewMovements(e) {
         const productId = e.currentTarget.getAttribute('data-id');
         showMovementModal(productId);
     }
 
-
     function ganSuKienTonKho() {
-        // Gán sự kiện Form Nhập hàng
+
         addImportForm.removeEventListener('submit', themPhieuNhap); 
         addImportForm.addEventListener('submit', themPhieuNhap);
         
-        // Gán sự kiện Chọn Sản phẩm
+
         productSelect.removeEventListener('change', handleProductSelectChange);
         productSelect.addEventListener('change', handleProductSelectChange);
         
-        // Gán sự kiện nút Lịch sử
+
         const viewMovementBtns = document.querySelectorAll('.btn-view-movements');
         viewMovementBtns.forEach(btn => {
             btn.removeEventListener('click', handleViewMovements);
             btn.addEventListener('click', handleViewMovements);
         });
 
-        // Gán sự kiện Đóng Modal
         closeMovementModalBtn.removeEventListener('click', closeMovementModal);
         closeMovementModalBtn.addEventListener('click', closeMovementModal);
         
         closeMovementModalFooterBtn.removeEventListener('click', closeMovementModal);
         closeMovementModalFooterBtn.addEventListener('click', closeMovementModal);
         
-        // Gán sự kiện Lọc báo cáo
+
         movementFilterForm.removeEventListener('submit', handleMovementFilter);
         movementFilterForm.addEventListener('submit', handleMovementFilter);
         
         handleProductSelectChange();
     }
     
-    // Logic đóng Modal khi click ra ngoài
+
     stockMovementModal.addEventListener('click', (e) => {
         if (e.target === stockMovementModal) {
             closeMovementModal();
         }
     });
     
-    // =========================================================
-    // 5. HÀM KHỞI CHẠY MODULE
-    // =========================================================
+
     
     function initializeInventoryTab() {
         loadProductsToSelect();

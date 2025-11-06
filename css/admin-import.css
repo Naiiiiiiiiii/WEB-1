@@ -1,12 +1,5 @@
-/* ===================================================================
-   FILE: admin-import.css - Style cho module Quản lý Phiếu Nhập
-   Author: ShoeStore Admin
-   Version: 2.0
-   =================================================================== */
 
-/* ===============================
-   IMPORT SLIPS SECTION
-=============================== */
+
 .import-slips {
   animation: fadeIn 0.3s ease-in;
 }
@@ -47,9 +40,6 @@
   color: #3498db;
 }
 
-/* ===============================
-   FORM THÊM PHIẾU NHẬP
-=============================== */
 .import-slips .section-toolbar {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border: 2px solid #dee2e6;
@@ -103,9 +93,6 @@
   transform: translateY(-1px);
 }
 
-/* ===============================
-   BỘ LỌC / FILTER TOOLBAR
-=============================== */
 .filter-toolbar {
   background: #ffffff;
   border: 1px solid #dee2e6;
@@ -128,9 +115,6 @@
   color: #3498db;
 }
 
-/* ===============================
-   BẢNG DANH SÁCH PHIẾU NHẬP
-=============================== */
 .table-responsive {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -187,9 +171,6 @@
   border-bottom: none;
 }
 
-/* ===============================
-   STATUS BADGES (PHIẾU NHẬP)
-=============================== */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -243,9 +224,6 @@
   }
 }
 
-/* ===============================
-   ACTION BUTTONS (TRONG BẢNG)
-=============================== */
 .action-buttons {
   display: flex;
   gap: 8px;
@@ -331,9 +309,6 @@
   box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
 }
 
-/* ===============================
-   MODAL: SỬA PHIẾU NHẬP
-=============================== */
 .import-modal .modal-content {
   border-radius: 16px;
   overflow: hidden;
@@ -369,7 +344,6 @@
   transform: rotate(90deg);
 }
 
-/* Info Box trong Modal */
 .info-box {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border: 2px solid #dee2e6;
@@ -417,7 +391,6 @@
   font-weight: 700;
 }
 
-/* Form trong Modal */
 .import-modal .modal-form .form-group {
   margin-bottom: 20px;
 }
@@ -470,9 +443,6 @@
   gap: 12px;
 }
 
-/* ===============================
-   EMPTY STATE / LOADING
-=============================== */
 .loading-placeholder {
   text-align: center;
   padding: 40px 20px;
@@ -502,9 +472,6 @@
   margin: 10px 0 0 0;
 }
 
-/* ===============================
-   UTILITY CLASSES
-=============================== */
 .mb-3 {
   margin-bottom: 15px;
 }
@@ -539,7 +506,6 @@
   font-weight: bold;
 }
 
-/* Width Classes */
 .w-80 {
   width: 80px;
   min-width: 80px;
@@ -565,11 +531,6 @@
   min-width: 280px;
 }
 
-/* ===============================
-   RESPONSIVE DESIGN
-=============================== */
-
-/* Tablets */
 @media (max-width: 1024px) {
   .import-slips-table {
     font-size: 13px;
@@ -591,7 +552,6 @@
   }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
   .import-slips h2 {
     font-size: 20px;
@@ -628,7 +588,7 @@
   }
 
   .import-slips-table thead th i {
-    display: none; /* Ẩn icon trên mobile để tiết kiệm không gian */
+    display: none; 
   }
 
   .status-badge {
@@ -653,7 +613,6 @@
   }
 }
 
-/* Small Mobile */
 @media (max-width: 480px) {
   .import-slips h2 {
     font-size: 18px;
@@ -675,9 +634,6 @@
   }
 }
 
-/* ===============================
-   ANIMATIONS
-=============================== */
 @keyframes slideInFromRight {
   from {
     opacity: 0;
@@ -697,9 +653,6 @@
   animation-delay: 0.05s;
 }
 
-/* ===============================
-   PRINT STYLES
-=============================== */
 @media print {
   .filter-toolbar,
   .action-buttons,
@@ -721,22 +674,22 @@
     border: 1px solid #000;
   }
 }
-/* --- PATCH: Import Slips - bảng cuộn ngang, hành động xếp dọc --- */
+
 @media (max-width: 768px) {
-  /* Wrapper bảng (nếu có) ưu tiên cuộn ngang mượt */
+  
   .table-responsive,
   .import-slips {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Giữ bề rộng nội dung để không bóp cột */
+  
   .import-slips-table {
     min-width: 100%;
     width: max-content;
   }
 
-  /* 1 dòng + ellipsis cho ô, tránh xuống dòng khó đọc */
+  
   .import-slips-table th,
   .import-slips-table td {
     white-space: nowrap;
@@ -745,7 +698,7 @@
     max-width: 320px;
   }
 
-  /* Cột hành động: cho phép xuống dòng và xếp dọc nút */
+  
   .import-slips-table td:last-child {
     white-space: normal;
   }

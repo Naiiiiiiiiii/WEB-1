@@ -1,12 +1,8 @@
-/**
- * productData.js
- * File lưu trữ DỮ LIỆU THÔ ban đầu của các sản phẩm.
- */
 
 
 const calculateInitialStock = (variants) => {
     if (!variants || variants.length === 0) return 0;
-    // Tính tổng trường 'stock' của tất cả các biến thể
+
     return variants.reduce((total, variant) => total + variant.stock, 0);
 };
 
@@ -87,7 +83,7 @@ export const productDataList = [
     {
         id: 3,
         name: "GIÀY DA CÔNG SỞ (DA THẬT) - GERMANO BELLESI - SẢN XUẤT THỦ CÔNG TẠI ITALY",
-        categoryId: "C002", // ✅ ĐÃ SỬA
+        categoryId: "C002",
         price: 10990000,
         oldPrice: null,
         img: "./img/giaycongsoGERMANO.webp",
@@ -98,7 +94,6 @@ export const productDataList = [
             "Giày da công sở Germano Bellesi được sản xuất thủ công tại Ý, sử dụng da thật cao cấp, mang lại sự sang trọng và đẳng cấp cho phái mạnh.",
         images: ["./img/giaycongsoGERMANO.webp", "./img/giaycongsoGERMANO.webp"],
 
-        // KHÔNG CÓ BIẾN THỂ (Quản lý tồn kho chung)
         variants: [
             { size: 39, stock: 20 },
             { size: 40, stock: 25 },

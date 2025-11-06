@@ -1,9 +1,7 @@
-// File: js/price-admin.js
-// Logic giao diện cho Section Quản lý Giá bán & Lợi nhuận
+
 
 import { productManager, categoryManager } from './admin.js';
 
-// --- DOM Elements ---
 let priceTableBody;
 let priceFilterCategory;
 let priceFilterName;
@@ -11,13 +9,8 @@ let priceFilterApply;
 let priceFilterReset;
 let categorySelectLoaded = false;
 
-// --- Helper Functions ---
 const formatCurrency = (num) => new Intl.NumberFormat('vi-VN').format(num || 0);
 
-/**
- * Tính toán % lợi nhuận thực tế (Margin)
- * Công thức: (Giá Bán - Giá Vốn) / Giá Bán
- */
 function getActualSaleMarginPercent(product) {
     if (!product || product.price <= 0 || product.costPrice <= 0 || product.price < product.costPrice) {
         return 0;
@@ -27,23 +20,17 @@ function getActualSaleMarginPercent(product) {
     return margin;
 }
 
-/**
- * Hiển thị danh sách sản phẩm ra bảng
- */
 export function renderPriceList() {
     if (!priceTableBody) priceTableBody = document.getElementById('priceTableBody');
     if (!priceTableBody) return;
 
-    // Tải danh mục vào bộ lọc nếu chưa tải
     loadCategoryFilter();
 
-    // Lấy giá trị filter
     const categoryName = priceFilterCategory ? priceFilterCategory.value : 'all';
     const searchName = priceFilterName ? priceFilterName.value.toLowerCase().trim() : '';
 
-    const products = productManager.getAllProducts(true); // Lấy cả sản phẩm ẩn
+    const products = productManager.getAllProducts(true);
 
-    // Lọc sản phẩm
     const filteredProducts = products.filter(product => {
         const nameMatch = searchName === '' || product.name.toLowerCase().includes(searchName);
         const categoryMatch = categoryName === 'all' || categoryManager.getCategoryNameById(product.categoryId) === categoryName;
@@ -55,18 +42,17 @@ export function renderPriceList() {
         return;
     }
 
-    priceTableBody.innerHTML = ''; // Xóa nội dung cũ
+    priceTableBody.innerHTML = '';
 
     filteredProducts.forEach(product => {
         const category = categoryManager.getCategoryNameById(product.categoryId);
         
-        // % Lợi nhuận thực tế
+
         const actualMargin = getActualSaleMarginPercent(product);
         let marginClass = 'zero';
         if (actualMargin > 0) marginClass = 'positive';
         else if (actualMargin < 0) marginClass = 'negative';
 
-        // % Lợi nhuận mục tiêu (đã lưu)
         const targetMargin = product.targetProfitMargin || '';
 
         const row = document.createElement('tr');
@@ -110,22 +96,15 @@ export function renderPriceList() {
         priceTableBody.appendChild(row);
     });
 
-    // Gắn sự kiện cho các nút Cập nhật
     attachRowEventListeners();
 }
 
-/**
- * Gắn sự kiện cho các nút "Cập nhật" trong bảng
- */
 function attachRowEventListeners() {
     document.querySelectorAll('.btn-update-price').forEach(button => {
         button.addEventListener('click', handleUpdatePrice);
     });
 }
 
-/**
- * Xử lý khi nhấn nút Cập nhật
- */
 function handleUpdatePrice(event) {
     const button = event.currentTarget;
     const productId = button.dataset.productId;
@@ -141,27 +120,22 @@ function handleUpdatePrice(event) {
         return;
     }
 
-    // Gọi phương thức mới trong ProductManager
     const success = productManager.updateProductPriceByMargin(productId, newMarginPercent);
 
     if (success) {
-        // Cập nhật lại giá trị input để hiển thị % đã lưu
+
         input.value = newMarginPercent;
         alert(`Cập nhật giá bán cho sản phẩm ID ${productId} thành công!`);
-        renderPriceList(); // Tải lại bảng để cập nhật Giá Bán và % Thực tế
+        renderPriceList();
     } else {
         alert(`Có lỗi xảy ra. Vui lòng kiểm tra giá vốn của sản phẩm (phải > 0).`);
     }
 }
 
-
-/**
- * Tải danh sách danh mục vào bộ lọc
- */
 function loadCategoryFilter() {
     if (!priceFilterCategory) return;
     
-    // Chỉ tải 1 lần
+
     if (categorySelectLoaded) return; 
 
     const categories = categoryManager.getAllCategories();
@@ -174,18 +148,14 @@ function loadCategoryFilter() {
     categorySelectLoaded = true;
 }
 
-/**
- * Khởi tạo module Quản lý Giá
- */
 export function initPriceAdmin() {
-    // Cache DOM
+
     priceTableBody = document.getElementById('priceTableBody');
     priceFilterCategory = document.getElementById('priceFilterCategory');
     priceFilterName = document.getElementById('priceFilterName');
     priceFilterApply = document.getElementById('priceFilterApply');
     priceFilterReset = document.getElementById('priceFilterReset');
 
-    // Gắn sự kiện cho bộ lọc
     if (priceFilterApply) {
         priceFilterApply.addEventListener('click', renderPriceList);
     }
@@ -198,6 +168,4 @@ export function initPriceAdmin() {
         });
     }
 
-    // Tải danh mục cho bộ lọc (sẽ chạy khi tab được render lần đầu)
-    // loadCategoryFilter(); // Bỏ ở đây, chuyển vào renderPriceList
 }

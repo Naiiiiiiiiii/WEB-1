@@ -1,6 +1,5 @@
-/* File: css/admin-order.css */
 
-/* Định dạng Bảng Đơn Hàng */
+
 #ordersTable {
   width: 100%;
   border-collapse: collapse;
@@ -35,7 +34,6 @@
   justify-content: flex-start;
 }
 
-/* Định dạng Panel Chi Tiết Đơn Hàng */
 #orderDetailBox {
   background: #fdfdfd;
   border: 1px solid #ccc;
@@ -53,7 +51,6 @@
   color: #0056b3;
 }
 
-/* Grid layout cho chi tiết */
 .order-detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -112,7 +109,6 @@
   color: #d9534f;
 }
 
-/* Phần Cập nhật Trạng thái */
 #orderStatusUpdateForm {
   margin-top: 15px;
   background: #f4f6f8;
@@ -137,7 +133,6 @@
   font-size: 0.95rem;
 }
 
-/* Trạng thái đơn hàng (badges) */
 .status-badge {
   padding: 4px 10px;
   border-radius: 12px;
@@ -150,45 +145,44 @@
 }
 
 .status-new {
-  /* Mới đặt / Đang chờ xử lý */
+  
   background-color: #e6f7ff;
   color: #0056b3;
   border: 1px solid #b3e0ff;
 }
 
 .status-processed {
-  /* Đã xử lý */
+  
   background-color: #fffbe6;
   color: #d46b08;
   border: 1px solid #ffe58f;
 }
 
 .status-delivered {
-  /* Đã giao */
+  
   background-color: #f6ffed;
   color: #389e0d;
   border: 1px solid #b7eb8f;
 }
 
 .status-canceled {
-  /* Đã hủy */
+  
   background-color: #fff1f0;
   color: #d9534f;
   border: 1px solid #ffccc7;
 }
 
-/* Loading/Empty state */
 #ordersTable tbody .empty-row td {
   text-align: center;
   padding: 40px;
   color: #777;
   font-size: 1.1rem;
 }
-/* --- PATCH: tránh đè nút trong cột hành động + thân thiện mobile --- */
+
 #ordersTable .action-buttons {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap; /* tránh tràn, đè */
+  flex-wrap: wrap; 
 }
 
 @media (max-width: 768px) {

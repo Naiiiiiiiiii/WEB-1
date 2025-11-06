@@ -1,8 +1,4 @@
-/**
- * cart.js
- * Quản lý logic giỏ hàng: thêm, xóa, cập nhật số lượng, tính tổng, và xử lý tồn kho.
- * Gồm các hàm: addToCart, removeCartItem, updateCartItemSize, clearCart, placeOrder.
- */
+
 
 import { ProductManager } from "./ProductManager.js";
 const productManager = new ProductManager();
@@ -53,10 +49,6 @@ function saveCart(cart) {
   const cartKey = `cart_${username}`;
   localStorage.setItem(cartKey, JSON.stringify(cart));
 }
-
-// --------------------------------------------------------------------
-// Xử lý biến thể và cập nhật giỏ hàng
-// --------------------------------------------------------------------
 
 function findVariant(productId, size) {
   const product = productManager.getProductById(productId);
@@ -120,10 +112,6 @@ export function updateCartItemSize(oldItemIdentifier, newSize) {
 }
 window.updateCartItemSize = updateCartItemSize;
 
-// --------------------------------------------------------------------
-// Các hàm tính toán và cập nhật cơ bản
-// --------------------------------------------------------------------
-
 export function calculateCartTotal() {
   const cart = getCart();
   return cart.reduce(
@@ -158,15 +146,13 @@ export function updateCartCount() {
 }
 window.updateCartCount = updateCartCount;
 
-// Helper: Lấy tồn hiện tại có thể mua (KHÔNG trừ kho, chỉ đọc)
 function getAvailableStockForItem(cartItem) {
   const product = productManager.getProductById(cartItem.id);
   if (!product) return 0;
 
-  // Sản phẩm có biến thể
   if (product.variants && product.variants.length > 0) {
     if (!cartItem.size || cartItem.size === "Chưa chọn") {
-      // Chưa chọn size => chưa biết tồn cụ thể, không kẹp số lượng ở đây
+
       return Infinity;
     }
     const variant = product.variants.find(
@@ -175,13 +161,9 @@ function getAvailableStockForItem(cartItem) {
     return variant ? parseInt(variant.stock) || 0 : 0;
   }
 
-  // Sản phẩm không có biến thể
   return parseInt(product.initialStock) || 0;
 }
 
-// ... các phần import/tiện ích có sẵn
-
-// Trợ giúp: lấy tổng số lượng hiện có trong giỏ cho một sản phẩm/size
 function getCurrentCartQty(productId, sizeString) {
   const cart = getCart();
   const identifier = `${productId}-${sizeString}`;
@@ -189,7 +171,6 @@ function getCurrentCartQty(productId, sizeString) {
   return item ? parseInt(item.quantity) || 0 : 0;
 }
 
-// THÊM MỚI/THAY THẾ: addToCart chỉ kẹp theo tồn kho, KHÔNG trừ kho
 export function addToCart(
   productId,
   name,
@@ -205,7 +186,6 @@ export function addToCart(
     return false;
   }
 
-  // Làm sạch giá
   let priceString = String(price).replace(/[^\d]/g, "");
   const safePrice = parseInt(priceString) || 0;
   if (safePrice > 10000000000) {
@@ -221,7 +201,7 @@ export function addToCart(
   const hasVariants = product.variants && product.variants.length > 0;
   let safeSize = "N/A";
   if (hasVariants) {
-    // Normalize size: nếu không hợp lệ hoặc không khớp variant => coi như "Chưa chọn"
+
     const incomingSize =
       size === null || size === undefined ? "Chưa chọn" : String(size);
     const variantExists = product.variants.some(
@@ -239,14 +219,12 @@ export function addToCart(
 
   let cart = getCart();
 
-  // 1) Sản phẩm có biến thể và ĐÃ chọn size: kẹp theo tồn kho thực tế
   if (hasVariants && safeSize !== "Chưa chọn") {
     const variant = product.variants.find(
       (v) => v.size?.toString() === safeSize
     );
     const stock = variant ? parseInt(variant.stock) || 0 : 0;
 
-    // Số lượng hiện có trong giỏ cho đúng product-size
     const currentInCart = getCurrentCartQty(productId, safeSize);
     const remaining = Math.max(0, stock - currentInCart);
 
@@ -285,14 +263,12 @@ export function addToCart(
     return true;
   }
 
-  // 2) Sản phẩm có biến thể nhưng CHƯA chọn size:
-  // - Chỉ cho phép 1 dòng "Chưa chọn" (qty luôn = 1). Muốn tăng số lượng => buộc chọn size.
   if (hasVariants && safeSize === "Chưa chọn") {
     const itemIdentifier = `${productId}-Chưa chọn`;
     const idx = cart.findIndex((i) => i.itemIdentifier === itemIdentifier);
 
     if (idx > -1) {
-      // Đã có một dòng "Chưa chọn" -> không tăng thêm
+
       alert("Vui lòng chọn Size trước khi thêm số lượng.");
       return false;
     } else {
@@ -303,7 +279,7 @@ export function addToCart(
         img,
         size: "Chưa chọn",
         color: safeColor,
-        quantity: 1, // luôn 1 cho dòng 'Chưa chọn'
+        quantity: 1,
         itemIdentifier,
       });
       saveCart(cart);
@@ -312,7 +288,6 @@ export function addToCart(
     }
   }
 
-  // 3) Sản phẩm KHÔNG có biến thể: kẹp theo initialStock
   const initialStock = parseInt(product.initialStock) || 0;
   const currentInCart = getCurrentCartQty(productId, "N/A");
   const remaining = Math.max(0, initialStock - currentInCart);
@@ -351,8 +326,6 @@ export function addToCart(
 }
 window.addToCart = addToCart;
 
-// ... giữ nguyên các hàm khác (updateCartItemQuantity đã kẹp theo tồn; placeOrder dùng bản trong order-manager.js)
-// Kẹp số lượng theo tồn hiện tại (KHÔNG trừ kho)
 export function updateCartItemQuantity(itemIdentifier, newQuantity) {
   const toInt = (v) => {
     const n = parseInt(v);
@@ -366,7 +339,6 @@ export function updateCartItemQuantity(itemIdentifier, newQuantity) {
   const requestedQty = toInt(newQuantity);
   const currentQty = parseInt(item.quantity) || 1;
 
-  // Nếu sản phẩm có biến thể nhưng chưa chọn size, cho phép chỉnh số lượng (sẽ kiểm tra ở checkout)
   const available = getAvailableStockForItem(item);
 
   if (available !== Infinity && requestedQty > available) {
@@ -392,8 +364,6 @@ export function updateCartItemQuantity(itemIdentifier, newQuantity) {
 }
 window.updateCartItemQuantity = updateCartItemQuantity;
 
-// (Giữ hàm checkCartBeforeCheckout nếu đã có. Có thể bổ sung kiểm tra vượt tồn ở đây nếu muốn UX tốt hơn,
-// nhưng phần quyết định cuối cùng sẽ do order-manager.placeOrder xử lý.)
 export function removeCartItem(itemIdentifier) {
   let cart = getCart();
   const initialLength = cart.length;
@@ -417,10 +387,6 @@ export function clearCart() {
   if (window.renderCartTable) window.renderCartTable();
 }
 window.clearCart = clearCart;
-
-// --------------------------------------------------------------------
-// Hiển thị chọn kích cỡ trong giỏ hàng
-// --------------------------------------------------------------------
 
 export function renderSizeSelector(cartItem) {
   const product = productManager.getProductById(cartItem.id);
@@ -477,7 +443,6 @@ window.handleCartTableEvents = handleCartTableEvents;
 export function checkCartBeforeCheckout() {
   const cart = getCart();
 
-  // Check for missing size
   const missingSizeItem = cart.find((item) => item.size === "Chưa chọn");
   if (missingSizeItem) {
     alert(
@@ -486,10 +451,9 @@ export function checkCartBeforeCheckout() {
     return false;
   }
 
-  // Check for missing color (if product has colors)
   const missingColorItem = cart.find((item) => {
     const product = productManager.getProductById(item.id);
-    // If product has colors defined and item color is not selected, block checkout
+
     return (
       product &&
       product.colors &&
@@ -508,10 +472,6 @@ export function checkCartBeforeCheckout() {
   return true;
 }
 window.checkCartBeforeCheckout = checkCartBeforeCheckout;
-
-// --------------------------------------------------------------------
-// Xử lý đặt hàng (checkout)
-// --------------------------------------------------------------------
 
 export function placeOrder(orderData) {
   if (!window.checkCartBeforeCheckout()) {

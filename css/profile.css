@@ -1,4 +1,4 @@
-/* Reset & Base */
+
 * {
     margin: 0;
     padding: 0;
@@ -16,7 +16,6 @@ body {
     position: relative;
 }
 
-/* Nút trở về */
 .nut-tro-ve {
     position: absolute;
     top: 30px;
@@ -41,7 +40,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* Khung profile */
 .khung-profile {
     background: white;
     border-radius: 20px;
@@ -63,7 +61,6 @@ body {
     }
 }
 
-/* Tiêu đề profile */
 .tieu-de-profile {
     background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
     color: white;
@@ -114,12 +111,10 @@ body {
     font-size: 0.9rem;
 }
 
-/* Nội dung profile */
 .noi-dung-profile {
     padding: 1.5rem;
 }
 
-/* Avatar section */
 .avatar-section {
     display: flex;
     flex-direction: column;
@@ -149,7 +144,6 @@ body {
     display: none;
 }
 
-/* Thông tin  */
 .thong-tin-section,
 .mat-khau-section {
     margin-bottom: 1.2rem;
@@ -216,7 +210,6 @@ body {
     font-style: italic;
 }
 
-/* Họ tên box với nút sửa  */
 .ho-ten-box {
     display: flex;
     align-items: center;
@@ -242,7 +235,6 @@ body {
     box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
 }
 
-/* Nút sửa  */
 .nut-sua {
     padding: 10px 16px;
     background: linear-gradient(45deg, #ff6b35, #f7931e);
@@ -273,7 +265,6 @@ body {
     background: linear-gradient(45deg, #40c057, #2f9e44);
 }
 
-/* Thông báo lỗi */
 .thong-bao-loi {
     color: #e74c3c;
     font-size: 0.8rem;
@@ -297,7 +288,6 @@ body {
     }
 }
 
-/* Nút đổi mật khẩu  */
 .nut-doi-mat-khau {
     padding: 10px 20px;
     background: linear-gradient(45deg, #495057, #343a40);
@@ -319,7 +309,6 @@ body {
     box-shadow: 0 4px 12px rgba(52, 58, 64, 0.3);
 }
 
-/* Form đổi mật khẩu  */
 .form-doi-mat-khau {
     margin-top: 1rem;
     padding: 1rem;
@@ -441,7 +430,6 @@ body {
     transform: translateY(-1px);
 }
 
-/* Hành động  */
 .hanh-dong {
     display: flex;
     justify-content: center;
@@ -474,7 +462,6 @@ body {
     transform: translateY(0);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .khung-profile {
         margin: 0 10px;
@@ -524,7 +511,6 @@ body {
         flex-direction: column;
     }
 }
-/* --- LỊCH SỬ ĐƠN HÀNG (PROFILE) --- */
 
 .order-history-wrapper {
     max-width: 800px;
@@ -573,7 +559,6 @@ body {
     margin: 5px 0;
 }
 
-/* --- Trạng thái Đơn hàng --- */
 .order-status {
     padding: 5px 10px;
     border-radius: 20px;
@@ -582,13 +567,11 @@ body {
     color: #fff;
 }
 
-.status-pending { background-color: #ffc107; color: #333; } /* Vàng */
-.status-shipping { background-color: #007bff; } /* Xanh dương */
-.status-completed { background-color: #28a745; } /* Xanh lá */
-.status-cancelled { background-color: #dc3545; } /* Đỏ */
+.status-pending { background-color: #ffc107; color: #333; } 
+.status-shipping { background-color: #007bff; } 
+.status-completed { background-color: #28a745; } 
+.status-cancelled { background-color: #dc3545; } 
 
-
-/* --- Chi tiết Sản phẩm (Ẩn/Hiện) --- */
 .order-items-list {
     border-top: 1px solid #eee;
     padding-top: 10px;
@@ -651,9 +634,6 @@ body {
 .hidden {
     display: none !important;
 }
-/* =======================================
- * LỊCH SỬ ĐƠN HÀNG CSS
- * ======================================= */
 
 .lich-su-don-hang-section {
     margin-top: 25px;
@@ -671,17 +651,15 @@ body {
 
 .lich-su-don-hang-section h3 .fas {
     margin-right: 10px;
-    color: #ff5722; /* Màu cam nổi bật */
+    color: #ff5722; 
 }
 
-/* Container cho danh sách đơn hàng */
 .danh-sach-don-hang {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-/* Mỗi đơn hàng */
 .don-hang-item {
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -709,7 +687,6 @@ body {
     color: #777;
 }
 
-/* CSS Trạng thái */
 .don-hang-header .trang-thai {
     padding: 3px 8px;
     border-radius: 4px;
@@ -739,7 +716,6 @@ body {
     opacity: 0.7;
 }
 
-/* Nội dung chi tiết đơn hàng */
 .don-hang-body .san-pham {
     margin: 5px 0;
     padding-left: 10px;
@@ -759,7 +735,6 @@ body {
     border-top: 1px solid #eee;
 }
 
-/* Footer (Nút hủy) */
 .don-hang-footer {
     text-align: right;
     margin-top: 10px;

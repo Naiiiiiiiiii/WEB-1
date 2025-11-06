@@ -1,28 +1,21 @@
-/**
- * product-detail.js - Logic hiển thị chi tiết sản phẩm trên trang product-detail.html
- */
+
 
 import { ProductManager } from './ProductManager.js'; 
-// Import hàm khởi tạo mới
+
 import { initializeProductDetailPage } from './product-detail-logic.js'; 
 
 const productManager = new ProductManager();
 
-// Helper function để ngăn chặn XSS
 function escapeHtml(str = '') {
     return String(str).replace(/[&<>"']/g, (m) => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
     })[m]);
 }
 
-// ===============================================
-// HÀM RENDER HTML 
-// ===============================================
 function renderProductDetail(product) {
     const detailContainer = document.getElementById('product-detail');
     if (!detailContainer) return;
 
-    // Chuẩn bị danh sách Size và Màu duy nhất cho nút bấm
     const variants = product.variants || [];
     const uniqueSizes = [...new Set(variants.map(v => v.size))].filter(s => s);
     const uniqueColors = [...new Set(variants.map(v => v.color))].filter(c => c);
@@ -31,12 +24,10 @@ function renderProductDetail(product) {
     const hasColors = uniqueColors.length > 0;
     const hasAnyVariant = hasSizes || hasColors; 
 
-    // Tạo HTML cho nút Size
     const sizeOptionsHtml = uniqueSizes.map(size => 
         `<button type="button" class="size-option" data-size="${escapeHtml(size)}">${escapeHtml(size)}</button>`
     ).join('');
 
-    // Tạo HTML cho nút Color
     const colorOptionsHtml = uniqueColors.map(color => {
         let displayColor = color;
         if (color.includes('/')) {
@@ -49,11 +40,10 @@ function renderProductDetail(product) {
                            </button>`;
     }).join('');
     
-    // HTML giá cũ (nếu có)
+
     const oldPriceHtml = product.oldPrice && product.isOnSale() ? 
         `<span id="product-old-price" class="old-price">${product.getFormattedOldPrice()}</span>` : '';
 
-    // RENDER TOÀN BỘ CẤU TRÚC SẢN PHẨM VÀO #product-detail
     detailContainer.innerHTML = `
         <div class="product-detail-content">
             <div class="product-gallery">
@@ -87,7 +77,6 @@ function renderProductDetail(product) {
                     </div>
                 ` : '<div class="variant-selection"><p>Sản phẩm này không có biến thể size/màu.</p></div>'}
 
-
                 <p id="product-stock-status" class="status-warning">${hasSizes ? 'Vui lòng chọn Kích cỡ' : 'Đang kiểm tra tồn kho...'}</p> 
                 
                 <div class="quantity-control">
@@ -108,11 +97,8 @@ function renderProductDetail(product) {
     `;
 }
 
-// ===============================================
-// LOGIC KHỞI TẠO (ĐỌC ID TỪ URL)
-// ===============================================
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Lấy tham số ID từ URL
+
     const urlParams = new URLSearchParams(window.location.search);
     const productId = Number(urlParams.get('id')); 
 
@@ -120,25 +106,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!detailContainer) return;
 
     if (productId && !isNaN(productId)) {
-        // 2. Tìm sản phẩm
+
         const product = productManager.getProductById(productId);
 
         if (product) {
-            // 3. Render HTML chi tiết sản phẩm
+
             renderProductDetail(product); 
             
-            // 4. Gắn logic tương tác SAU KHI HTML đã được RENDER
-            // Truyền productId và productManager instance
+
             const detailLogic = initializeProductDetailPage(productId, productManager);
             window.updateProductStockUI = detailLogic.updateStock;
             
         } else {
-            // ID có nhưng không tìm thấy
+
             detailContainer.innerHTML = 
                 '<h2 class="error-msg" style="text-align: center; padding: 50px;">❌ Rất tiếc! Không tìm thấy sản phẩm có ID: ' + productId + '.</h2>';
         }
     } else {
-        // Không có ID hoặc ID không hợp lệ
+
         detailContainer.innerHTML = 
             '<h2 class="error-msg" style="text-align: center; padding: 50px;">Vui lòng truy cập trang chi tiết sản phẩm bằng đường dẫn hợp lệ (ví dụ: product-detail.html?id=1).</h2>';
     }

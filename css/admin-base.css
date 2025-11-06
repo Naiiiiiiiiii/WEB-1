@@ -1,11 +1,5 @@
-/* ===================================================================
-   FILE: admin-base.css - Style nền tảng cho trang Admin
-   Chứa: Reset, Layout, Login, Menu, Header, Buttons, Forms & Tables chung.
-   =================================================================== */
 
-/* ===============================
-   RESET & BASE (Đã sửa lỗi khoảng trắng)
-=============================== */
+
 * {
   margin: 0;
   padding: 0;
@@ -33,9 +27,6 @@ a {
   color: inherit;
 }
 
-/* ===============================
-   LOGIN FORM
-=============================== */
 #loginPage {
   display: flex;
   justify-content: center;
@@ -102,9 +93,6 @@ a {
   background: #5a6de5;
 }
 
-/* ===============================
-   ADMIN PANEL LAYOUT - ✅ FIXED: NO GAPS
-=============================== */
 #adminPanel {
   display: flex;
   margin: 0;
@@ -114,7 +102,6 @@ a {
   position: relative;
 }
 
-/* MENU BAR - ✅ FIXED: Dính sát trái và trên */
 .menu {
   width: 250px;
   background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
@@ -133,14 +120,12 @@ a {
   overflow-y: auto;
 }
 
-/* Nav Container - ✅ Loại bỏ padding không cần thiết */
 .nav-container {
   width: 100%;
   margin: 0;
   padding: 0;
 }
 
-/* Logo - ✅ Giữ padding nhưng không tạo gap */
 .logo {
   padding: 20px;
   font-size: 22px;
@@ -156,7 +141,6 @@ a {
   color: #1abc9c;
 }
 
-/* Nav Menu */
 .nav-menu {
   margin: 0;
   padding: 0;
@@ -200,7 +184,6 @@ a {
   font-size: 16px;
 }
 
-/* MAIN CONTENT - ✅ FIXED: Chiếm toàn bộ không gian còn lại */
 .main-content {
   flex-grow: 1;
   margin-left: 250px;
@@ -214,7 +197,6 @@ a {
   width: calc(100vw - 250px);
 }
 
-/* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
@@ -248,7 +230,6 @@ a {
   background: #fbe0dd;
 }
 
-/* SECTIONS */
 .main-content section {
   padding: 25px;
   background: white;
@@ -273,9 +254,6 @@ a {
   font-size: 18px;
 }
 
-/* ===============================
-   DASHBOARD INDEX
-=============================== */
 .index-content {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -303,11 +281,6 @@ a {
   text-align: center;
 }
 
-/* ===============================
-   FORM ELEMENTS - UNIFIED
-=============================== */
-
-/* Section Toolbar */
 .section-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -321,7 +294,6 @@ a {
   width: 100%;
 }
 
-/* Actions Form */
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -334,7 +306,6 @@ a {
   border: 1px solid #e8e8e8;
 }
 
-/* Form Grid Layouts - ✅ FIXED: Responsive & No Overflow */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -356,7 +327,6 @@ a {
   color: #2c3e50;
 }
 
-/* ✅ Responsive Breakpoints cho Form Grid */
 @media (max-width: 900px) {
   .form-grid-3 {
     grid-template-columns: repeat(2, 1fr);
@@ -370,7 +340,6 @@ a {
   }
 }
 
-/* Fields */
 .field {
   display: flex;
   flex-direction: column;
@@ -389,7 +358,6 @@ a {
   grid-column: 1 / -1;
 }
 
-/* Input Elements - UNIFIED HEIGHT */
 input[type="text"],
 input[type="number"],
 input[type="url"],
@@ -423,7 +391,6 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-/* Buttons - UNIFIED */
 .btn {
   padding: 8px 16px;
   border: none;
@@ -493,7 +460,6 @@ textarea:focus {
   grid-column: 1 / -1;
 }
 
-/* Action Buttons in Table */
 .btn-reset,
 .btn-lock,
 .btn-unlock,
@@ -549,9 +515,6 @@ textarea:focus {
   background: #38a169;
 }
 
-/* ===============================
-   TABLES - UNIFIED
-=============================== */
 .userTable,
 #ordersTable,
 #inventoryTable {
@@ -596,7 +559,6 @@ textarea:focus {
   vertical-align: middle;
 }
 
-/* Table Column Widths */
 .w-80 {
   width: 80px;
   min-width: 80px;
@@ -623,7 +585,6 @@ textarea:focus {
   text-align: center;
 }
 
-/* Table Action Column */
 .userTable td:last-child,
 #ordersTable td:last-child,
 #inventoryTable td:last-child {
@@ -635,7 +596,6 @@ textarea:focus {
   border-bottom: none;
 }
 
-/* Status Badges */
 .status-active,
 .status-locked,
 .badge {
@@ -663,7 +623,6 @@ textarea:focus {
   border: 1px solid #f5c6cb;
 }
 
-/* Low Stock Warning */
 .table-warning {
   background-color: #fff3cd !important;
 }
@@ -678,9 +637,6 @@ textarea:focus {
   font-weight: 500;
 }
 
-/* ===============================
-   MODAL
-=============================== */
 .modal {
   position: fixed;
   z-index: 2000;
@@ -762,7 +718,6 @@ textarea:focus {
   color: #333;
 }
 
-/* Filter Form in Modal */
 .filter-form {
   display: flex;
   gap: 15px;
@@ -789,7 +744,6 @@ textarea:focus {
   color: #34495e;
 }
 
-/* Summary Container */
 .summary-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -862,9 +816,6 @@ textarea:focus {
   color: #3498db;
 }
 
-/* ===============================
-   UTILITIES
-=============================== */
 .mt-40 {
   margin-top: 40px;
 }
@@ -894,7 +845,6 @@ textarea:focus {
   font-size: 12px;
 }
 
-/* Alert */
 .alert {
   padding: 15px 20px;
   border-radius: 8px;
@@ -908,7 +858,6 @@ textarea:focus {
   color: #856404;
 }
 
-/* Panel */
 .panel {
   border: 1px solid #dee2e6;
   padding: 20px;
@@ -924,7 +873,6 @@ textarea:focus {
   align-items: center;
 }
 
-/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -933,11 +881,6 @@ textarea:focus {
   flex-wrap: wrap;
 }
 
-/* ===============================
-   RESPONSIVE DESIGN (CHUNG)
-=============================== */
-
-/* Tablets */
 @media (max-width: 1024px) {
   .menu {
     width: 200px;
@@ -954,7 +897,6 @@ textarea:focus {
   }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
   #adminPanel {
     flex-direction: column;
@@ -1040,7 +982,7 @@ textarea:focus {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  /* Table Responsive */
+  
   .userTable,
   #ordersTable,
   #inventoryTable {
@@ -1082,7 +1024,6 @@ textarea:focus {
   }
 }
 
-/* Small Mobile */
 @media (max-width: 480px) {
   .main-content h2 {
     font-size: 20px;
@@ -1114,9 +1055,6 @@ textarea:focus {
   }
 }
 
-/* ===============================
-   PRINT STYLES
-=============================== */
 @media print {
   .menu,
   .header .logout,
@@ -1137,31 +1075,29 @@ textarea:focus {
     page-break-inside: avoid;
   }
 }
-/* --- PATCH: Bảng cuộn ngang + giữ 1 dòng cho nội dung, trừ cột nút --- */
 
-/* Hỗ trợ wrap nút hành động trên mọi kích thước để tránh đè */
 .action-buttons {
   flex-wrap: wrap;
   gap: 8px;
 }
 
 @media (max-width: 768px) {
-  /* 1) Cho section chứa bảng cuộn ngang khi bảng rộng hơn màn hình */
+  
   .main-content section {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* 2) Để bảng có thể rộng hơn container (khi có nhiều cột), container sẽ cuộn ngang */
+  
   .userTable,
   #ordersTable,
   #inventoryTable,
   .price-table {
     min-width: 100%;
-    width: max-content; /* giữ bố cục bảng, không bóp cột gây xuống dòng khó đọc */
+    width: max-content; 
   }
 
-  /* 3) Mặc định: giữ nội dung mỗi ô 1 dòng để dễ đọc, không bị gãy dòng lộn xộn */
+  
   .userTable th,
   .userTable td,
   #ordersTable th,
@@ -1171,14 +1107,13 @@ textarea:focus {
   .price-table th,
   .price-table td {
     white-space: nowrap;
-    /* Nếu có chuỗi rất dài, cho phép bể ra scroll ngang thay vì tràn vỡ layout */
+    
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 340px; /* giảm “siêu dài” trên mobile, vẫn nhìn rõ và scroll được */
+    max-width: 340px; 
   }
 
-  /* 4) Riêng cột hành động (thường là cột cuối): cho phép xuống dòng,
-        đồng thời xếp dọc các nút để không đè nhau */
+  
   .userTable td:last-child,
   #ordersTable td:last-child,
   #inventoryTable td:last-child,
@@ -1200,7 +1135,7 @@ textarea:focus {
     width: 100%;
   }
 
-  /* 5) Bảo toàn ý nghĩa .nowrap cho các cột cần giữ 1 dòng (ID, giá, ngày...) */
+  
   .nowrap {
     white-space: nowrap !important;
     text-overflow: ellipsis;
@@ -1208,7 +1143,6 @@ textarea:focus {
   }
 }
 
-/* Optional utility: chủ động gán vào span trong ô để cắt bớt và hiện dấu ... */
 .ellipsis {
   display: inline-block;
   max-width: 280px;

@@ -1,8 +1,5 @@
-/* ========================================
-   MODAL ĐĂNG NHẬP/ĐĂNG KÝ
-   ======================================== */
 
-/* Override modal styles cho login modal */
+
 .login-register-modal-override {
     display: none !important;
     position: fixed;
@@ -20,7 +17,6 @@
     display: flex !important;
 }
 
-/* Nội dung modal */
 .login-modal-content {
     background: #fff;
     width: 90%;
@@ -44,7 +40,6 @@
     }
 }
 
-/* Nút đóng modal */
 .modal-close {
     position: absolute;
     top: 15px;
@@ -70,17 +65,14 @@
     transform: rotate(90deg);
 }
 
-/* Khung đăng nhập */
 .khung-dang-nhap {
     padding: 40px 30px 30px;
 }
 
-/* Nút trở về (ẩn trong modal) */
 .nut-tro-ve {
     display: none;
 }
 
-/* Logo và tiêu đề */
 .tieu-de-form {
     text-align: center;
     margin-bottom: 30px;
@@ -111,7 +103,6 @@
     margin: 0;
 }
 
-/* Tab buttons */
 .cac-tab {
     display: flex;
     gap: 10px;
@@ -145,7 +136,6 @@
     border-color: #ff6b35;
 }
 
-/* Form container */
 .khung-form {
     display: none;
 }
@@ -164,7 +154,6 @@
     }
 }
 
-/* Input groups */
 .nhom-input {
     margin-bottom: 20px;
 }
@@ -198,7 +187,6 @@
     box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
 }
 
-/* Icons */
 .icon-truoc {
     position: absolute;
     left: 12px;
@@ -219,7 +207,6 @@
     color: #ff6b35;
 }
 
-/* Error messages */
 .thong-bao-loi {
     display: none;
     color: #dc3545;
@@ -228,7 +215,6 @@
     padding-left: 5px;
 }
 
-/* Success messages */
 .thong-bao-thanh-cong {
     display: none;
     background: #d4edda;
@@ -241,8 +227,6 @@
     border: 1px solid #c3e6cb;
 }
 
-
-/* Submit button */
 .nut-gui {
     width: 100%;
     padding: 14px;
@@ -272,7 +256,6 @@
     display: inline-block;
 }
 
-/* Loading spinner */
 .loading {
     display: none;
     width: 20px;
@@ -293,7 +276,6 @@
     }
 }
 
-/* Responsive */
 @media (max-width: 480px) {
     .login-modal-content {
         width: 95%;
@@ -319,7 +301,6 @@
     }
 }
 
-/* Smooth scrollbar for modal */
 .login-modal-content::-webkit-scrollbar {
     width: 8px;
 }

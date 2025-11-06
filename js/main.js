@@ -1,23 +1,13 @@
 
-// =========================================================================
-// 0. IMPORTS: PHẢI LUÔN ĐƯỢC ĐẶT Ở ĐẦU FILE MODULE
-// =========================================================================
 
-// Import hàm render lịch sử đơn hàng từ module order-history-ui
 import { renderOrderHistory } from './order-history-ui.js'; 
-// THÊM IMPORT VÀ KHỞI TẠO ProductManager
+
 import { ProductManager } from './ProductManager.js'; 
 const productManager = new ProductManager(); 
 
-
-// =========================================================================
-// 1. BIẾN GLOBAL VÀ HÀM TIỆN ÍCH
-// =========================================================================
-
-// Hàm kiểm tra đăng nhập (được gán global)
 function kiemTraDangNhap(moModal = false) {
     if (window.kiemTraDangNhap_core) { 
-        // Ưu tiên dùng core function nếu được định nghĩa ở user.js
+
         return window.kiemTraDangNhap_core(moModal);
     }
     const USER_KEY = 'nguoiDungHienTai'; 
@@ -27,7 +17,7 @@ function kiemTraDangNhap(moModal = false) {
         try {
             return JSON.parse(nguoiDungHienTai);
         } catch (e) {
-            // Xóa key bị lỗi nếu parse thất bại
+
             localStorage.removeItem(USER_KEY);
             return null;
         }
@@ -50,7 +40,7 @@ function xuLyDangXuat() {
         
         if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
             localStorage.removeItem(USER_KEY);
-            // Sau khi đăng xuất, reset UI header
+
             if (window.capNhatUIHeader) {
                 window.capNhatUIHeader();
             }
@@ -59,7 +49,6 @@ function xuLyDangXuat() {
     }
 }
 
-// HÀM XỬ LÝ LOGIC THÊM VÀO GIỎ HÀNG 
 function handleAddToCartClick(e) { 
     
     const card = this.closest('.product-card') || this.closest('.modal-content');
@@ -69,7 +58,6 @@ function handleAddToCartClick(e) {
         return;
     }
 
-    // Lấy ID sản phẩm 
     const productId = this.dataset.id || card.dataset.id; 
     
     if (!productId) {
@@ -77,7 +65,7 @@ function handleAddToCartClick(e) {
         return;
     }
     
-    // Lấy đối tượng sản phẩm từ ProductManager
+
     const product = productManager.getProductById(productId);
     
     if (!product) {
@@ -85,14 +73,14 @@ function handleAddToCartClick(e) {
         return;
     }
     
-    // Lấy dữ liệu an toàn từ đối tượng product
+
     const name = product.name;
-    const price = product.price; // SỬ DỤNG GIÁ TRỊ SỐ NGUYÊN GỐC 
+    const price = product.price;
     const img = product.img || 'default.jpg';
     
-    // Thiết lập size mặc định là 'Chưa chọn' để người dùng có thể cập nhật trong giỏ hàng
+
     const size = 'Chưa chọn'; 
-    const color = null; // Mặc định là null/N/A
+    const color = null;
     const quantity = 1;
     
     if (window.addToCart) {
@@ -100,7 +88,7 @@ function handleAddToCartClick(e) {
         
         if(success !== false) {
             alert(`🛒 Đã thêm ${name} vào giỏ hàng!`);
-            // Sau khi Quick Add thành công, mở Modal Giỏ hàng
+
             if (window.openCartModal) {
                 window.openCartModal();
             }
@@ -110,17 +98,12 @@ function handleAddToCartClick(e) {
     }
 }
 
-// =========================================================================
-// 2. KHỞI TẠO SỰ KIỆN GIỎ HÀNG VÀ NAV (DÙNG EVENT DELEGATION)
-// =========================================================================
-
 function khoiTaoSuKienGioHang() {
     
-    // 1. Gắn sự kiện cho các nút "Thêm vào giỏ" trên trang chủ (Event Delegation)
-    // LẮNG NGHE CLICK TRÊN TOÀN BỘ BODY (chỉ gắn 1 lần)
+
     document.body.addEventListener('click', function(e) {
         
-        // Kiểm tra xem phần tử được click có phải là nút .add-to-cart không
+
         const nutThemVaoGio = e.target.closest('.add-to-cart');
         
         if (nutThemVaoGio) {
@@ -130,12 +113,11 @@ function khoiTaoSuKienGioHang() {
                 return; 
             }
             
-            // Gọi hàm xử lý, gán 'this' là nút được click
+
             handleAddToCartClick.call(nutThemVaoGio, e);
         }
     });
 
-    // 2. Gắn sự kiện cho các icon Giỏ hàng và Wishlist (Giữ nguyên)
     const wishlistLink = document.querySelector('a[href="#wishlist"], a[href="./wishlist.html"]');
     const cartLink = document.querySelector('a[href="#cart"], a[href="./cart.html"]');
     const userProfileLink = document.querySelector('a[href="#profile"], a[href="./profile.html"]'); 
@@ -143,13 +125,13 @@ function khoiTaoSuKienGioHang() {
 
     [wishlistLink, cartLink, userProfileLink].forEach(link => {
         if (link) {
-            // TẠM THỜI GỠ BỎ event listener CŨ để tránh lặp nếu hàm khoiTaoSuKienGioHang bị gọi lặp ở đâu đó
+
             link.removeEventListener('click', kiemTraLinkNav); 
             link.addEventListener('click', kiemTraLinkNav);
         }
     });
     
-    // Hàm xử lý link nav (tách riêng để dùng removeEventListener)
+
     function kiemTraLinkNav(e) {
         if (!window.kiemTraDangNhap(true)) {
             return e.preventDefault();
@@ -161,61 +143,49 @@ function khoiTaoSuKienGioHang() {
         }
     }
     
-    // 3. Gắn sự kiện Đăng xuất
+
     if (logoutBtn) {
-        // Tương tự, gỡ bỏ trước khi gắn để an toàn tuyệt đối
+
         logoutBtn.removeEventListener('click', xuLyDangXuat);
         logoutBtn.addEventListener('click', xuLyDangXuat);
     }
 }
 
-/**
- * Gắn sự kiện cho nút Xem lịch sử đơn hàng
- */
 function khoiTaoSuKienOrderHistory() {
     const viewOrdersLink = document.getElementById('view-orders-link');
     if (viewOrdersLink) {
-        // Tương tự, gỡ bỏ trước khi gắn
+
         viewOrdersLink.removeEventListener('click', handleViewOrdersClick);
         viewOrdersLink.addEventListener('click', handleViewOrdersClick);
     }
     
     function handleViewOrdersClick(e) {
         e.preventDefault();
-        const user = kiemTraDangNhap(true); // Kiểm tra và mở modal đăng nhập nếu cần
+        const user = kiemTraDangNhap(true);
         
         if (user) {
-            renderOrderHistory(); // Gọi hàm đã import
+            renderOrderHistory();
         }
     }
 }
 
-// =========================================================================
-// 3. LOGIC XỬ LÝ MODAL (FIX QUAN TRỌNG CHO VIỆC CẬP NHẬT TỒN KHO)
-// =========================================================================
-
 function khoiTaoModalEvents() {
-    // Thay 'cartModal' bằng ID thực tế của modal giỏ hàng của bạn (thường là cartModal)
+
     const cartModalElement = document.getElementById('cartModal'); 
 
     if (cartModalElement) {
-        // Lắng nghe sự kiện khi Modal GIỎ HÀNG ĐÃ ĐÓNG HOÀN TOÀN (Sự kiện chuẩn của Bootstrap)
+
         cartModalElement.addEventListener('hidden.bs.modal', function () {
             
-            // NẾU ĐANG Ở TRANG CHI TIẾT SẢN PHẨM: GỌI HÀM CẬP NHẬT TỒN KHO
+
             if (window.updateProductStockUI) {
                 console.log("🔥 Đã đóng Modal Giỏ hàng. Cập nhật lại tồn kho trên trang chi tiết.");
-                // Hàm này sẽ tự động lấy dữ liệu mới nhất từ ProductManager
+
                 window.updateProductStockUI();
             }
         });
     }
 }
-
-
-// =========================================================================
-// 4. LOGIC SLIDER (Giữ nguyên)
-// =========================================================================
 
 function khoiTaoSlider() {
     const wrapper = document.querySelector('.slides-wrapper');
@@ -275,13 +245,8 @@ function khoiTaoSlider() {
     startAutoSlide();
 }
 
-
-// =========================================================================
-// 5. CSS VÀ AUTO INIT
-// =========================================================================
-
 const styleCSS = `
-/* CSS UI LOGIN/LOGOUT TỪ BẠN - ĐẢM BẢO UI ĐỒNG BỘ */
+
 .user-section {
     display: flex;
     align-items: center;
@@ -346,7 +311,6 @@ const styleCSS = `
 }
 `;
 
-// Tự động thêm CSS vào head
 if (!document.querySelector('#user-styles')) {
     const styleElement = document.createElement('style');
     styleElement.id = 'user-styles';
@@ -354,22 +318,21 @@ if (!document.querySelector('#user-styles')) {
     document.head.appendChild(styleElement);
 }
 
-// Hàm khởi tạo chính
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Cập nhật số lượng giỏ hàng ban đầu 
+
     if (window.updateCartCount) {
         window.updateCartCount();
     }
     
-    // 2. Khởi tạo các sự kiện
+
     khoiTaoSuKienGioHang();
     khoiTaoSlider(); 
     khoiTaoSuKienOrderHistory(); 
     
-    //  Khởi tạo sự kiện Modal 
+
     khoiTaoModalEvents();
     
-    // 3. Cập nhật UI Header
+
     if (window.capNhatUIUser) {
         window.capNhatUIUser(window.kiemTraDangNhap());
     }

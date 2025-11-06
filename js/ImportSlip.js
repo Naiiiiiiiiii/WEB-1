@@ -1,9 +1,5 @@
-// File: js/ImportSlip.js - Model Phiếu Nhập & Import Manager
 
-/**
- ImportSlip
-  Đại diện cho một phiếu nhập hàng
- */
+
 export class ImportSlip {
     constructor({
         id = null,
@@ -37,16 +33,12 @@ export class ImportSlip {
         this.createdBy = createdBy;
     }
 
-    /**
-     * Chuyển đổi từ JSON sang ImportSlip instance
-     */
+    
     static fromJSON(json) {
         return new ImportSlip(json);
     }
 
-    /**
-     * Chuyển đổi ImportSlip sang JSON để lưu trữ
-     */
+    
     toJSON() {
         return {
             id: this.id,
@@ -66,16 +58,12 @@ export class ImportSlip {
         };
     }
 
-    /**
-     * Kiểm tra phiếu nhập có thể sửa hay không
-     */
+    
     canEdit() {
         return this.status === 'DRAFT';
     }
 
-    /**
-     * Hoàn thành phiếu nhập
-     */
+    
     complete() {
         if (this.status === 'DRAFT') {
             this.status = 'COMPLETED';
@@ -86,23 +74,13 @@ export class ImportSlip {
     }
 }
 
-/**
- ImportManager
- Quản lý danh sách phiếu nhập hàng
- */
 export class ImportManager {
     constructor() {
         this.STORAGE_KEY = 'shoestore_import_slips';
         this.slips = this.loadSlips();
     }
 
-    // ============================================================
-    // LOAD & SAVE
-    // ============================================================
-
-    /**
-     * Tải danh sách phiếu nhập từ localStorage
-     */
+    
     loadSlips() {
         try {
             const data = localStorage.getItem(this.STORAGE_KEY);
@@ -116,9 +94,7 @@ export class ImportManager {
         return [];
     }
 
-    /**
-     * Lưu danh sách phiếu nhập vào localStorage
-     */
+    
     saveSlips() {
         try {
             const slipsData = this.slips.map(s => s.toJSON());
@@ -130,18 +106,12 @@ export class ImportManager {
         }
     }
 
-    // ============================================================
-    // CRUD OPERATIONS
-    // ============================================================
-
-    /**
-     * Tạo số phiếu nhập tự động (format: PN-YYYYMMDD-XXX)
-     */
+    
     generateSlipNumber() {
         const now = new Date();
         const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
         
-        // Đếm số phiếu trong ngày
+
         const todaySlips = this.slips.filter(s => 
             s.createdDate.slice(0, 10) === now.toISOString().slice(0, 10)
         );
@@ -150,9 +120,7 @@ export class ImportManager {
         return `PN-${dateStr}-${sequence}`;
     }
 
-    /**
-     * Thêm phiếu nhập mới (Nháp)
-     */
+    
     addSlip(slipData) {
         const newId = this.slips.length > 0 
             ? Math.max(...this.slips.map(s => s.id)) + 1 
@@ -171,23 +139,18 @@ export class ImportManager {
         return newSlip;
     }
 
-    /**
-     * Lấy phiếu nhập theo ID
-     */
+    
     getSlipById(id) {
         return this.slips.find(s => s.id === Number(id));
     }
 
-    /**
-     * Cập nhật phiếu nhập (chỉ khi còn ở trạng thái DRAFT)
-     */
+    
     updateSlip(id, updatedData) {
         const slip = this.getSlipById(id);
         if (!slip || !slip.canEdit()) {
             return false;
         }
 
-        // Cập nhật các trường được phép
         const allowedFields = ['productId', 'productName', 'variantSize', 'quantity', 'importPrice', 'supplier', 'note'];
         allowedFields.forEach(field => {
             if (updatedData[field] !== undefined) {
@@ -195,16 +158,13 @@ export class ImportManager {
             }
         });
 
-        // Tính lại tổng giá trị
         slip.totalValue = slip.quantity * slip.importPrice;
 
         this.saveSlips();
         return true;
     }
 
-    /**
-     * Xóa phiếu nhập (chỉ khi còn ở trạng thái DRAFT)
-     */
+    
     deleteSlip(id) {
         const slip = this.getSlipById(id);
         if (!slip || !slip.canEdit()) {
@@ -221,9 +181,7 @@ export class ImportManager {
         return false;
     }
 
-    /**
-     * Hoàn thành phiếu nhập
-     */
+    
     completeSlip(id) {
         const slip = this.getSlipById(id);
         if (!slip) {
@@ -240,22 +198,14 @@ export class ImportManager {
         return { success: true, slip };
     }
 
-    // ============================================================
-    // TÌM KIẾM & LỌC
-    // ============================================================
-
-    /**
-     * Tìm kiếm và lọc phiếu nhập
-     */
+    
     searchSlips(filters = {}) {
         let results = [...this.slips];
 
-        // Lọc theo trạng thái
         if (filters.status && filters.status !== 'ALL') {
             results = results.filter(s => s.status === filters.status);
         }
 
-        // Lọc theo tên sản phẩm
         if (filters.productName && filters.productName.trim()) {
             const searchTerm = filters.productName.toLowerCase().trim();
             results = results.filter(s => 
@@ -264,7 +214,6 @@ export class ImportManager {
             );
         }
 
-        // Lọc theo ngày tạo
         if (filters.fromDate) {
             results = results.filter(s => 
                 new Date(s.createdDate) >= new Date(filters.fromDate)
@@ -273,41 +222,30 @@ export class ImportManager {
 
         if (filters.toDate) {
             const toDate = new Date(filters.toDate);
-            toDate.setHours(23, 59, 59, 999); // Bao gồm cả ngày cuối
+            toDate.setHours(23, 59, 59, 999);
             results = results.filter(s => 
                 new Date(s.createdDate) <= toDate
             );
         }
 
-        // Sắp xếp theo ngày tạo 
         results.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
 
         return results;
     }
 
-    /**
-     * Lấy tất cả phiếu nhập
-     */
+    
     getAllSlips() {
         return [...this.slips].sort((a, b) => 
             new Date(b.createdDate) - new Date(a.createdDate)
         );
     }
 
-    /**
-     * Lấy phiếu nhập theo trạng thái
-     */
+    
     getSlipsByStatus(status) {
         return this.slips.filter(s => s.status === status);
     }
 
-    // ============================================================
-    // THỐNG KÊ
-    // ============================================================
-
-    /**
-     * Tính tổng giá trị nhập trong khoảng thời gian
-     */
+    
     getTotalImportValue(fromDate = null, toDate = null) {
         let slips = this.slips.filter(s => s.status === 'COMPLETED');
 
@@ -324,9 +262,7 @@ export class ImportManager {
         return slips.reduce((sum, slip) => sum + slip.totalValue, 0);
     }
 
-    /**
-     * Đếm số phiếu theo trạng thái
-     */
+    
     getSlipsCount() {
         return {
             total: this.slips.length,
@@ -336,5 +272,4 @@ export class ImportManager {
     }
 }
 
-// Export
 export const importManager = new ImportManager();
