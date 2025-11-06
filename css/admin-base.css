@@ -1031,21 +1031,21 @@ textarea:focus {
 
   /* Mobile nav menu - vertical layout */
   .nav-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%) !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     z-index: 1000;
-    max-height: 0;
-    overflow: hidden;
+    max-height: 0 !important;
+    overflow: hidden !important;
     transition: max-height 0.3s ease;
   }
 
   .nav-menu.open {
-    max-height: 500px;
-    overflow-y: auto;
+    max-height: 500px !important;
+    overflow-y: auto !important;
   }
 
   .nav-menu ul {
