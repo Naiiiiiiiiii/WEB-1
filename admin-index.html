@@ -76,12 +76,12 @@
                     <table class="userTable" id="userTable">
                         <thead>
                             <tr>
-                                <th>Họ tên</th>
-                                <th>Tên đăng nhập</th>
-                                <th>Email</th>
-                                <th class="nowrap w-120">Đơn hàng</th>
-                                <th class="nowrap w-120">Trạng thái</th>
-                                <th class="nowrap w-240">Hành động</th>
+                                <th><i class="fa-solid fa-user"></i> Họ tên</th>
+                                <th><i class="fa-solid fa-signature"></i> Tên đăng nhập</th>
+                                <th><i class="fa-solid fa-envelope"></i> Email</th>
+                                <th class="col-orders"><i class="fa-solid fa-bag-shopping"></i> Đơn hàng</th>
+                                <th class="col-status"><i class="fa-solid fa-circle-info"></i> Trạng thái</th>
+                                <th class="col-actions-lg"><i class="fa-solid fa-gear"></i> Hành động</th>
                             </tr>
                         </thead>
                         <tbody id="userTableBody">
@@ -104,13 +104,13 @@
                 <table class="userTable">
                     <thead>
                         <tr>
-                            <th class="nowrap w-80">ID</th>
-                            <th>Tên Sản phẩm</th>
-                            <th class="nowrap w-120">Danh mục</th>
-                            <th class="nowrap w-120 right">Giá</th>
-                            <th class="nowrap w-80 center">Tồn kho</th>
-                            <th class="nowrap w-120">Trạng thái</th>
-                            <th class="nowrap w-220">Hành động</th>
+                            <th class="col-id"><i class="fa-solid fa-barcode"></i> ID</th>
+                            <th><i class="fa-solid fa-tag"></i> Tên Sản phẩm</th>
+                            <th class="col-category"><i class="fa-solid fa-tags"></i> Danh mục</th>
+                            <th class="col-price right"><i class="fa-solid fa-dollar-sign"></i> Giá</th>
+                            <th class="col-stock center"><i class="fa-solid fa-warehouse"></i> Tồn kho</th>
+                            <th class="col-status"><i class="fa-solid fa-circle-info"></i> Trạng thái</th>
+                            <th class="col-actions-md"><i class="fa-solid fa-gear"></i> Hành động</th>
                         </tr>
                     </thead>
                     <tbody id="productTableBody"></tbody>
@@ -135,10 +135,10 @@
                 <table class="data-table category-table">z
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Tên loại</th>
-                            <th class="nowrap w-120">Trạng thái</th>
-                            <th class="nowrap w-160">Hành động</th>
+                            <th><i class="fa-solid fa-barcode"></i> ID</th>
+                            <th><i class="fa-solid fa-tag"></i> Tên loại</th>
+                            <th class="col-status"><i class="fa-solid fa-circle-info"></i> Trạng thái</th>
+                            <th class="col-actions-sm"><i class="fa-solid fa-gear"></i> Hành động</th>
                         </tr>
                     </thead>
                     <tbody id="categoryTableBody">
@@ -182,12 +182,12 @@
                 <table id="ordersTable">
                     <thead>
                         <tr>
-                            <th class="nowrap">Mã đơn</th>
-                            <th class="nowrap w-120">Ngày đặt</th>
-                            <th>Khách hàng</th>
-                            <th class="right w-120">Tổng tiền</th>
-                            <th class="w-160">Trạng thái</th>
-                            <th class="nowrap w-120">Hành động</th>
+                            <th class="col-slip-num"><i class="fa-solid fa-receipt"></i> Mã đơn</th>
+                            <th class="col-date"><i class="fa-solid fa-calendar-days"></i> Ngày đặt</th>
+                            <th><i class="fa-solid fa-user"></i> Khách hàng</th>
+                            <th class="col-price right"><i class="fa-solid fa-money-bill-wave"></i> Tổng tiền</th>
+                            <th class="col-status-lg"><i class="fa-solid fa-circle-info"></i> Trạng thái</th>
+                            <th class="col-actions"><i class="fa-solid fa-gear"></i> Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -307,13 +307,13 @@
                 <table id="inventoryTable">
                     <thead>
                         <tr>
-                            <th class="nowrap">Mã SP</th>
-                            <th>Tên</th>
-                            <th class="nowrap">Loại</th>
-                            <th class="right nowrap w-120">Tồn</th>
-                            <th class="right nowrap w-120">Giá Vốn</th>
-                            <th class="nowrap">Trạng thái</th>
-                            <th class="nowrap">Hành động</th>
+                            <th class="col-id"><i class="fa-solid fa-barcode"></i> Mã SP</th>
+                            <th><i class="fa-solid fa-tag"></i> Tên</th>
+                            <th class="col-category"><i class="fa-solid fa-tags"></i> Loại</th>
+                            <th class="col-stock right"><i class="fa-solid fa-warehouse"></i> Tồn</th>
+                            <th class="col-price right"><i class="fa-solid fa-dollar-sign"></i> Giá Vốn</th>
+                            <th class="col-status"><i class="fa-solid fa-circle-info"></i> Trạng thái</th>
+                            <th class="col-actions"><i class="fa-solid fa-gear"></i> Hành động</th>
                         </tr>
                     </thead>
                     <tbody id="inventoryTableBody"></tbody>
@@ -364,11 +364,11 @@
                             <table class="userTable mt-10">
                                 <thead>
                                     <tr>
-                                        <th class="nowrap w-120">Ngày</th>
-                                        <th class="nowrap w-80">Loại</th>
-                                        <th class="nowrap w-120 right">Số lượng</th>
+                                        <th class="col-date">Ngày</th>
+                                        <th class="col-slip-type">Loại</th>
+                                        <th class="col-qty right">Số lượng</th>
                                         <th>Ghi chú/Mã đơn hàng</th>
-                                        <th class="nowrap w-120 right">Giá Vốn</th>
+                                        <th class="col-price right">Giá Vốn</th>
                                     </tr>
                                 </thead>
                                 <tbody id="movementLogTableBody">
@@ -431,14 +431,14 @@
                     <table class="userTable price-table">
                         <thead>
                             <tr>
-                                <th class="nowrap">Mã SP</th>
-                                <th>Tên Sản phẩm</th>
-                                <th class="nowrap w-120">Danh mục</th>
-                                <th class="nowrap w-120 right">Giá Vốn</th>
-                                <th class="nowrap w-120 right">Giá Bán (Hiện tại)</th>
-                                <th class="nowrap w-100 right">Lợi nhuận (Thực tế)</th>
-                                <th class="nowrap w-160 center">Thiết lập Lợi nhuận (%)</th>
-                                <th class="nowrap w-120">Hành động</th>
+                                <th class="col-id"><i class="fa-solid fa-barcode"></i> Mã SP</th>
+                                <th><i class="fa-solid fa-tag"></i> Tên Sản phẩm</th>
+                                <th class="col-category"><i class="fa-solid fa-tags"></i> Danh mục</th>
+                                <th class="col-price right"><i class="fa-solid fa-dollar-sign"></i> Giá Vốn</th>
+                                <th class="col-price right"><i class="fa-solid fa-sack-dollar"></i> Giá Bán (Hiện tại)</th>
+                                <th class="col-margin right"><i class="fa-solid fa-percent"></i> Lợi nhuận (Thực tế)</th>
+                                <th class="col-margin-input center"><i class="fa-solid fa-calculator"></i> Thiết lập Lợi nhuận (%)</th>
+                                <th class="col-actions"><i class="fa-solid fa-gear"></i> Hành động</th>
                             </tr>
                         </thead>
                         <tbody id="priceTableBody">
@@ -570,31 +570,31 @@
                     <table class="userTable import-slips-table">
                         <thead>
                             <tr>
-                                <th class="nowrap w-160">
+                                <th class="col-slip-num-lg">
                                     <i class="fa-solid fa-barcode"></i> Số Phiếu
                                 </th>
                                 <th>
                                     <i class="fa-solid fa-box"></i> Tên Sản phẩm
                                 </th>
-                                <th class="nowrap w-120 center">
+                                <th class="col-size center">
                                     <i class="fa-solid fa-ruler"></i> Size
                                 </th>
-                                <th class="nowrap w-100 right">
+                                <th class="col-qty right">
                                     <i class="fa-solid fa-hashtag"></i> SL
                                 </th>
-                                <th class="nowrap w-120 right">
+                                <th class="col-price right">
                                     <i class="fa-solid fa-dollar-sign"></i> Giá nhập
                                 </th>
-                                <th class="nowrap w-140 right">
+                                <th class="col-total-value right">
                                     <i class="fa-solid fa-money-bill-wave"></i> Tổng giá trị
                                 </th>
-                                <th class="nowrap w-160">
+                                <th class="col-date">
                                     <i class="fa-solid fa-calendar"></i> Ngày tạo
                                 </th>
-                                <th class="nowrap w-140 center">
+                                <th class="col-status center">
                                     <i class="fa-solid fa-circle-info"></i> Trạng thái
                                 </th>
-                                <th class="nowrap w-280">
+                                <th class="col-actions-lg">
                                     <i class="fa-solid fa-gear"></i> Hành động
                                 </th>
                             </tr>

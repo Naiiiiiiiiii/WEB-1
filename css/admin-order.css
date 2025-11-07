@@ -194,3 +194,12 @@
     width: 100%;
   }
 }
+.action-buttons button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}

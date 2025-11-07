@@ -1151,3 +1151,92 @@ textarea:focus {
   text-overflow: ellipsis;
   vertical-align: bottom;
 }
+/* --- Định nghĩa Hành vi Không Ngắt Dòng và Căn chỉnh --- */
+
+/* Lớp này áp dụng white-space: nowrap và căn chỉnh cho tất cả các cột được định nghĩa mới */
+.userTable th[class*="col-"],
+.userTable td[class*="col-"],
+.import-slips-table th[class*="col-"],
+.import-slips-table td[class*="col-"] {
+    white-space: nowrap; /* Ngăn không cho nội dung bị ngắt xuống dòng */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Thêm dấu ... nếu nội dung quá dài (Tùy chọn) */
+}
+
+/* Căn lề phải cho cột giá trị tiền tệ/số lượng */
+.userTable .right,
+.price-table .right,
+.import-slips-table .right {
+    text-align: right !important;
+}
+
+/* Căn lề giữa cho cột số lượng/ID */
+.userTable .center,
+.price-table .center,
+.import-slips-table .center {
+    text-align: center !important;
+}
+
+
+/* --- Định nghĩa Chiều rộng cố định cho từng loại cột  --- */
+
+.col-id,
+.col-stock,
+.col-size {
+    width: 80px;
+    min-width: 80px;
+}
+
+
+.col-orders,
+.col-status,
+.col-price,
+.col-category {
+    width: 120px;
+    min-width: 120px;
+}
+
+
+.col-date,
+.col-slip-num {
+    width: 160px;
+    min-width: 160px;
+}
+
+
+.col-actions-sm {
+    width: 160px;
+    min-width: 160px;
+}
+
+
+.col-total-value,
+.col-status-lg {
+    width: 180px;
+    min-width: 180px;
+}
+
+
+.col-actions-md {
+    width: 500px;
+    min-width: 220px;
+}
+
+
+.col-actions, 
+.col-actions-lg {
+    width: 240px;
+    min-width: 240px;
+}
+
+
+.col-slip-num-lg {
+    width: 180px;
+    min-width: 180px;
+}
+
+
+.col-margin-input {
+    width: 150px;
+    min-width: 150px;
+}
