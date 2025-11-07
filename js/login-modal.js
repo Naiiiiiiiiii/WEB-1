@@ -86,7 +86,13 @@ const LOGIN_MODAL_HTML = `
                             <label for="emailDangKy">Email</label>
                             <div class="o-nhap-lieu">
                                 <i class="fas fa-envelope icon-truoc"></i>
-                                <input type="email" id="emailDangKy" name="emailDangKy" placeholder="an@example.com">
+                                <input type="email" 
+    id="emailDangKy" 
+    name="emailDangKy" 
+    placeholder="an@example.com"
+    oninvalid="this.setCustomValidity('Vui lòng nhập một địa chỉ email hợp lệ, bao gồm ký tự ten@tenmien.com')"
+    oninput="this.setCustomValidity('')" 
+>
                             </div>
                             <div class="thong-bao-loi" id="loiEmailDangKy"></div>
                         </div>

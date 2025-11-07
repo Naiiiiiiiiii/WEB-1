@@ -223,6 +223,7 @@ class UserManager {
         const user = this.users.find(u => u.tenDangNhap === username);
         if (user) {
             user.matKhau = '123456'; 
+            user.isLocked = false;
             this.luuDanhSachUser();
             return true;
         }
