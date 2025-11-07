@@ -1,5 +1,6 @@
 
 import { ProductManager } from "./ProductManager.js";
+import { categoryManager } from "./category.js";
 
 console.log("LOG 1: renderProducts.js loaded.");
 
@@ -25,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const productGrid = $(".product-grid");
-  const filterBtns = $$(".filter-btn");
+  const filterGroup = $(".filter-group");
   const sortSelect = $(".sort-select");
   const loadMoreBtn = $(".load-more-btn");
 
@@ -242,14 +243,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  filterBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      filterBtns.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      currentCategory = btn.dataset.filter;
-      applyFilters();
+  // Dynamically generate filter buttons from categoryManager
+  function renderFilterButtons() {
+    if (!filterGroup) return;
+    
+    try {
+      filterGroup.innerHTML = "";
+      
+      // Add "All" button
+      const allBtn = document.createElement("button");
+      allBtn.className = "filter-btn active";
+      allBtn.dataset.filter = "all";
+      allBtn.textContent = "Tất cả";
+      filterGroup.appendChild(allBtn);
+      
+      // Add category buttons
+      const categories = categoryManager.getAllCategories();
+      if (Array.isArray(categories)) {
+        categories.forEach((category) => {
+          if (category && category.name) {
+            const btn = document.createElement("button");
+            btn.className = "filter-btn";
+            btn.dataset.filter = category.name;
+            btn.textContent = category.name;
+            filterGroup.appendChild(btn);
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error rendering filter buttons:", error);
+    }
+  }
+  
+  // Use event delegation for filter buttons to avoid memory leaks
+  if (filterGroup) {
+    filterGroup.addEventListener("click", (e) => {
+      const btn = e.target.closest(".filter-btn");
+      if (btn) {
+        const filterBtns = $$(".filter-btn");
+        filterBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentCategory = btn.dataset.filter;
+        applyFilters();
+      }
     });
-  });
+  }
+  
+  // Render filter buttons on load
+  renderFilterButtons();
 
   if (sortSelect) {
     sortSelect.addEventListener("change", (e) => {
