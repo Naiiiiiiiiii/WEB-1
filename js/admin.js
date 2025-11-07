@@ -196,9 +196,7 @@ function hienThiDanhSachUser() {
                 <span class="status-badge status-active">Hoạt động</span>
             </td>
             <td class="action-buttons">
-                <button class="btn btn-info btn-view-orders" data-username="${user.tenDangNhap}">
-                    <i class="fa-solid fa-eye"></i> Xem đơn hàng
-                </button>
+                
                 <button class="btn btn-warning btn-reset" data-index="${index}">
                     <i class="fa-solid fa-key"></i> Reset MK
                 </button>
@@ -211,6 +209,9 @@ function hienThiDanhSachUser() {
     });
 
     ganSuKienNut();
+    // <button class="btn btn-info btn-view-orders" data-username="${user.tenDangNhap}">
+    //                 <i class="fa-solid fa-eye"></i> Xem đơn hàng
+    //             </button>
 }
 
 function ganSuKienNut() {
