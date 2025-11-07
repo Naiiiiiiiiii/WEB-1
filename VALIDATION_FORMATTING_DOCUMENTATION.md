@@ -612,7 +612,7 @@ export function checkCartBeforeCheckout() {
    **Ví dụ số điện thoại hợp lệ**:
    - `0912345678` ✓
    - `0987654321` ✓
-   - `0123456789` ✓
+   - `0901234567` ✓
    
    **Ví dụ số điện thoại không hợp lệ**:
    - `912345678` ✗ (không bắt đầu bằng 0)
@@ -803,7 +803,7 @@ console.log(regexEmail.test('user @example.com'));     // false ✗ (có khoản
 
 ### 3.2. Phone Number Pattern
 
-**Pattern**: `0[0-9]{9}`
+**Pattern**: `^0[0-9]{9}$`
 
 **Vị trí**: `js/checkout-modal-html.js` (HTML pattern attribute)
 
@@ -824,7 +824,7 @@ const phonePattern = /^0[0-9]{9}$/;
 
 console.log(phonePattern.test('0912345678'));   // true ✓
 console.log(phonePattern.test('0987654321'));   // true ✓
-console.log(phonePattern.test('0123456789'));   // true ✓
+console.log(phonePattern.test('0901234567'));   // true ✓
 
 console.log(phonePattern.test('912345678'));    // false ✗ (thiếu 0 đầu)
 console.log(phonePattern.test('09123456789'));  // false ✗ (11 chữ số)
@@ -836,12 +836,12 @@ console.log(phonePattern.test('01234567ab'));   // false ✗ (có chữ cái)
 - Bắt đầu bằng 0
 - Tổng 10 chữ số
 - Các đầu số phổ biến:
-  - `09x` - Mobifone
-  - `08x` - Vinaphone  
-  - `07x` - Viettel
-  - `03x` - Viettel (mới)
-  - `05x` - Vietnamobile
-  - `02x` - Điện thoại cố định
+  - **Viettel**: 086, 096, 097, 098, 032, 033, 034, 035, 036, 037, 038, 039
+  - **Vinaphone**: 088, 091, 094, 083, 084, 085, 081, 082
+  - **Mobifone**: 089, 090, 093, 070, 079, 077, 076, 078
+  - **Vietnamobile**: 092, 052, 056, 058
+  - **Gmobile**: 099, 059
+  - **Điện thoại cố định**: 024 (Hà Nội), 028 (TP.HCM), và các mã vùng khác
 
 ---
 
