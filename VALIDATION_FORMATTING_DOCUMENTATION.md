@@ -810,8 +810,10 @@ console.log(regexEmail.test('user @example.com'));     // false ✗ (có khoản
 **Chi tiết pattern**:
 
 ```
-0              Bắt đầu bằng số 0 (chuẩn SĐT Việt Nam)
+^              Bắt đầu chuỗi
+0              Số 0 bắt buộc (chuẩn SĐT Việt Nam)
 [0-9]{9}       Đúng 9 chữ số từ 0-9
+$              Kết thúc chuỗi
                
 Tổng: 10 chữ số (0 + 9 chữ số)
 ```
