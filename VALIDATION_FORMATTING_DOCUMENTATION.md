@@ -766,9 +766,13 @@ editCategoryInput.addEventListener("input", validateEditCategoryInput);
                - \s (khoảng trắng)
                - @ (ký tự @)
 @              Ký tự @ bắt buộc
-[^\s@]+        Một hoặc nhiều ký tự KHÔNG phải khoảng trắng hoặc @
+[^\s@]+        Một hoặc nhiều ký tự KHÔNG phải:
+               - \s (khoảng trắng)
+               - @ (ký tự @)
 \.             Dấu chấm (.) - escaped vì . là ký tự đặc biệt trong regex
-[^\s@]+        Một hoặc nhiều ký tự KHÔNG phải khoảng trắng hoặc @
+[^\s@]+        Một hoặc nhiều ký tự KHÔNG phải:
+               - \s (khoảng trắng)
+               - @ (ký tự @)
 $              Kết thúc chuỗi
 ```
 
