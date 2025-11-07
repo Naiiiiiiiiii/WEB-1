@@ -112,7 +112,7 @@ function handleTableClick(e) {
 function showOrderDetails(orderId) {
     const order = currentOrderList.find(o => o.id === orderId);
     if (!order) {
-        alert('Không tìm thấy chi tiết đơn hàng!');
+        // alert('Không tìm thấy chi tiết đơn hàng!');
         return;
     }
 
