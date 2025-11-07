@@ -247,34 +247,45 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderFilterButtons() {
     if (!filterGroup) return;
     
-    filterGroup.innerHTML = "";
-    
-    // Add "All" button
-    const allBtn = document.createElement("button");
-    allBtn.className = "filter-btn active";
-    allBtn.dataset.filter = "all";
-    allBtn.textContent = "Tất cả";
-    filterGroup.appendChild(allBtn);
-    
-    // Add category buttons
-    const categories = categoryManager.getAllCategories();
-    categories.forEach((category) => {
-      const btn = document.createElement("button");
-      btn.className = "filter-btn";
-      btn.dataset.filter = category.name;
-      btn.textContent = category.name;
-      filterGroup.appendChild(btn);
-    });
-    
-    // Attach event listeners to new buttons
-    const filterBtns = $$(".filter-btn");
-    filterBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
+    try {
+      filterGroup.innerHTML = "";
+      
+      // Add "All" button
+      const allBtn = document.createElement("button");
+      allBtn.className = "filter-btn active";
+      allBtn.dataset.filter = "all";
+      allBtn.textContent = "Tất cả";
+      filterGroup.appendChild(allBtn);
+      
+      // Add category buttons
+      const categories = categoryManager.getAllCategories();
+      if (Array.isArray(categories)) {
+        categories.forEach((category) => {
+          if (category && category.name) {
+            const btn = document.createElement("button");
+            btn.className = "filter-btn";
+            btn.dataset.filter = category.name;
+            btn.textContent = category.name;
+            filterGroup.appendChild(btn);
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error rendering filter buttons:", error);
+    }
+  }
+  
+  // Use event delegation for filter buttons to avoid memory leaks
+  if (filterGroup) {
+    filterGroup.addEventListener("click", (e) => {
+      const btn = e.target.closest(".filter-btn");
+      if (btn) {
+        const filterBtns = $$(".filter-btn");
         filterBtns.forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
         currentCategory = btn.dataset.filter;
         applyFilters();
-      });
+      }
     });
   }
   
