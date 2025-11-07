@@ -672,3 +672,52 @@ body {
 .item-name {
     font-weight: 600;
 }
+/* --- Pagination Controls Styling --- */
+.pagination-controls {
+    display: flex;
+    justify-content: center; /* Căn giữa các nút phân trang */
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa các nút */
+    margin-top: 30px;
+    padding: 10px 0;
+}
+
+.pagination-controls button {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    color: #333;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 40px; /* Đảm bảo các nút số có chiều rộng tối thiểu */
+    text-align: center;
+    user-select: none; /* Ngăn chặn việc chọn văn bản nút */
+}
+
+/* Hiệu ứng di chuột */
+.pagination-controls button:hover:not(.active):not(:disabled) {
+    background: #f0f0f0;
+    border-color: #667eea; /* Màu viền khi di chuột */
+}
+
+/* Nút trang hiện tại (Active) */
+.pagination-controls button.active {
+    /* Sử dụng gradient màu chủ đạo */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-color: #667eea;
+    cursor: default;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Nút bị vô hiệu hóa (Disabled - Áp dụng cho nút "Trước" và "Sau" ở trang đầu/cuối) */
+.pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f7f7f7;
+    border-color: #ddd;
+    color: #888;
+    box-shadow: none;
+}
