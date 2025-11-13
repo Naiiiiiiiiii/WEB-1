@@ -290,6 +290,16 @@ function getCurrentCartQty(productId, sizeString) {
   return item ? parseInt(item.quantity) || 0 : 0;
 }
 
+// Hàm export: Thêm sản phẩm vào giỏ hàng
+// Hàm phức tạp nhất trong module - xử lý nhiều edge cases
+// @param productId: ID sản phẩm
+// @param name: Tên sản phẩm
+// @param price: Giá sản phẩm
+// @param img: URL ảnh sản phẩm
+// @param size: Size được chọn (có thể null/undefined/"Chưa chọn")
+// @param color: Màu sắc (có thể null)
+// @param quantity: Số lượng muốn thêm (mặc định = 1)
+// @return: true nếu thành công, false nếu thất bại
 export function addToCart(
   productId,
   name,
@@ -299,33 +309,50 @@ export function addToCart(
   color,
   quantity = 1
 ) {
+  // Validate 1: Kiểm tra user đã đăng nhập chưa
   const username = getCurrentUsername();
   if (!username) {
+    // Nếu chưa đăng nhập, mở modal login
     if (window.openLoginModal) window.openLoginModal();
     return false;
   }
 
+  // Sanitize giá: Loại bỏ tất cả ký tự không phải số
+  // VD: "1.000.000₫" → "1000000"
   let priceString = String(price).replace(/[^\d]/g, "");
   const safePrice = parseInt(priceString) || 0;
-  if (safePrice > 10000000000) {
+  
+  // Validate 2: Kiểm tra giá có bất thường không (bug nhân đôi)
+  if (safePrice > 10000000000) {  // > 10 tỷ
     console.error(
       "Lỗi: Giá trị sản phẩm có vẻ bị nhân đôi. Vui lòng xóa Local Storage thủ công."
     );
     return false;
   }
 
+  // Validate 3: Kiểm tra sản phẩm có tồn tại không
   const product = productManager.getProductById(productId);
   if (!product) return false;
 
+  // Kiểm tra sản phẩm có variants (nhiều size) không
   const hasVariants = product.variants && product.variants.length > 0;
-  let safeSize = "N/A";
+  
+  // Xử lý size an toàn
+  let safeSize = "N/A";  // Mặc định cho sản phẩm không có variants
+  
   if (hasVariants) {
-
+    // Nếu có variants, xử lý size input
+    
+    // Normalize size: null/undefined → "Chưa chọn"
     const incomingSize =
       size === null || size === undefined ? "Chưa chọn" : String(size);
+    
+    // Kiểm tra size có tồn tại trong variants không
     const variantExists = product.variants.some(
       (v) => v.size?.toString() === incomingSize
     );
+    
+    // Gán safeSize: nếu variant exists thì dùng, không thì "Chưa chọn"
     safeSize = variantExists
       ? incomingSize
       : incomingSize === "Chưa chọn"
@@ -333,32 +360,51 @@ export function addToCart(
       : "Chưa chọn";
   }
 
+  // Xử lý màu an toàn
   const safeColor = color || "N/A";
+  
+  // Parse số lượng, đảm bảo >= 1
   const requestedQty = parseInt(quantity) || 1;
 
+  // Lấy giỏ hàng hiện tại
   let cart = getCart();
 
+  // Trường hợp 1: Sản phẩm có variants VÀ đã chọn size cụ thể
   if (hasVariants && safeSize !== "Chưa chọn") {
+    // Tìm variant theo size
     const variant = product.variants.find(
       (v) => v.size?.toString() === safeSize
     );
+    
+    // Lấy tồn kho của variant này
     const stock = variant ? parseInt(variant.stock) || 0 : 0;
 
+    // Lấy số lượng đã có trong giỏ của size này
     const currentInCart = getCurrentCartQty(productId, safeSize);
+    
+    // Tính số lượng còn có thể thêm
     const remaining = Math.max(0, stock - currentInCart);
 
+    // Validate: Nếu không còn tồn kho
     if (remaining <= 0) {
       alert(`Size ${safeSize} đã được thêm tối đa có thể.`);
       return false;
     }
 
+    // Số lượng thực tế thêm = min(số lượng yêu cầu, số lượng còn lại)
     const addQty = Math.min(requestedQty, remaining);
+    
+    // Tạo identifier duy nhất cho item (format: "id-size")
     const itemIdentifier = `${productId}-${safeSize}`;
+    
+    // Tìm xem item này đã có trong giỏ chưa
     const idx = cart.findIndex((i) => i.itemIdentifier === itemIdentifier);
 
     if (idx > -1) {
+      // Item đã tồn tại: Tăng quantity
       cart[idx].quantity = (parseInt(cart[idx].quantity) || 0) + addQty;
     } else {
+      // Item chưa có: Tạo mới và push vào giỏ
       cart.push({
         id: productId,
         name,
@@ -371,26 +417,38 @@ export function addToCart(
       });
     }
 
+    // Nếu thêm không đủ số lượng yêu cầu, thông báo
     if (addQty < requestedQty) {
       alert(
         `Tồn kho còn ${remaining} cho Size ${safeSize}. Số lượng đã được thêm tối đa có thể.`
       );
     }
 
+    // Lưu giỏ hàng vào localStorage
     saveCart(cart);
+    
+    // Cập nhật badge số lượng trên icon giỏ hàng
     if (window.updateCartCount) window.updateCartCount();
-    return true;
+    
+    return true;  // Thêm thành công
   }
 
+  // Trường hợp 2: Sản phẩm có variants NHƯNG chưa chọn size
   if (hasVariants && safeSize === "Chưa chọn") {
+    // Tạo identifier với size "Chưa chọn"
     const itemIdentifier = `${productId}-Chưa chọn`;
+    
+    // Kiểm tra xem đã có item "Chưa chọn" trong giỏ chưa
     const idx = cart.findIndex((i) => i.itemIdentifier === itemIdentifier);
 
     if (idx > -1) {
-
+      // Nếu đã có item "Chưa chọn", không cho thêm nữa
+      // Yêu cầu user phải chọn size trước
       alert("Vui lòng chọn Size trước khi thêm số lượng.");
       return false;
     } else {
+      // Nếu chưa có, cho phép thêm 1 item "Chưa chọn"
+      // User sẽ chọn size sau trong giỏ hàng
       cart.push({
         id: productId,
         name,
@@ -398,37 +456,56 @@ export function addToCart(
         img,
         size: "Chưa chọn",
         color: safeColor,
-        quantity: 1,
+        quantity: 1,  // Chỉ cho thêm 1 item
         itemIdentifier,
       });
+      
       saveCart(cart);
+      
+      // Cập nhật badge
       if (window.updateCartCount) window.updateCartCount();
+      
       return true;
     }
   }
 
+  // Trường hợp 3: Sản phẩm KHÔNG có variants (sản phẩm đơn giản)
+  
+  // Lấy tồn kho ban đầu
   const initialStock = parseInt(product.initialStock) || 0;
+  
+  // Lấy số lượng đã có trong giỏ (dùng "N/A" làm size)
   const currentInCart = getCurrentCartQty(productId, "N/A");
+  
+  // Tính số lượng còn có thể thêm
   const remaining = Math.max(0, initialStock - currentInCart);
 
+  // Validate: Kiểm tra tồn kho
   if (remaining <= 0) {
     alert("Sản phẩm đã hết hàng trong khả năng đặt thêm.");
     return false;
   }
 
+  // Số lượng thực tế thêm
   const addQty = Math.min(requestedQty, remaining);
+  
+  // Tạo identifier (format: "id-N/A")
   const itemIdentifier = `${productId}-N/A`;
+  
+  // Tìm item trong giỏ
   const idx = cart.findIndex((i) => i.itemIdentifier === itemIdentifier);
 
   if (idx > -1) {
+    // Item đã tồn tại: Tăng quantity
     cart[idx].quantity = (parseInt(cart[idx].quantity) || 0) + addQty;
   } else {
+    // Item chưa có: Tạo mới
     cart.push({
       id: productId,
       name,
       price: safePrice,
       img,
-      size: "N/A",
+      size: "N/A",  // Không có size
       color: safeColor,
       quantity: addQty,
       itemIdentifier,
