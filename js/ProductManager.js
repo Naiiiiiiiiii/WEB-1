@@ -93,40 +93,69 @@ export class ProductManager {
         return this.products.filter(p => !p.isHidden);
     }
 
+    // Phương thức: Cập nhật thông tin sản phẩm
+    // @param id: ID của sản phẩm cần cập nhật
+    // @param updatedData: Object chứa dữ liệu mới cần cập nhật
+    // @return: true nếu thành công, false nếu không tìm thấy sản phẩm
     updateProduct(id, updatedData) {
+        // Tìm index của sản phẩm trong mảng
         const productIndex = this.products.findIndex(p => p.id === Number(id));
+        
+        // Nếu không tìm thấy, trả về false
         if (productIndex === -1) return false;
 
+        // Lấy sản phẩm hiện tại
         const currentProduct = this.products[productIndex];
         
-
+        // Merge dữ liệu cũ và mới:
+        // 1. currentProduct.toJSON() = lấy tất cả thuộc tính cũ
+        // 2. ...updatedData = ghi đè bằng dữ liệu mới
         const newProductData = { ...currentProduct.toJSON(), ...updatedData };
+        
+        // Tạo Product instance mới với dữ liệu đã merge
         this.products[productIndex] = new Product(newProductData);
 
+        // Lưu vào localStorage
         this.saveProducts();
-        return true;
+        
+        return true;  // Cập nhật thành công
     }
 
+    // Phương thức: Thêm sản phẩm mới vào danh sách
+    // @param productData: Object chứa thông tin sản phẩm mới
+    // @return: Product instance vừa được tạo
     addProduct(productData) {
+        // Tạo ID mới cho sản phẩm:
+        // - Nếu có sản phẩm: lấy ID lớn nhất + 1
+        // - Nếu chưa có sản phẩm nào: ID = 1
         const newId = this.products.length > 0 
             ? Math.max(...this.products.map(p => p.id)) + 1 
             : 1;
 
+        // Tạo Product instance mới với dữ liệu được chuẩn hóa
         const newProduct = new Product({
-            ...productData,
-            id: newId,
-            sales: [],
-            imports: [],
+            ...productData,          // Spread toàn bộ dữ liệu từ param
+            id: newId,               // Gán ID mới
+            sales: [],               // Khởi tạo lịch sử bán hàng rỗng
+            imports: [],             // Khởi tạo lịch sử nhập hàng rỗng
             initialStock: productData.initialStock || (productData.variants ? 0 : 0), 
-            isHidden: false,
-            variants: productData.variants || []
+            isHidden: false,         // Mặc định không ẩn
+            variants: productData.variants || []  // Đảm bảo có mảng variants
         });
 
+        // Thêm sản phẩm mới vào mảng
         this.products.push(newProduct);
+        
+        // Lưu vào localStorage
         this.saveProducts();
+        
+        // Trả về sản phẩm vừa tạo
         return newProduct;
     }
 
+    // Phương thức: Chuyển đổi trạng thái ẩn/hiện của sản phẩm
+    // @param id: ID của sản phẩm
+    // @return: true nếu thành công, false nếu không tìm thấy
     toggleHideStatus(id) {
         const product = this.getProductById(id);
         if (product) {
