@@ -1,52 +1,83 @@
-
-
+// Import ProductManager để lấy thông tin sản phẩm khi cần
 import { ProductManager } from "./ProductManager.js";
 const productManager = new ProductManager();
 
+// Key để lưu thông tin người dùng hiện tại trong localStorage
 const USER_MANAGER_KEY = "nguoiDungHienTai";
 
+// Hàm: Lấy username của người dùng đang đăng nhập
 function getCurrentUsername() {
   try {
+    // Đọc dữ liệu người dùng từ localStorage
     const currentUserData = localStorage.getItem(USER_MANAGER_KEY);
+    
     if (currentUserData) {
+      // Parse JSON và lấy username
       const user = JSON.parse(currentUserData);
       return user.tenDangNhap;
     }
   } catch (e) {
+    // Log lỗi nếu có vấn đề khi đọc hoặc parse
     console.error("Lỗi khi đọc current user:", e);
   }
+  
+  // Trả về null nếu không có người dùng đăng nhập
   return null;
 }
 
+// Hàm export: Lấy giỏ hàng của người dùng hiện tại
 export function getCart() {
+  // Lấy username của người dùng đang đăng nhập
   const username = getCurrentUsername();
+  
+  // Nếu chưa đăng nhập, trả về giỏ hàng rỗng
   if (!username) {
     return [];
   }
+  
+  // Tạo key riêng cho giỏ hàng của từng user (cart_username)
   const cartKey = `cart_${username}`;
+  
   try {
+    // Đọc dữ liệu giỏ hàng từ localStorage
     const cartString = localStorage.getItem(cartKey);
+    
+    // Parse JSON, nếu null thì dùng mảng rỗng
     const cart = JSON.parse(cartString) || [];
+    
+    // Chuẩn hóa dữ liệu từng item trong giỏ hàng
     return cart.map((item) => ({
-      ...item,
-      price: Number(item.price) || 0,
-      quantity: parseInt(item.quantity) || 0,
+      ...item,  // Giữ nguyên các thuộc tính cũ
+      price: Number(item.price) || 0,  // Đảm bảo price là số
+      quantity: parseInt(item.quantity) || 0,  // Đảm bảo quantity là số nguyên
+      // Tạo identifier duy nhất cho item (kết hợp id và size)
       itemIdentifier: item.itemIdentifier || `${item.id}-${item.size || "N/A"}`,
     }));
   } catch (e) {
+    // Log lỗi nếu có vấn đề khi đọc/parse
     console.error("Lỗi khi tải giỏ hàng:", e);
     return [];
   }
 }
+
+// Gán hàm vào window để các file khác có thể gọi
 window.getCart = getCart;
 
+// Hàm: Lưu giỏ hàng vào localStorage
 function saveCart(cart) {
+  // Lấy username của người dùng đang đăng nhập
   const username = getCurrentUsername();
+  
+  // Nếu chưa đăng nhập, không thể lưu
   if (!username) {
     console.warn("Không thể lưu giỏ hàng: Người dùng chưa đăng nhập.");
     return;
   }
+  
+  // Tạo key riêng cho giỏ hàng của user này
   const cartKey = `cart_${username}`;
+  
+  // Lưu giỏ hàng vào localStorage dưới dạng JSON string
   localStorage.setItem(cartKey, JSON.stringify(cart));
 }
 

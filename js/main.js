@@ -1,99 +1,135 @@
-
-
+// Import hàm render lịch sử đơn hàng từ module order-history-ui
 import { renderOrderHistory } from './order-history-ui.js'; 
 
+// Import class ProductManager để quản lý sản phẩm
 import { ProductManager } from './ProductManager.js'; 
+
+// Tạo instance của ProductManager để sử dụng trong file này
 const productManager = new ProductManager(); 
 
+// Hàm: Kiểm tra người dùng đã đăng nhập chưa
+// moModal: nếu true thì hiển thị modal đăng nhập khi chưa login
 function kiemTraDangNhap(moModal = false) {
+    // Nếu có hàm kiemTraDangNhap_core từ module khác, ưu tiên dùng hàm đó
     if (window.kiemTraDangNhap_core) { 
-
         return window.kiemTraDangNhap_core(moModal);
     }
+    
+    // Key để lưu thông tin người dùng hiện tại trong localStorage
     const USER_KEY = 'nguoiDungHienTai'; 
+    
+    // Đọc thông tin người dùng từ localStorage
     const nguoiDungHienTai = localStorage.getItem(USER_KEY);
     
+    // Nếu có dữ liệu người dùng
     if (nguoiDungHienTai) {
         try {
+            // Parse JSON và trả về object người dùng
             return JSON.parse(nguoiDungHienTai);
         } catch (e) {
-
+            // Nếu parse lỗi (dữ liệu bị hỏng), xóa khỏi localStorage
             localStorage.removeItem(USER_KEY);
             return null;
         }
     }
     
+    // Nếu chưa đăng nhập và moModal = true
     if (moModal && window.openLoginModal) {
+        // Mở modal đăng nhập
         window.openLoginModal();
     } else if (moModal) {
+        // Hoặc hiển thị alert nếu không có modal
         alert('Vui lòng đăng nhập để sử dụng chức năng này!');
     }
+    
+    // Trả về null nếu chưa đăng nhập
     return null;
 }
+
+// Gán hàm vào window để các file khác có thể gọi
 window.kiemTraDangNhap = kiemTraDangNhap; 
 
+// Hàm: Xử lý khi người dùng nhấn nút đăng xuất
 function xuLyDangXuat() {
+    // Nếu có hàm dangXuat từ module khác, ưu tiên dùng hàm đó
     if (window.dangXuat) {
         window.dangXuat();
     } else {
+        // Fallback: tự xử lý đăng xuất
         const USER_KEY = 'nguoiDungHienTai';
         
+        // Hiển thị hộp thoại xác nhận
         if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+            // Xóa thông tin người dùng khỏi localStorage
             localStorage.removeItem(USER_KEY);
 
+            // Cập nhật lại giao diện header nếu có hàm capNhatUIHeader
             if (window.capNhatUIHeader) {
                 window.capNhatUIHeader();
             }
+            
+            // Reload trang để reset toàn bộ trạng thái
             window.location.reload();
         }
     }
 }
 
+// Hàm: Xử lý khi nhấn nút "Thêm vào giỏ" trên card sản phẩm
 function handleAddToCartClick(e) { 
-    
+    // this = nút "Thêm vào giỏ" được click
+    // Tìm thẻ cha là .product-card hoặc .modal-content
     const card = this.closest('.product-card') || this.closest('.modal-content');
             
+    // Nếu không tìm thấy thẻ cha hợp lệ
     if (!card) {
         console.error("Lỗi: Nút 'Thêm vào giỏ' không nằm trong thẻ cha hợp lệ.");
         return;
     }
 
+    // Lấy product ID từ data-id attribute của button hoặc card
     const productId = this.dataset.id || card.dataset.id; 
     
+    // Nếu không có productId thì không thể thêm vào giỏ
     if (!productId) {
         console.error("Không tìm thấy Product ID. Bỏ qua Quick Add.");
         return;
     }
     
-
+    // Lấy thông tin sản phẩm từ ProductManager theo ID
     const product = productManager.getProductById(productId);
     
+    // Nếu không tìm thấy sản phẩm trong database
     if (!product) {
         console.error(`Không tìm thấy sản phẩm với ID: ${productId}`);
         return;
     }
     
-
+    // Lấy các thông tin cần thiết từ product object
     const name = product.name;
     const price = product.price;
-    const img = product.img || 'default.jpg';
+    const img = product.img || 'default.jpg';  // Dùng ảnh mặc định nếu không có
     
-
-    const size = 'Chưa chọn'; 
-    const color = null;
-    const quantity = 1;
+    // Thiết lập các giá trị mặc định cho quick add
+    const size = 'Chưa chọn';  // Chưa chọn size cụ thể
+    const color = null;        // Chưa chọn màu
+    const quantity = 1;        // Thêm 1 sản phẩm
     
+    // Gọi hàm addToCart (được định nghĩa trong cart.js)
     if (window.addToCart) {
         const success = window.addToCart(productId, name, price, img, size, color, quantity); 
         
+        // Nếu thêm thành công
         if(success !== false) {
+            // Hiển thị thông báo
             alert(`🛒 Đã thêm ${name} vào giỏ hàng!`);
 
+            // Mở modal giỏ hàng để xem
             if (window.openCartModal) {
                 window.openCartModal();
             }
         }
     } else {
+        // Lỗi: hàm addToCart chưa được load
         console.error("Lỗi: window.addToCart chưa được load.");
     }
 }

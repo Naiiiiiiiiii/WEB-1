@@ -1,63 +1,95 @@
-
+// Import class Product để tạo và quản lý các đối tượng sản phẩm
 import { Product } from './Product.js';
+
+// Import dữ liệu sản phẩm mẫu ban đầu từ file productData.js
 import { productDataList } from './productData.js'; 
+
+// Import categoryManager để lấy tên danh mục từ ID
 import { categoryManager } from './category.js'; 
 
+// Class ProductManager: Quản lý toàn bộ danh sách sản phẩm
 export class ProductManager {
+    // Constructor: Khởi tạo ProductManager
     constructor() {
+        // Key để lưu/đọc dữ liệu sản phẩm từ localStorage
         this.STORAGE_KEY = 'shoestore_products';
+        
+        // Tải danh sách sản phẩm từ localStorage hoặc dữ liệu mẫu
         this.products = this.loadProducts();
     }
     
-
+    // Phương thức: Lấy tên danh mục từ categoryId
     getCategoryName(categoryId) {
+        // Gọi hàm từ categoryManager để convert ID thành tên
         return categoryManager.getCategoryNameById(categoryId);
     }
 
+    // Phương thức: Tải danh sách sản phẩm từ localStorage
     loadProducts() {
         try {
+            // Đọc dữ liệu từ localStorage
             const data = localStorage.getItem(this.STORAGE_KEY);
+            
+            // Nếu có dữ liệu đã lưu
             if (data) {
+                // Parse JSON string thành array
                 const productsData = JSON.parse(data);
+                
+                // Chuyển đổi mỗi object thành instance của class Product
                 return productsData.map(p => Product.fromJSON(p));
             }
         } catch (error) {
+            // Log lỗi nếu có vấn đề khi đọc/parse dữ liệu
             console.error('Lỗi khi tải danh sách sản phẩm:', error);
         }
         
-
+        // Nếu không có dữ liệu trong localStorage, dùng dữ liệu mẫu
+        // Tạo instance Product cho mỗi item trong productDataList
         return productDataList.map((data, index) => new Product({
-            id: data.id || index + 1, 
-            ...data,
-            variants: data.variants || [], 
-            costPrice: data.costPrice || data.price * 0.7 
+            id: data.id || index + 1,  // Tạo ID nếu chưa có
+            ...data,  // Spread toàn bộ thuộc tính từ data
+            variants: data.variants || [],  // Đảm bảo có mảng variants
+            costPrice: data.costPrice || data.price * 0.7  // Ước tính giá vốn = 70% giá bán
         }));
     }
 
+    // Phương thức: Lưu danh sách sản phẩm vào localStorage
     saveProducts() {
         try {
+            // Chuyển đổi tất cả Product instances thành plain objects
             const productsData = this.products.map(p => p.toJSON());
+            
+            // Lưu vào localStorage dưới dạng JSON string
             localStorage.setItem(this.STORAGE_KEY, JSON.stringify(productsData));
+            
+            // Trả về true nếu lưu thành công
             return true;
         } catch (error) {
+            // Log lỗi nếu có vấn đề (VD: localStorage đầy)
             console.error('Lỗi khi lưu danh sách sản phẩm:', error);
             return false;
         }
     }
 
+    // Phương thức: Tìm sản phẩm theo ID
     getProductById(id) {
-
+        // Dùng find() để tìm sản phẩm có id khớp (chuyển về Number để so sánh)
         return this.products.find(p => p.id === Number(id));
     }
 
+    // Phương thức: Lấy tất cả sản phẩm (có thể bao gồm sản phẩm bị ẩn)
     getAllProducts(includeHidden = false) {
+        // Nếu includeHidden = true, trả về tất cả
         if (includeHidden) {
             return this.products;
         }
+        // Ngược lại, chỉ trả về sản phẩm chưa bị ẩn (isHidden = false)
         return this.products.filter(p => !p.isHidden);
     }
     
+    // Phương thức: Lấy danh sách sản phẩm hiển thị (không bị ẩn)
     getVisibleProducts() {
+        // Lọc và chỉ trả về các sản phẩm có isHidden = false
         return this.products.filter(p => !p.isHidden);
     }
 
