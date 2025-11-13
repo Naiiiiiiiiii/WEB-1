@@ -1,82 +1,107 @@
+// Import ProductManager để lấy và quản lý danh sách sản phẩm
 import { ProductManager } from "./ProductManager.js";
+
+// Import categoryManager để lấy thông tin danh mục
 import { categoryManager } from "./category.js";
 
+// Chờ DOM load xong mới chạy code
 document.addEventListener("DOMContentLoaded", () => {
+    // Tạo instance của ProductManager
     const productManager = new ProductManager();
 
+    // Lấy tất cả sản phẩm hiển thị (không bị ẩn)
     const allProducts = productManager.getVisibleProducts();
 
+    // Helper function: Tìm một phần tử trong DOM (shorthand cho querySelector)
     const $ = (sel) => document.querySelector(sel);
+    
+    // Helper function: Tìm nhiều phần tử trong DOM và convert thành Array
     const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
+    // Hàm: Escape HTML để tránh XSS (Cross-Site Scripting)
+    // Chuyển các ký tự đặc biệt thành HTML entities
     function escapeHtml(str = "") {
         return String(str)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+            .replace(/&/g, "&amp;")    // & thành &amp;
+            .replace(/</g, "&lt;")     // < thành &lt;
+            .replace(/>/g, "&gt;")     // > thành &gt;
+            .replace(/"/g, "&quot;")   // " thành &quot;
+            .replace(/'/g, "&#039;");  // ' thành &#039;
     }
 
-    const productGrid = $(".product-grid");
-    const filterGroup = $(".filter-group");
-    const sortSelect = $(".sort-select");
-    const paginationContainer = $("#pagination-controls");
+    // Lấy các phần tử DOM cần thiết
+    const productGrid = $(".product-grid");              // Container chứa danh sách sản phẩm
+    const filterGroup = $(".filter-group");              // Nhóm nút lọc danh mục
+    const sortSelect = $(".sort-select");                // Dropdown sắp xếp
+    const paginationContainer = $("#pagination-controls"); // Container phân trang
 
-    const modal = $("#quick-view-modal");
-    const modalImg = $("#modal-img");
-    const modalName = $("#modal-name");
-    const modalRating = $("#modal-rating");
-    const modalPrice = $("#modal-price");
-    const modalAddBtn = $("#modal-add-to-cart");
-    const modalViewDetail = $("#modal-view-detail");
+    // Các phần tử của Quick View Modal
+    const modal = $("#quick-view-modal");                // Modal popup
+    const modalImg = $("#modal-img");                    // Ảnh sản phẩm trong modal
+    const modalName = $("#modal-name");                  // Tên sản phẩm trong modal
+    const modalRating = $("#modal-rating");              // Rating trong modal
+    const modalPrice = $("#modal-price");                // Giá trong modal
+    const modalAddBtn = $("#modal-add-to-cart");         // Nút thêm vào giỏ trong modal
+    const modalViewDetail = $("#modal-view-detail");     // Link xem chi tiết trong modal
 
-    const modalOptionsContainer = $("#modal-options-container");
+    const modalOptionsContainer = $("#modal-options-container"); // Container cho options
 
+    // Nếu không tìm thấy productGrid, dừng execution (trang không có grid)
     if (!productGrid) {
         return;
     }
 
-    let currentCategory = "all";
-    let currentSort = "";
+    // Biến state: Lưu trạng thái lọc và sắp xếp hiện tại
+    let currentCategory = "all";  // Danh mục hiện tại ("all" = tất cả)
+    let currentSort = "";          // Kiểu sắp xếp hiện tại (rỗng = không sắp xếp)
     
-    const ITEMS_PER_PAGE = 6; 
-    let productsPerPage = ITEMS_PER_PAGE;
+    // Cấu hình phân trang
+    const ITEMS_PER_PAGE = 6;      // Số sản phẩm hiển thị mỗi trang (constant)
+    let productsPerPage = ITEMS_PER_PAGE; // Số sản phẩm mỗi trang (có thể thay đổi)
     
-    let currentPage = 1;
-    let filtered = allProducts.slice();
-    let totalPages = 0;
+    // Biến state phân trang
+    let currentPage = 1;           // Trang hiện tại
+    let filtered = allProducts.slice(); // Mảng sản phẩm sau khi lọc (copy từ allProducts)
+    let totalPages = 0;            // Tổng số trang
 
+    // Hàm: Tạo HTML card cho một sản phẩm
     function createProductCard(product) {
+        // Tạo thẻ div cho card sản phẩm
         const card = document.createElement("div");
-        card.className = "product-card";
-        card.dataset.id = product.id;
+        card.className = "product-card";       // Gán class cho styling
+        card.dataset.id = product.id;          // Lưu product ID vào data attribute
 
+        // Tạo HTML cho badge (nhãn như "Sale", "New", "Hot")
         const badgeText = product.getBadgeText();
         const badgeHtml = product.badge
             ? `<div class="product-badge ${escapeHtml(product.badge)}">${escapeHtml(
                   badgeText
               )}</div>`
-            : "";
+            : "";  // Nếu không có badge, trả về chuỗi rỗng
 
+        // Tạo HTML cho ảnh sản phẩm
         const imgHtml = product.img
             ? `<img src="${escapeHtml(product.img)}" alt="${escapeHtml(
                   product.name
               )}" class="product-img">`
-            : `<i class="fas fa-shoe-prints product-icon" aria-hidden="true"></i>`;
+            : `<i class="fas fa-shoe-prints product-icon" aria-hidden="true"></i>`; // Icon mặc định nếu không có ảnh
 
+        // Format giá hiện tại theo locale Việt Nam (VD: 1.000.000)
         const currentPrice = (product.price || 0).toLocaleString("vi-VN");
         let priceHtml = `<span class="current-price">${currentPrice} VNĐ</span>`;
 
+        // Nếu có giá cũ và đang sale, hiển thị cả giá cũ bị gạch
         if (product.oldPrice && product.isOnSale()) {
             const oldPrice = (product.oldPrice || 0).toLocaleString("vi-VN");
             priceHtml = `<span class="current-price">${currentPrice} VNĐ</span> <span class="old-price">${oldPrice} VNĐ</span>`;
         }
 
+        // Tạo HTML cho rating (sao đánh giá)
         const ratingHtml = `<div class="product-rating"><div class="stars">${product.renderStars()}</div><span class="rating-text">(${
-            product.ratingCount || 0
+            product.ratingCount || 0  // Số lượng đánh giá
         })</span></div>`;
 
+        // Gán nội dung HTML cho card
         card.innerHTML = `
             ${badgeHtml}
             <div class="product-image">
