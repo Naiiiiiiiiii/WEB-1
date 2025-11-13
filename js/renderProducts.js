@@ -127,80 +127,147 @@ document.addEventListener("DOMContentLoaded", () => {
         return card;
     }
 
+    // Hàm: Render các nút điều khiển phân trang (Previous, 1, 2, 3..., Next)
+    // Hiển thị tối đa 5 nút số trang xung quanh trang hiện tại
     function renderPaginationControls() {
+        // Nếu không tìm thấy container, dừng
         if (!paginationContainer) return;
+        
+        // Xóa nội dung cũ
         paginationContainer.innerHTML = '';
         
+        // Nếu chỉ có 1 trang hoặc ít hơn, không cần phân trang
         if (totalPages <= 1) return;
 
+        // Tạo nút "Trước" (Previous)
         const prevButton = document.createElement('button');
         prevButton.textContent = 'Trước';
+        
+        // Disable nút nếu đang ở trang đầu tiên
         prevButton.disabled = currentPage === 1;
+        
+        // Click để chuyển về trang trước
         prevButton.addEventListener('click', () => goToPage(currentPage - 1));
         paginationContainer.appendChild(prevButton);
 
-        let startPage = Math.max(1, currentPage - 2);
-        let endPage = Math.min(totalPages, currentPage + 2);
+        // Tính toán range của các số trang cần hiển thị
+        // Hiển thị 5 trang: currentPage -2, -1, current, +1, +2
+        let startPage = Math.max(1, currentPage - 2);           // Không nhỏ hơn 1
+        let endPage = Math.min(totalPages, currentPage + 2);    // Không lớn hơn totalPages
 
+        // Đảm bảo luôn hiển thị đủ 5 nút (nếu có đủ trang)
         if (endPage - startPage < 4) {
+            // Nếu ở đầu, mở rộng về cuối
             if (startPage === 1) endPage = Math.min(totalPages, 5);
+            
+            // Nếu ở cuối, mở rộng về đầu
             if (endPage === totalPages) startPage = Math.max(1, totalPages - 4);
         }
 
+        // Tạo các nút số trang từ startPage đến endPage
         for (let i = startPage; i <= endPage; i++) {
             const pageButton = document.createElement('button');
-            pageButton.textContent = i;
+            pageButton.textContent = i;  // Số trang
+            
+            // Thêm class 'active' cho trang hiện tại
             pageButton.classList.toggle('active', i === currentPage);
+            
+            // Click để chuyển đến trang i
             pageButton.addEventListener('click', () => goToPage(i));
             paginationContainer.appendChild(pageButton);
         }
 
+        // Tạo nút "Sau" (Next)
         const nextButton = document.createElement('button');
         nextButton.textContent = 'Sau';
+        
+        // Disable nút nếu đang ở trang cuối
         nextButton.disabled = currentPage === totalPages;
+        
+        // Click để chuyển sang trang sau
         nextButton.addEventListener('click', () => goToPage(currentPage + 1));
         paginationContainer.appendChild(nextButton);
     }
 
+    // Hàm: Render danh sách sản phẩm cho trang hiện tại
+    // Chỉ hiển thị slice sản phẩm theo pagination
     function renderList() {
+        // Xóa nội dung grid cũ
         productGrid.innerHTML = "";
         
+        // Tính toán chỉ số bắt đầu và kết thúc
+        // VD: Trang 1 (0-5), Trang 2 (6-11)...
         const start = productsPerPage * (currentPage - 1);
         const end = start + productsPerPage;
+        
+        // Lấy slice sản phẩm từ mảng filtered
         const slice = filtered.slice(start, end);
 
+        // Nếu không có sản phẩm nào, hiển thị thông báo
         if (slice.length === 0) {
             productGrid.innerHTML =
                 '<p class="no-products">Không có sản phẩm phù hợp.</p>';
+            
+            // Xóa pagination nếu không có sản phẩm
             if (paginationContainer) paginationContainer.innerHTML = "";
             return;
         }
 
+        // Sử dụng DocumentFragment để tối ưu performance
+        // DocumentFragment không gây reflow khi append multiple elements
         const frag = document.createDocumentFragment();
+        
+        // Tạo card cho từng sản phẩm và thêm vào fragment
         slice.forEach((p) => frag.appendChild(createProductCard(p)));
+        
+        // Append tất cả cards vào grid một lần (chỉ 1 reflow)
         productGrid.appendChild(frag);
 
+        // Render pagination controls
         renderPaginationControls();
     }
 
+    // Hàm: Chuyển đến trang cụ thể
+    // @param page: Số trang cần chuyển đến
     function goToPage(page) {
+        // Validate page number trong range hợp lệ
         if (page >= 1 && page <= totalPages) {
+            // Cập nhật trang hiện tại
             currentPage = page;
+            
+            // Re-render danh sách sản phẩm
             renderList();
+            
+            // Scroll smooth lên đầu product grid
+            // Để user nhìn thấy sản phẩm ngay sau khi chuyển trang
             if (productGrid.scrollIntoView) {
                 productGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
     }
 
+    // Hàm: Áp dụng filter và sort cho danh sách sản phẩm
+    // Thực hiện cả 2 operations: lọc theo category và sắp xếp
     function applyFilters() {
+        // Step 1: FILTER - Lọc theo danh mục
+        
+        // Kiểm tra dữ liệu hợp lệ
         if (!allProducts || !Array.isArray(allProducts)) {
             filtered = [];
-        } else if (currentCategory === "all") {
-            filtered = allProducts.slice();
-        } else {
+        } 
+        // Nếu chọn "Tất cả", lấy toàn bộ sản phẩm
+        else if (currentCategory === "all") {
+            filtered = allProducts.slice();  // Clone array
+        } 
+        // Lọc theo category cụ thể
+        else {
+            // Normalize category name: lowercase + trim để so sánh chính xác
             const normalized = (currentCategory || "").toLowerCase().trim();
+            
+            // Filter products có category khớp
             filtered = allProducts.filter((p) => {
+                // Lấy category name từ categoryId hoặc trực tiếp từ p.category
+                // Sử dụng optional chaining (?.) và nullish coalescing (??)
                 const name = (
                     productManager.getCategoryName?.(p.categoryId) ??
                     p.category ??
@@ -209,47 +276,79 @@ document.addEventListener("DOMContentLoaded", () => {
                     .toString()
                     .toLowerCase()
                     .trim();
+                
+                // So sánh category name với filter
                 return name === normalized;
             });
         }
 
+        // Step 2: SORT - Sắp xếp theo tiêu chí
+        
+        // Sort option 1: Giá tăng dần (Price: Low to High)
         if (currentSort === "price-asc") {
             filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
-        } else if (currentSort === "price-desc") {
+        } 
+        // Sort option 2: Giá giảm dần (Price: High to Low)
+        else if (currentSort === "price-desc") {
             filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
-        } else if (currentSort === "newest") {
+        } 
+        // Sort option 3: Sản phẩm mới nhất (ID lớn nhất = mới nhất)
+        else if (currentSort === "newest") {
             filtered.sort((a, b) => (b.id || 0) - (a.id || 0));
-        } else if (currentSort === "best-seller") {
+        } 
+        // Sort option 4: Bán chạy nhất (ratingCount cao nhất)
+        else if (currentSort === "best-seller") {
             filtered.sort((a, b) => (b.ratingCount || 0) - (a.ratingCount || 0));
         }
 
+        // Step 3: PAGINATION - Tính toán số trang
+        // Math.ceil() để làm tròn lên (VD: 7 items / 6 per page = 1.16 → 2 pages)
         totalPages = Math.ceil(filtered.length / productsPerPage);
+        
+        // Reset về trang 1 sau khi filter/sort
         currentPage = 1;
+        
+        // Re-render danh sách
         renderList();
     }
 
+    // Hàm: Mở modal Quick View để xem nhanh sản phẩm
+    // @param productId: ID của sản phẩm cần xem
     function openQuickView(productId) {
+        // Convert sang Number (từ string dataset)
         const id = Number(productId);
+        
+        // Lấy thông tin sản phẩm từ ProductManager
         const product = productManager.getProductById(id);
+        
+        // Nếu không tìm thấy product hoặc modal, dừng
         if (!product || !modal) return;
 
+        // Cập nhật ảnh sản phẩm trong modal
         if (modalImg) {
-            modalImg.src = product.img || "./img/default.avif";
-            modalImg.alt = product.name;
+            modalImg.src = product.img || "./img/default.avif";  // Fallback image
+            modalImg.alt = product.name;  // Alt text cho accessibility
         }
+        
+        // Cập nhật tên sản phẩm
         if (modalName) {
             modalName.textContent = product.name;
         }
+        
+        // Cập nhật rating (sao + số lượng đánh giá)
         if (modalRating) {
             modalRating.innerHTML = `${product.renderStars()} <span class="rating-text">(${
                 product.ratingCount || 0
             })</span>`;
         }
 
+        // Cập nhật giá sản phẩm
         if (modalPrice) {
+            // Format giá hiện tại
             const currentPrice = (product.price || 0).toLocaleString("vi-VN");
             let priceHtml = `<strong>${currentPrice} VNĐ</strong>`;
 
+            // Nếu đang sale, hiển thị cả giá cũ bị gạch
             if (product.oldPrice && product.isOnSale()) {
                 const oldPrice = (product.oldPrice || 0).toLocaleString("vi-VN");
                 priceHtml += ` <span class="old-price">${oldPrice} VNĐ</span>`;
@@ -257,11 +356,14 @@ document.addEventListener("DOMContentLoaded", () => {
             modalPrice.innerHTML = priceHtml;
         }
 
+        // Tạo size selector (dropdown chọn kích cỡ giày)
         if (modalOptionsContainer) {
+            // Các size giày phổ biến: EU 39-43
             const sizeOptions = [39, 40, 41, 42, 43]
                 .map((size) => `<option value="${size}">EU ${size}</option>`)
                 .join("");
 
+            // Inject HTML cho size selector
             modalOptionsContainer.innerHTML = `
                 <div class="form-group size-selector">
                     <label for="modal-shoe-size">Chọn Kích cỡ:</label>
@@ -273,23 +375,37 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
         }
 
+        // Lưu product ID vào nút "Thêm vào giỏ" để xử lý sau
         if (modalAddBtn) modalAddBtn.dataset.id = id;
 
+        // Cập nhật link "Xem chi tiết" để navigate đến product detail page
         if (modalViewDetail) {
             modalViewDetail.href = `./product-detail.html?id=${id}`;
         }
 
+        // Hiển thị modal với animation
         modal.classList.add("open");
         modal.style.display = "flex";
+        
+        // Update ARIA attribute cho screen readers
         modal.setAttribute("aria-hidden", "false");
     }
 
+    // Hàm: Đóng modal Quick View
     function closeQuickView() {
+        // Kiểm tra modal tồn tại
         if (!modal) return;
+        
+        // Remove class 'open' để trigger CSS transition (fade out)
         modal.classList.remove("open");
+        
+        // Ẩn modal
         modal.style.display = "none";
+        
+        // Update ARIA attribute cho screen readers
         modal.setAttribute("aria-hidden", "true");
 
+        // Xóa nội dung options container (cleanup)
         if (modalOptionsContainer) modalOptionsContainer.innerHTML = "";
     }
 
