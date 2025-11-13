@@ -1,102 +1,160 @@
+// File: checkout-ui.js
+// Mục đích: Quản lý giao diện và logic checkout (thanh toán)
+// Bao gồm: Multi-step checkout flow (shipping → payment → review → success)
 
-
+// Import template HTML cho modal checkout từ file riêng
 import { CHECKOUT_OVERLAY_HTML } from './checkout-modal-html.js';
 
+// Biến global: Reference đến overlay modal checkout
 let checkoutOverlay = null;
 
+// Object: Cache dữ liệu đơn hàng tạm thời trong quá trình checkout
+// Lưu thông tin user nhập vào các bước để dùng ở bước cuối
 let orderDataCache = {}; 
 
+// Hàm: Format số tiền theo chuẩn Việt Nam (VD: 1.000.000₫)
+// @param amount: Số tiền cần format
+// @return: Chuỗi tiền tệ đã format
 const formatCurrency = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 
+// Hàm: Inject HTML modal checkout vào DOM (chỉ chạy 1 lần)
+// Kiểm tra xem modal đã tồn tại chưa để tránh inject trùng
 function injectCheckoutOverlay() {
+    // Nếu đã có modal trong DOM, không inject nữa
     if (document.getElementById('checkout-overlay')) return; 
+    
+    // Insert HTML vào cuối body
     document.body.insertAdjacentHTML('beforeend', CHECKOUT_OVERLAY_HTML);
 }
 
+// Hàm: Khởi tạo DOM elements và event listeners cho checkout
 function initializeCheckoutDom() {
+    // Inject HTML nếu chưa có
     injectCheckoutOverlay(); 
+    
+    // Lấy reference đến overlay element
     checkoutOverlay = document.getElementById('checkout-overlay');
     
-
+    // Setup các event listeners (nút next, back, submit...)
     setupEventListeners(); 
 }
 
+// Hàm: Hiển thị một bước cụ thể trong checkout flow
+// @param stepName: Tên bước cần hiển thị ('shipping', 'payment', 'review', 'success')
 function showStep(stepName) {
+    // Định nghĩa các bước trong checkout flow với ID tương ứng
     const steps = [
-        { name: 'shipping', id: 'step-shipping' }, 
-        { name: 'payment', id: 'step-payment' }, 
-        { name: 'review', id: 'step-review' }, 
-        { name: 'success', id: 'order-success-message' } 
+        { name: 'shipping', id: 'step-shipping' },      // Bước 1: Thông tin giao hàng
+        { name: 'payment', id: 'step-payment' },        // Bước 2: Phương thức thanh toán
+        { name: 'review', id: 'step-review' },          // Bước 3: Xem lại đơn hàng
+        { name: 'success', id: 'order-success-message' } // Bước 4: Thông báo thành công
     ];
     
+    // Duyệt qua các bước và hiển thị/ẩn tương ứng
     steps.forEach(step => {
         const el = document.getElementById(step.id); 
+        
+        // Nếu step.name khớp với stepName, hiển thị (display: block)
+        // Ngược lại, ẩn (display: none)
         if (el) el.style.display = (step.name === stepName) ? 'block' : 'none';
     });
 
+    // Đảm bảo overlay có class 'open' để hiển thị modal
     if (checkoutOverlay && !checkoutOverlay.classList.contains('open')) {
         checkoutOverlay.classList.add('open');
     }
 }
+
+// Gán hàm vào window để có thể gọi từ file khác
 window.showStep = showStep;
 
+// Hàm export: Mở modal checkout và bắt đầu flow thanh toán
+// Được gọi khi user click "Tiến hành thanh toán" từ giỏ hàng
 export function openCheckoutModal() {
+    // Khởi tạo DOM nếu chưa có
     if (!checkoutOverlay) initializeCheckoutDom(); 
     
-    const kiemTraDangNhap = window.kiemTraDangNhap;
-    const getCart = window.getCart;
-    const checkCartBeforeCheckout = window.checkCartBeforeCheckout;
+    // Lấy references đến các hàm cần thiết từ window
+    const kiemTraDangNhap = window.kiemTraDangNhap;     // Kiểm tra đăng nhập
+    const getCart = window.getCart;                      // Lấy giỏ hàng
+    const checkCartBeforeCheckout = window.checkCartBeforeCheckout; // Validate giỏ hàng
     
-
+    // Validation 1: Kiểm tra hàm kiemTraDangNhap có tồn tại không
     if (typeof kiemTraDangNhap !== 'function') {
         console.error("LỖI: Thiếu hàm window.kiemTraDangNhap. Đảm bảo file user.js đã được tải.");
         alert("Lỗi hệ thống: Chức năng người dùng chưa được tải. Vui lòng thử lại sau.");
-        return;
+        return;  // Dừng nếu thiếu hàm
     }
     
+    // Validation 2: Kiểm tra user đã đăng nhập chưa
     const user = kiemTraDangNhap();
     if (!user || !user.tenDangNhap) {
+        // Nếu chưa đăng nhập, hiển thị thông báo
         alert("Vui lòng đăng nhập để tiến hành thanh toán và lưu lịch sử đơn hàng.");
+        
+        // Mở modal đăng nhập nếu có
         if (window.showLoginModal) window.showLoginModal();
-        return; 
+        return;  // Dừng checkout flow
     }
     
+    // Validation 3: Kiểm tra giỏ hàng có sản phẩm không
     if (!getCart || getCart().length === 0) {
         alert("Giỏ hàng của bạn đang trống! Vui lòng thêm sản phẩm.");
-        return;
+        return;  // Dừng nếu giỏ trống
     }
 
+    // Validation 4: Kiểm tra giỏ hàng hợp lệ (size đã chọn, tồn kho...)
     if (typeof checkCartBeforeCheckout === 'function' && !checkCartBeforeCheckout()) {
-        return; 
+        return;  // Dừng nếu không pass validation
     }
 
+    // Đóng modal giỏ hàng trước khi mở checkout
     if (window.closeCartModal) {
         window.closeCartModal(); 
     }
     
-
+    // Hiển thị bước đầu tiên: Thông tin giao hàng
     showStep('shipping'); 
     
-
+    // Pre-fill form với thông tin từ user account
     const fullNameEl = document.getElementById('fullName');
     const emailEl = document.getElementById('email');
     const phoneEl = document.getElementById('phone');
 
+    // Điền họ tên từ user data
     if(fullNameEl) fullNameEl.value = user.hoTen || "";
+    
+    // Điền email từ user data
     if(emailEl) emailEl.value = user.email || "";
+    
+    // Giữ nguyên số điện thoại nếu đã điền trước đó
     if(phoneEl) phoneEl.value = phoneEl.value || ""; 
     
+    // Pre-fill địa chỉ mặc định (demo data) nếu chưa có
+    if(document.getElementById('address')) 
+        document.getElementById('address').value = document.getElementById('address').value || "123 Đường Bàn Cờ";
+    
+    if(document.getElementById('district')) 
+        document.getElementById('district').value = document.getElementById('district').value || "Quận 3"; 
+    
+    if(document.getElementById('province')) 
+        document.getElementById('province').value = document.getElementById('province').value || "TP. Hồ Chí Minh"; 
 
-    if(document.getElementById('address')) document.getElementById('address').value = document.getElementById('address').value || "123 Đường Bàn Cờ";
-    if(document.getElementById('district')) document.getElementById('district').value = document.getElementById('district').value || "Quận 3"; 
-    if(document.getElementById('province')) document.getElementById('province').value = document.getElementById('province').value || "TP. Hồ Chí Minh"; 
-
+    // Hiển thị modal checkout với animation
     if (checkoutOverlay) {
+        // Set display để modal xuất hiện
         checkoutOverlay.style.display = 'flex'; 
+        
+        // Ẩn scroll của body khi modal mở
         document.body.style.overflow = 'hidden'; 
+        
+        // Dùng requestAnimationFrame để trigger CSS transition
+        // Đảm bảo browser đã render display:flex trước khi add class 'open'
         requestAnimationFrame(() => checkoutOverlay.classList.add('open')); 
     }
 }
+
+// Gán hàm vào window để có thể gọi từ cart-ui.js
 window.openCheckoutModal = openCheckoutModal; 
 
 export function closeCheckoutModal() {
