@@ -134,29 +134,39 @@ function handleAddToCartClick(e) {
     }
 }
 
+// Hàm: Khởi tạo các sự kiện liên quan đến giỏ hàng và authentication
+// Được gọi trong DOMContentLoaded để setup event listeners
 function khoiTaoSuKienGioHang() {
-    
-
+    // Event Delegation: Gắn 1 listener lên body thay vì từng nút
+    // Lợi ích: Hoạt động với elements được tạo động sau này
     document.body.addEventListener('click', function(e) {
-        
-
+        // Tìm nút "Thêm vào giỏ" gần nhất với element được click
+        // closest() tìm lên phía cha cho đến khi gặp selector khớp
         const nutThemVaoGio = e.target.closest('.add-to-cart');
         
+        // Nếu click vào nút "Thêm vào giỏ" (hoặc child của nó)
         if (nutThemVaoGio) {
+            // Ngăn hành động mặc định (VD: submit form, navigate link)
             e.preventDefault();
             
+            // Kiểm tra đăng nhập trước khi cho phép thêm vào giỏ
+            // kiemTraDangNhap(true) = hiển thị modal login nếu chưa đăng nhập
             if (!window.kiemTraDangNhap(true)) {
-                return; 
+                return;  // Dừng lại nếu chưa đăng nhập
             }
             
-
+            // Gọi hàm xử lý thêm vào giỏ với context là nút được click
+            // .call() để set `this` = nutThemVaoGio trong hàm
             handleAddToCartClick.call(nutThemVaoGio, e);
         }
     });
 
+    // Lấy các links cần bảo vệ (yêu cầu đăng nhập)
     const wishlistLink = document.querySelector('a[href="#wishlist"], a[href="./wishlist.html"]');
     const cartLink = document.querySelector('a[href="#cart"], a[href="./cart.html"]');
     const userProfileLink = document.querySelector('a[href="#profile"], a[href="./profile.html"]'); 
+    
+    // Lấy nút đăng xuất
     const logoutBtn = document.querySelector('#logout-btn'); 
 
     [wishlistLink, cartLink, userProfileLink].forEach(link => {
