@@ -247,104 +247,153 @@ export class ProductManager {
             this.saveProducts();
             return true;  // Nhập hàng thành công
         }
+        // Nếu có lỗi validation, return false
         return false;
     }
     
-
-    
+    // Phương thức: Giảm tồn kho khi bán hàng
+    // @param productId: ID sản phẩm
+    // @param quantity: Số lượng bán
+    // @param size: Size của variant (null nếu không có variant)
+    // @return: true nếu thành công, false nếu thất bại
     decreaseStock(productId, quantity, size = null) {
+        // Tìm sản phẩm
         const product = this.getProductById(productId);
+        
+        // Validate: sản phẩm tồn tại và quantity > 0
         if (!product || quantity <= 0) return false;
 
+        // Flag để track thành công
         let success = false;
 
+        // Trường hợp 1: Sản phẩm có variants
         if (product.variants && product.variants.length > 0) {
-
+            // Tìm variant theo size
             const variant = product.variants.find(v => Number(v.size) === Number(size));
+            
+            // Nếu tìm thấy variant và đủ tồn kho
             if (variant && variant.stock >= quantity) {
+                // Giảm stock
                 variant.stock -= quantity;
                 success = true;
             }
         } else {
-
+            // Trường hợp 2: Sản phẩm không có variants
+            // Kiểm tra initialStock đủ không
             if (product.initialStock >= quantity) {
+                // Giảm initialStock
                 product.initialStock -= quantity;
                 success = true;
             }
         }
 
+        // Nếu giảm stock thành công
         if (success) {
-
+            // Lưu lịch sử bán hàng vào mảng sales
             product.sales.push({ 
-                date: new Date().toISOString(), 
-                qty: quantity, 
-                type: "SALE",
-                variantSize: size 
+                date: new Date().toISOString(),  // Thời gian bán
+                qty: quantity,                    // Số lượng bán 
+                type: "SALE",                     // Loại transaction
+                variantSize: size                 // Size (nếu có)
             });
+            
+            // Lưu vào localStorage
             this.saveProducts();
         }
+        
         return success;
     }
 
-    
+    // Phương thức: Tăng tồn kho (thường dùng khi hoàn trả/hủy đơn)
+    // @param productId: ID sản phẩm
+    // @param quantity: Số lượng tăng
+    // @param size: Size của variant (null nếu không có)
+    // @return: true nếu thành công, false nếu thất bại
     increaseStock(productId, quantity, size = null) {
+        // Tìm sản phẩm
         const product = this.getProductById(productId);
+        
+        // Validate
         if (!product || quantity <= 0) return false;
 
+        // Flag success
         let success = false;
 
+        // Trường hợp 1: Có variants
         if (product.variants && product.variants.length > 0) {
-
+            // Tìm variant theo size
             const variant = product.variants.find(v => Number(v.size) === Number(size));
+            
             if (variant) {
+                // Tăng stock
                 variant.stock += quantity;
                 success = true;
             }
         } else {
-
+            // Trường hợp 2: Không có variants
+            // Tăng initialStock
             product.initialStock += quantity;
             success = true;
         }
 
+        // Nếu thành công, lưu lại
         if (success) {
-
             this.saveProducts();
         }
+        
         return success;
     }
 
-    
+    // Phương thức: Cập nhật giá bán dựa trên margin (%)
+    // Công thức: Giá bán = Giá vốn / (1 - margin/100)
+    // @param id: ID sản phẩm
+    // @param newMarginPercent: Tỉ lệ lợi nhuận mong muốn (%)
+    // @return: true nếu thành công, false nếu thất bại
     updateProductPriceByMargin(id, newMarginPercent) {
+        // Tìm sản phẩm
         const product = this.getProductById(id);
         if (!product) return false;
         
+        // Parse và validate margin
         const margin = Number(newMarginPercent);
         if (isNaN(margin) || margin <= 0 || margin >= 100) {
              console.error('Tỉ lệ lợi nhuận không hợp lệ. Phải là số > 0 và < 100.');
              return false;
         }
 
+        // Validate giá vốn phải > 0
         if (product.costPrice <= 0) {
             console.error('Không thể cập nhật giá khi Giá vốn = 0');
             return false;
         }
         
-
+        // Tính giá bán mới dựa trên margin
+        // VD: costPrice = 100, margin = 20% → salePrice = 100 / (1 - 0.2) = 125
         const newSalePrice = product.costPrice / (1 - (margin / 100));
         
-
+        // Làm tròn giá về bội số 1000 (VD: 125,432 → 125,000)
         const roundedPrice = Math.round(newSalePrice / 1000) * 1000;
 
+        // Cập nhật giá và margin
         product.price = roundedPrice;
         product.targetProfitMargin = margin;
 
+        // Lưu lại
         this.saveProducts();
         return true;
     }
 
-    
+    // Phương thức: Tìm kiếm nâng cao với nhiều filters
+    // @param name: Tên sản phẩm (tìm kiếm substring)
+    // @param category: Danh mục ('All' = tất cả)
+    // @param minPrice: Giá tối thiểu
+    // @param maxPrice: Giá tối đa
+    // @return: Mảng sản phẩm đã lọc
     advancedSearch(name = '', category = 'All', minPrice = 0, maxPrice = Infinity) {
+        // Bắt đầu với các sản phẩm visible (không bị ẩn)
         let results = this.getVisibleProducts();
+        
+        // Chuẩn hóa search term
         const searchName = name.toLowerCase().trim();
         const minP = Number(minPrice);
         const maxP = Number(maxPrice);
