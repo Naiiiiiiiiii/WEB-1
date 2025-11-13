@@ -1,7 +1,12 @@
+// File: login-modal.js
+// Mục đích: Quản lý modal đăng nhập và đăng ký người dùng
+// Bao gồm: Hiển thị form, validate, xử lý submit, chuyển đổi tab
 
-
+// Import các class User và UserManager từ module user.js
 import { User, UserManager } from './user.js';
 
+// Constant: Template HTML cho modal đăng nhập/đăng ký
+// Chứa toàn bộ cấu trúc HTML của modal với 2 tabs: Đăng nhập và Đăng ký
 const LOGIN_MODAL_HTML = `
     <div id="login-register-modal" class="modal login-register-modal-override" style="display: none;">
         <div class="modal-content login-modal-content">
@@ -130,92 +135,151 @@ const LOGIN_MODAL_HTML = `
     </div>
 `;
 
+// Tạo instance của UserManager để quản lý người dùng
 const userManager = new UserManager();
 
+// ============ UTILITY FUNCTIONS ============
+
+// Hàm: Hiển thị thông báo lỗi
+// @param id: ID của element thông báo lỗi
+// @param msg: Nội dung thông báo lỗi
 function hienLoi(id, msg) {
+    // Lấy element theo ID
     const el = document.getElementById(id);
+    
     if (el) {
+        // Gán nội dung lỗi
         el.textContent = msg;
+        
+        // Hiển thị element (CSS đã ẩn mặc định)
         el.style.display = 'block';
     }
 }
 
+// Hàm: Ẩn thông báo lỗi
+// @param id: ID của element thông báo lỗi
 function anLoi(id) {
+    // Lấy element theo ID
     const el = document.getElementById(id);
+    
     if (el) {
+        // Xóa nội dung
         el.textContent = '';
+        
+        // Ẩn element
         el.style.display = 'none';
     }
 }
 
+// Hàm: Hiển thị icon loading (spinner)
+// @param id: ID của element loading
 function hienLoading(id) {
     const el = document.getElementById(id);
     if (el) el.style.display = 'block';
 }
 
+// Hàm: Ẩn icon loading
+// @param id: ID của element loading
 function anLoading(id) {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
 }
 
+// Hàm: Chuyển đổi giữa tab "Đăng nhập" và "Đăng ký"
+// @param tabName: Tên tab cần chuyển đến ('dang-nhap' hoặc 'dang-ky')
 function chuyenTab(tabName) {
+    // Lấy tất cả các nút tab
     const nutTabElements = document.querySelectorAll('.nut-tab');
     
+    // Duyệt qua từng nút và cập nhật class 'active'
     nutTabElements.forEach(nut => {
+        // Nếu data-tab khớp với tabName, thêm class 'active'
         if (nut.getAttribute('data-tab') === tabName) {
             nut.classList.add('active');
         } else {
+            // Ngược lại, xóa class 'active'
             nut.classList.remove('active');
         }
     });
 
+    // Lấy tất cả các khung form và cập nhật hiển thị
     document.querySelectorAll('.khung-form').forEach(khung => {
+        // Nếu data-tab-content khớp với tabName, hiển thị form này
         if (khung.getAttribute('data-tab-content') === tabName) {
             khung.classList.add('active');
         } else {
+            // Ngược lại, ẩn form
             khung.classList.remove('active');
         }
     });
 
+    // Reset tất cả thông báo lỗi khi chuyển tab
     document.querySelectorAll('.thong-bao-loi').forEach(el => anLoi(el.id));
+    
+    // Ẩn tất cả thông báo thành công
     document.querySelectorAll('.thong-bao-thanh-cong').forEach(el => el.style.display = 'none');
 }
 
+// Regex: Pattern để validate email
+// Format: text@domain.extension (VD: user@gmail.com)
 const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// ============ XỬ LÝ ĐĂNG NHẬP ============
+
+// Hàm: Xử lý sự kiện submit form đăng nhập
+// @param e: Event object từ form submit
 function xuLyDangNhap(e) {
+    // Ngăn chặn hành vi mặc định của form (reload trang)
     e.preventDefault();
 
+    // Reset tất cả thông báo lỗi trước đó
     anLoi('loiTenDangNhap');
     anLoi('loiMatKhau');
+    
+    // Ẩn thông báo thành công cũ (nếu có)
     document.getElementById('thongBaoDangNhap').style.display = 'none';
 
+    // Lấy giá trị từ các input fields
+    // trim() để loại bỏ khoảng trắng thừa ở đầu/cuối
     const tenDangNhap = document.getElementById('tenDangNhap').value.trim();
     const matKhau = document.getElementById('matKhau').value;
 
+    // Biến flag để track validation
     let hopLe = true;
 
+    // Validate 1: Kiểm tra tên đăng nhập/email không được rỗng
     if (!tenDangNhap) {
         hienLoi('loiTenDangNhap', 'Vui lòng nhập tên đăng nhập hoặc email');
         hopLe = false;
     }
 
+    // Validate 2: Kiểm tra mật khẩu không được rỗng
     if (!matKhau) {
         hienLoi('loiMatKhau', 'Vui lòng nhập mật khẩu');
         hopLe = false;
     }
 
+    // Nếu tất cả validation pass
     if (hopLe) {
+        // Hiển thị loading spinner
         hienLoading('loadingDangNhap');
 
+        // Simulate async operation với setTimeout (500ms delay)
+        // Trong thực tế sẽ là API call
         setTimeout(() => {
+            // Tìm kiếm user trong database (localStorage)
+            // timTaiKhoan() sẽ so sánh username/email và password
             const user = userManager.timTaiKhoan(tenDangNhap, matKhau);
+            
+            // Ẩn loading spinner
             anLoading('loadingDangNhap');
 
+            // Nếu tìm thấy user (đăng nhập thành công)
             if (user) {
-
+                // Lưu thông tin user vào localStorage
                 userManager.luuUserHienTai(user);
                 
+                // Hiển thị thông báo thành công
                 const thongBao = document.getElementById('thongBaoDangNhap');
                 thongBao.textContent = `Đăng nhập thành công! Chào mừng ${user.hoTen}`;
                 thongBao.style.display = 'block';
