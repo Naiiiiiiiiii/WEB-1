@@ -1,71 +1,91 @@
-
-
+// Class User: Định nghĩa cấu trúc của một người dùng trong hệ thống
 class User {
+    // Constructor: Khởi tạo đối tượng User với các thông tin cần thiết
     constructor(hoTen, tenDangNhap, email, matKhau, orders = [], isLocked = false) {
-        this.hoTen = hoTen;
-        this.tenDangNhap = tenDangNhap;
-        this.email = email;
-        this.matKhau = matKhau;
-        this.orders = orders; 
-        this.isLocked = isLocked; 
+        this.hoTen = hoTen;              // Họ tên đầy đủ của người dùng
+        this.tenDangNhap = tenDangNhap;  // Username để đăng nhập (unique)
+        this.email = email;              // Email của người dùng
+        this.matKhau = matKhau;          // Mật khẩu (lưu ý: trong thực tế nên hash)
+        this.orders = orders;            // Mảng lưu lịch sử đơn hàng của user
+        this.isLocked = isLocked;        // Trạng thái khóa tài khoản (true = bị khóa)
     }
 
+    // Phương thức: Kiểm tra mật khẩu có khớp không
     kiemTraMatKhau(matKhauNhap) {
+        // So sánh mật khẩu nhập vào với mật khẩu đã lưu
         return this.matKhau === matKhauNhap;
     }
 }
 
+// Class UserManager: Quản lý toàn bộ danh sách người dùng
 class UserManager {
+    // Constructor: Khởi tạo UserManager
     constructor() {
+        // Key để lưu danh sách tất cả users trong localStorage
         this.STORAGE_KEY = 'users_shoestore'; 
+        
+        // Key để lưu thông tin user đang đăng nhập (khách hàng)
         this.CURRENT_USER_KEY = 'nguoiDungHienTai';
+        
+        // Key để lưu thông tin admin đang đăng nhập
         this.ADMIN_USER_KEY = 'nguoiDungAdmin';
+        
+        // Tải danh sách users từ localStorage hoặc dữ liệu mẫu
         this.users = this.taiDanhSachUser();
         
-
+        // Nếu có nhiều hơn 2 users và chưa lưu vào localStorage
+        // thì lưu lại (để persist data)
         if(this.users.length > 2 && !localStorage.getItem(this.STORAGE_KEY)) {
              this.luuDanhSachUser();
         }
     }
 
+    // Phương thức: Tải danh sách người dùng từ localStorage
     taiDanhSachUser() {
         try {
+            // Đọc dữ liệu từ localStorage
             const data = localStorage.getItem(this.STORAGE_KEY);
+            
+            // Nếu có dữ liệu đã lưu
             if (data) {
+                // Parse JSON thành array
                 const usersData = JSON.parse(data);
 
+                // Chuyển đổi mỗi object thành instance của class User
                 return usersData.map(u => new User(
                     u.hoTen, 
                     u.tenDangNhap, 
                     u.email, 
                     u.matKhau, 
-                    u.orders || [], 
-                    u.isLocked || false 
+                    u.orders || [],           // Lịch sử đơn hàng, mặc định []
+                    u.isLocked || false       // Trạng thái khóa, mặc định false
                 ));
             }
         } catch (error) {
+            // Log lỗi nếu có vấn đề khi đọc/parse
             console.error('Lỗi khi tải danh sách user:', error);
         }
         
-
+        // Nếu không có dữ liệu trong localStorage, tạo dữ liệu mẫu
+        // Đơn hàng mẫu cho tài khoản admin
         const adminOrders = [
             {
                 id: 'ORD-2025-001',
-                date: new Date(Date.now() - 86400000 * 2).toISOString(), 
-                status: 'delivered', 
-                total: 1500000,
+                date: new Date(Date.now() - 86400000 * 2).toISOString(),  // 2 ngày trước
+                status: 'delivered',   // Trạng thái: đã giao hàng
+                total: 1500000,        // Tổng tiền
                 items: [{ id: 'S001', name: 'Giày Thể Thao Cao Cấp', size: '42', price: 1500000, quantity: 1 }]
             },
             {
                 id: 'ORD-2025-002',
-                date: new Date().toISOString(), 
-                status: 'new', 
+                date: new Date().toISOString(),  // Hôm nay
+                status: 'new',         // Trạng thái: đơn mới
                 total: 2800000,
                 items: [{ id: 'S003', name: 'Giày Da Oxford Đen', size: '41', price: 1400000, quantity: 2 }]
             }
         ];
         
-
+        // Trả về mảng chứa 2 user mặc định: admin và testuser
         return [
             new User("Admin ShoeStore", "admin", "admin@shoestore.com", "Admin123", adminOrders, false),
             new User("Người Dùng Thử", "testuser", "test@user.com", "123456", [], false)
