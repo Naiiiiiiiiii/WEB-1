@@ -1,0 +1,23 @@
+Cập nhật tiến độ giải thích code:
+
+Files hoàn thành 100%:
+- Product.js
+- cart-ui.js  
+- category.js (NEW! - 100%)
+
+Files 70-90%:
+- cart.js (85%)
+- ProductManager.js (70%)
+
+Files 30-60%:
+- main.js (55%)
+- user.js (45%)
+- renderProducts.js (40%)
+- index.html (35%)
+
+Files đã bắt đầu (20-40%):
+- checkout-ui.js (35%)
+- order-manager.js (30%)
+- login-modal.js (25%)
+
+Tổng: ~1050 dòng comments đã thêm cho 12 files
