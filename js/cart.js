@@ -81,124 +81,212 @@ function saveCart(cart) {
   localStorage.setItem(cartKey, JSON.stringify(cart));
 }
 
+// Hàm: Tìm variant (biến thể) của sản phẩm theo size
+// @param productId: ID của sản phẩm
+// @param size: Size cần tìm
+// @return: Variant object hoặc null nếu không tìm thấy
 function findVariant(productId, size) {
+  // Lấy thông tin sản phẩm từ ProductManager
   const product = productManager.getProductById(productId);
+  
+  // Nếu không tìm thấy sản phẩm hoặc không có variants, trả về null
   if (!product || !product.variants || product.variants.length === 0) {
     return null;
   }
+  
+  // Tìm variant có size khớp (convert sang string để so sánh)
   return (
     product.variants.find((v) => v.size.toString() === size.toString()) || null
   );
 }
 
+// Hàm export: Cập nhật size của item trong giỏ hàng
+// @param oldItemIdentifier: Identifier cũ của item (format: "id-size")
+// @param newSize: Size mới muốn đổi
+// @return: true nếu cập nhật thành công, false nếu không tìm thấy item
 export function updateCartItemSize(oldItemIdentifier, newSize) {
+  // Lấy giỏ hàng hiện tại
   let cart = getCart();
+  
+  // Tìm item cần update theo identifier cũ
   const oldIndex = cart.findIndex(
     (item) => item.itemIdentifier === oldItemIdentifier
   );
 
+  // Nếu không tìm thấy item, trả về false
   if (oldIndex === -1) return false;
 
+  // Lấy item cũ và chuẩn bị identifier mới
   const oldItem = cart[oldIndex];
-  const newSizeStr = newSize.toString();
-  const newId = oldItem.id;
-  const newIdentifier = `${newId}-${newSizeStr}`;
+  const newSizeStr = newSize.toString();  // Convert size sang string
+  const newId = oldItem.id;                // Giữ nguyên product ID
+  const newIdentifier = `${newId}-${newSizeStr}`;  // Tạo identifier mới
 
+  // Kiểm tra xem giỏ đã có item với size mới chưa
   const existingIndex = cart.findIndex(
     (item) => item.itemIdentifier === newIdentifier
   );
 
+  // Trường hợp 1: Đã có item với size mới (và không phải item hiện tại)
   if (existingIndex > -1 && existingIndex !== oldIndex) {
+    // Cộng quantity của item cũ vào item đã tồn tại
     cart[existingIndex].quantity += oldItem.quantity;
+    
+    // Xóa item cũ khỏi giỏ (vì đã merge vào item khác)
     cart.splice(oldIndex, 1);
   } else {
+    // Trường hợp 2: Chưa có item với size mới, update item hiện tại
+    
+    // Lấy thông tin sản phẩm để cập nhật giá
     const product = productManager.getProductById(newId);
     let newPrice = product ? product.price : oldItem.price;
 
+    // Nếu sản phẩm có variants, lấy giá theo variant
     if (product && product.variants && product.variants.length > 0) {
       const variant = findVariant(newId, newSizeStr);
+      
+      // Ưu tiên giá của variant, nếu không có thì dùng giá sản phẩm
       newPrice = variant
         ? variant.price !== undefined
-          ? variant.price
-          : product.price
-        : product.price;
+          ? variant.price        // Giá của variant
+          : product.price        // Giá sản phẩm nếu variant không có giá riêng
+        : product.price;         // Giá sản phẩm nếu không tìm thấy variant
     }
 
-    oldItem.size = newSizeStr;
-    oldItem.price = Number(newPrice);
-    oldItem.itemIdentifier = newIdentifier;
+    // Cập nhật thông tin item
+    oldItem.size = newSizeStr;                 // Size mới
+    oldItem.price = Number(newPrice);          // Giá mới
+    oldItem.itemIdentifier = newIdentifier;    // Identifier mới
   }
 
+  // Lưu giỏ hàng đã cập nhật vào localStorage
   saveCart(cart);
 
+  // Re-render table giỏ hàng nếu có hàm renderCartTable
   if (window.renderCartTable) {
     window.renderCartTable();
   }
 
+  // Cập nhật badge số lượng trên icon giỏ hàng
   if (window.updateCartCount) {
     window.updateCartCount();
   }
 
-  return true;
+  return true;  // Cập nhật thành công
 }
+
+// Gán hàm vào window để các file khác có thể gọi
 window.updateCartItemSize = updateCartItemSize;
 
+// Hàm export: Tính tổng tiền của giỏ hàng
+// @return: Tổng tiền (Number)
 export function calculateCartTotal() {
+  // Lấy giỏ hàng hiện tại
   const cart = getCart();
+  
+  // Dùng reduce() để cộng dồn tổng tiền
+  // sum: giá trị tích lũy, bắt đầu từ 0
+  // item: mỗi item trong giỏ
+  // Công thức: tổng = giá × số lượng
   return cart.reduce(
     (sum, item) => sum + Number(item.price) * (item.quantity || 0),
-    0
+    0  // Giá trị khởi tạo của sum
   );
 }
 window.calculateCartTotal = calculateCartTotal;
 
+// Hàm export: Cập nhật badge số lượng trên icon giỏ hàng
+// Được gọi sau mỗi thao tác thêm/xóa/sửa giỏ hàng
 export function updateCartCount() {
+  // Lấy giỏ hàng hiện tại
   const cart = getCart();
+  
+  // Tính tổng số lượng sản phẩm (cộng dồn quantity của tất cả items)
   const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
 
+  // Lấy element hiển thị số lượng (badge trên icon giỏ hàng)
   const countElement = document.querySelector(".cart-count");
 
   if (countElement) {
+    // Lấy số lượng hiện tại đang hiển thị (để so sánh)
     const currentCount = parseInt(countElement.textContent) || 0;
 
+    // Cập nhật số lượng mới
     countElement.textContent = totalCount;
+    
+    // Hiển thị badge nếu có sản phẩm, ẩn nếu giỏ trống
     countElement.style.display = totalCount > 0 ? "flex" : "none";
 
+    // Nếu số lượng tăng lên, thêm animation bounce
     if (totalCount > currentCount || (totalCount > 0 && currentCount === 0)) {
+      // Tìm wrapper của icon giỏ hàng
       const iconWrapper = countElement.closest(".cart-icon-wrapper");
+      
       if (iconWrapper) {
+        // Xóa class bounce (nếu có) để reset animation
         iconWrapper.classList.remove("bounce");
+        
+        // Force reflow để đảm bảo animation chạy lại
         void iconWrapper.offsetWidth;
+        
+        // Thêm class bounce để trigger animation
         iconWrapper.classList.add("bounce");
+        
+        // Xóa class sau 600ms (khi animation kết thúc)
         setTimeout(() => iconWrapper.classList.remove("bounce"), 600);
       }
     }
   }
 }
+// Gán vào window để các file khác có thể gọi
 window.updateCartCount = updateCartCount;
 
+// Hàm: Lấy số lượng tồn kho khả dụng cho một item trong giỏ
+// @param cartItem: Item trong giỏ hàng
+// @return: Số lượng tồn kho (Number)
 function getAvailableStockForItem(cartItem) {
+  // Lấy thông tin sản phẩm từ ProductManager
   const product = productManager.getProductById(cartItem.id);
+  
+  // Nếu không tìm thấy sản phẩm, tồn kho = 0
   if (!product) return 0;
 
+  // Nếu sản phẩm có variants (theo size)
   if (product.variants && product.variants.length > 0) {
+    // Nếu chưa chọn size hoặc size = "Chưa chọn"
     if (!cartItem.size || cartItem.size === "Chưa chọn") {
-
+      // Trả về Infinity (không giới hạn) vì chưa chọn size cụ thể
       return Infinity;
     }
+    
+    // Tìm variant theo size
     const variant = product.variants.find(
       (v) => v.size?.toString() === cartItem.size?.toString()
     );
+    
+    // Trả về stock của variant, nếu không tìm thấy thì = 0
     return variant ? parseInt(variant.stock) || 0 : 0;
   }
 
+  // Nếu không có variants, trả về initialStock
   return parseInt(product.initialStock) || 0;
 }
 
+// Hàm: Lấy số lượng hiện tại của sản phẩm trong giỏ hàng
+// @param productId: ID của sản phẩm
+// @param sizeString: Size của sản phẩm (string)
+// @return: Số lượng hiện có trong giỏ (Number)
 function getCurrentCartQty(productId, sizeString) {
+  // Lấy giỏ hàng hiện tại
   const cart = getCart();
+  
+  // Tạo identifier để tìm item (format: "id-size")
   const identifier = `${productId}-${sizeString}`;
+  
+  // Tìm item trong giỏ theo identifier
   const item = cart.find((i) => i.itemIdentifier === identifier);
+  
+  // Trả về quantity của item, nếu không có thì = 0
   return item ? parseInt(item.quantity) || 0 : 0;
 }
 
