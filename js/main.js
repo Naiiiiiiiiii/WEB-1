@@ -169,130 +169,173 @@ function khoiTaoSuKienGioHang() {
     // Lấy nút đăng xuất
     const logoutBtn = document.querySelector('#logout-btn'); 
 
+    // Lặp qua từng link và gắn event listener
     [wishlistLink, cartLink, userProfileLink].forEach(link => {
         if (link) {
-
+            // Remove listener cũ để tránh duplicate (defensive programming)
             link.removeEventListener('click', kiemTraLinkNav); 
+            // Thêm listener mới để kiểm tra đăng nhập
             link.addEventListener('click', kiemTraLinkNav);
         }
     });
     
-
+    // Hàm nested: Kiểm tra navigation đến các trang cần đăng nhập
+    // @param {Event} e - Click event object
     function kiemTraLinkNav(e) {
+        // Kiểm tra đăng nhập, hiển thị modal nếu chưa login
         if (!window.kiemTraDangNhap(true)) {
+            // Ngăn navigation nếu chưa đăng nhập
             return e.preventDefault();
         }
         
+        // Xử lý đặc biệt cho link giỏ hàng: mở modal thay vì navigate
         if (this.href.includes('#cart') && window.openCartModal) {
             window.openCartModal();
-            return e.preventDefault();
+            return e.preventDefault(); // Ngăn navigation mặc định
         }
     }
     
-
+    // Gắn event listener cho nút đăng xuất
     if (logoutBtn) {
-
+        // Remove listener cũ để tránh duplicate
         logoutBtn.removeEventListener('click', xuLyDangXuat);
+        // Thêm listener mới
         logoutBtn.addEventListener('click', xuLyDangXuat);
     }
 }
 
+// Hàm: Khởi tạo sự kiện xem lịch sử đơn hàng
 function khoiTaoSuKienOrderHistory() {
+    // Lấy link "Xem đơn hàng" từ DOM
     const viewOrdersLink = document.getElementById('view-orders-link');
     if (viewOrdersLink) {
-
+        // Remove listener cũ trước khi thêm mới
         viewOrdersLink.removeEventListener('click', handleViewOrdersClick);
+        // Gắn event listener
         viewOrdersLink.addEventListener('click', handleViewOrdersClick);
     }
     
+    // Hàm nested: Xử lý khi click "Xem đơn hàng"
+    // @param {Event} e - Click event
     function handleViewOrdersClick(e) {
-        e.preventDefault();
+        e.preventDefault(); // Ngăn navigation mặc định
+        // Kiểm tra đăng nhập, hiển thị modal nếu chưa login
         const user = kiemTraDangNhap(true);
         
+        // Nếu đã đăng nhập, render lịch sử đơn hàng
         if (user) {
             renderOrderHistory();
         }
     }
 }
 
+// Hàm: Khởi tạo events cho Bootstrap modals
 function khoiTaoModalEvents() {
-
+    // Lấy element của Bootstrap cart modal
     const cartModalElement = document.getElementById('cartModal'); 
 
     if (cartModalElement) {
-
+        // Listen event 'hidden.bs.modal' của Bootstrap
+        // Event này fire khi modal đã đóng hoàn toàn
         cartModalElement.addEventListener('hidden.bs.modal', function () {
-            
-
+            // Cập nhật lại UI tồn kho trên trang chi tiết sản phẩm
+            // (nếu user vừa thay đổi quantity trong giỏ hàng)
             if (window.updateProductStockUI) {
                 console.log("🔥 Đã đóng Modal Giỏ hàng. Cập nhật lại tồn kho trên trang chi tiết.");
-
+                // Gọi hàm cập nhật (định nghĩa trong product-detail.js)
                 window.updateProductStockUI();
             }
         });
     }
 }
 
+// Hàm: Khởi tạo image slider/carousel cho hero section
 function khoiTaoSlider() {
-    const wrapper = document.querySelector('.slides-wrapper');
-    const slides = document.querySelectorAll('.slide');
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
-    const dots = document.querySelectorAll('.dot');
+    // Lấy các elements cần thiết cho slider
+    const wrapper = document.querySelector('.slides-wrapper');  // Container chứa các slides
+    const slides = document.querySelectorAll('.slide');         // Tất cả các slides
+    const prevBtn = document.querySelector('.prev-btn');        // Nút Previous
+    const nextBtn = document.querySelector('.next-btn');        // Nút Next
+    const dots = document.querySelectorAll('.dot');             // Các dots indicator
     
+    // Kiểm tra tất cả elements có tồn tại không
+    // Nếu thiếu element nào thì return (trang không có slider)
     if (!wrapper || slides.length === 0 || !prevBtn || !nextBtn || dots.length === 0) {
         return; 
     }
 
-    let currentSlide = 0;
-    const totalSlides = slides.length;
-    const slideInterval = 4000;
-    let autoSlideTimer;
+    // Biến state cho slider
+    let currentSlide = 0;                  // Index của slide hiện tại
+    const totalSlides = slides.length;     // Tổng số slides
+    const slideInterval = 4000;            // 4 giây mỗi slide
+    let autoSlideTimer;                    // Reference đến setInterval timer
 
+    // Hàm nested: Cập nhật slide hiện tại
+    // @param {number} index - Index của slide cần hiển thị
     function updateSlide(index) {
         currentSlide = index;
+        // Tính offset để translateX: mỗi slide = 100% width
+        // VD: slide 0 = 0%, slide 1 = -100%, slide 2 = -200%
         const offset = currentSlide * -100;
         wrapper.style.transform = `translateX(${offset}%)`;
         
+        // Cập nhật dots indicator: chỉ dot hiện tại có class 'active'
         dots.forEach((dot, i) => {
             dot.classList.toggle('active', i === currentSlide);
         });
     }
 
+    // Hàm nested: Chuyển sang slide tiếp theo
     function nextSlide() {
+        // Sử dụng modulo để loop: sau slide cuối quay về slide đầu
+        // VD: (2 + 1) % 3 = 0 (quay về đầu)
         const nextIndex = (currentSlide + 1) % totalSlides;
         updateSlide(nextIndex);
     }
 
+    // Hàm nested: Quay lại slide trước
     function prevSlide() {
+        // Cộng totalSlides trước khi modulo để tránh số âm
+        // VD: (0 - 1 + 3) % 3 = 2 (quay về cuối)
         const prevIndex = (currentSlide - 1 + totalSlides) % totalSlides;
         updateSlide(prevIndex);
     }
 
+    // Hàm nested: Bắt đầu auto slide
     function startAutoSlide() {
-        clearInterval(autoSlideTimer); 
+        clearInterval(autoSlideTimer); // Clear timer cũ trước (nếu có)
+        // Tạo timer mới: gọi nextSlide() mỗi 4 giây
         autoSlideTimer = setInterval(nextSlide, slideInterval);
     }
 
+    // Gắn events cho nút Prev và Next
+    // Khi click: chuyển slide và restart auto timer
     prevBtn.addEventListener('click', () => { nextSlide(); startAutoSlide(); });
     nextBtn.addEventListener('click', () => { nextSlide(); startAutoSlide(); });
 
+    // Gắn events cho từng dot
     dots.forEach((dot, index) => {
         dot.addEventListener('click', () => {
-            updateSlide(index);
-            startAutoSlide();
+            updateSlide(index);   // Nhảy đến slide tương ứng
+            startAutoSlide();     // Restart auto timer
         });
     });
 
+    // Pause auto slide khi hover vào slider
     wrapper.addEventListener('mouseenter', () => clearInterval(autoSlideTimer));
+    // Resume auto slide khi mouse leave
     wrapper.addEventListener('mouseleave', startAutoSlide);
 
+    // Khởi tạo: hiển thị slide đầu tiên
     updateSlide(0);
+    // Bắt đầu auto slide
     startAutoSlide();
 }
 
+// CSS styles cho user section trong header
+// Định nghĩa trong string để inject vào <style> tag dynamically
 const styleCSS = `
-
+/* User section container */
 .user-section {
     display: flex;
     align-items: center;
@@ -357,28 +400,40 @@ const styleCSS = `
 }
 `;
 
+// Inject CSS vào document nếu chưa có
+// Kiểm tra xem đã có <style id="user-styles"> chưa
 if (!document.querySelector('#user-styles')) {
+    // Tạo <style> element mới
     const styleElement = document.createElement('style');
     styleElement.id = 'user-styles';
+    // Gán CSS content
     styleElement.textContent = styleCSS;
+    // Append vào <head>
     document.head.appendChild(styleElement);
 }
 
+// Event listener: Chờ DOM load xong mới chạy initialization code
 document.addEventListener('DOMContentLoaded', function() {
-
+    // Cập nhật badge số lượng sản phẩm trong giỏ hàng
+    // (hiển thị trên icon giỏ hàng ở header)
     if (window.updateCartCount) {
         window.updateCartCount();
     }
     
-
+    // Khởi tạo các event listeners liên quan đến giỏ hàng và auth
     khoiTaoSuKienGioHang();
+    
+    // Khởi tạo image slider cho hero section
     khoiTaoSlider(); 
+    
+    // Khởi tạo event cho link "Xem đơn hàng"
     khoiTaoSuKienOrderHistory(); 
     
-
+    // Khởi tạo events cho Bootstrap modals
     khoiTaoModalEvents();
     
-
+    // Cập nhật UI user section trong header (hiển thị tên user, nút logout)
+    // capNhatUIUser() được định nghĩa trong user.js hoặc login-modal.js
     if (window.capNhatUIUser) {
         window.capNhatUIUser(window.kiemTraDangNhap());
     }
