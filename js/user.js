@@ -92,8 +92,11 @@ class UserManager {
         ];
     }
 
+    // Phương thức: Lưu danh sách tất cả users vào localStorage
+    // @return {boolean} - true nếu lưu thành công, false nếu lỗi
     luuDanhSachUser() {
         try {
+            // Map từ User objects sang plain objects để stringify
             const usersData = this.users.map(u => ({
                 hoTen: u.hoTen,
                 tenDangNhap: u.tenDangNhap,
@@ -102,6 +105,7 @@ class UserManager {
                 orders: u.orders,
                 isLocked: u.isLocked 
             }));
+            // Lưu vào localStorage dưới dạng JSON string
             localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usersData));
             return true;
         } catch (error) {
@@ -110,14 +114,17 @@ class UserManager {
         }
     }
     
-
+    // Phương thức: Lưu thông tin user hiện tại đang đăng nhập (khách hàng)
+    // @param {User} user - User object cần lưu
+    // @return {boolean} - true nếu lưu thành công, false nếu lỗi
     luuUserHienTai(user) {
         try {
+            // Chỉ lưu các thông tin cần thiết, không lưu orders và password
             const userData = {
                 hoTen: user.hoTen,
                 tenDangNhap: user.tenDangNhap,
                 email: user.email,
-                thoiGianDangNhap: new Date().toISOString()
+                thoiGianDangNhap: new Date().toISOString() // Lưu thời gian đăng nhập
             };
             localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(userData));
             return true;
@@ -127,6 +134,8 @@ class UserManager {
         }
     }
 
+    // Phương thức: Lấy thông tin user hiện tại từ localStorage
+    // @return {Object|null} - User data object hoặc null nếu không có/lỗi
     layUserHienTai() {
         try {
             const data = localStorage.getItem(this.CURRENT_USER_KEY);
@@ -139,6 +148,9 @@ class UserManager {
         return null;
     }
 
+    // Phương thức: Lưu thông tin admin hiện tại đang đăng nhập
+    // @param {User} user - Admin user object cần lưu
+    // @return {boolean} - true nếu lưu thành công, false nếu lỗi
     luuAdminHienTai(user) {
         try {
             const userData = {
@@ -154,6 +166,8 @@ class UserManager {
         }
     }
 
+    // Phương thức: Lấy thông tin admin hiện tại từ localStorage
+    // @return {Object|null} - Admin data object hoặc null
     layAdminHienTai() {
         try {
             const data = localStorage.getItem(this.ADMIN_USER_KEY);
@@ -164,95 +178,141 @@ class UserManager {
         }
     }
     
+    // Phương thức: Xóa thông tin admin khỏi localStorage (đăng xuất admin)
     xoaAdminHienTai() {
         localStorage.removeItem(this.ADMIN_USER_KEY);
     }
     
 
-    
+    // Phương thức: Kiểm tra tên đăng nhập đã tồn tại chưa
+    // @param {string} tenDangNhap - Username cần kiểm tra
+    // @return {boolean} - true nếu đã tồn tại, false nếu chưa
     tonTaiTenDangNhap(tenDangNhap) {
+        // some() return true nếu tìm thấy ít nhất 1 user khớp
+        // toLowerCase() để so sánh không phân biệt hoa thường
         return this.users.some(user => user.tenDangNhap.toLowerCase() === tenDangNhap.toLowerCase());
     }
 
-    
+    // Phương thức: Kiểm tra email đã tồn tại chưa
+    // @param {string} email - Email cần kiểm tra
+    // @return {boolean} - true nếu đã tồn tại, false nếu chưa
     tonTaiEmail(email) {
         return this.users.some(user => user.email.toLowerCase() === email.toLowerCase());
     }
 
+    // Phương thức: Cập nhật thông tin user
+    // @param {Object} updatedUser - Object chứa thông tin mới cần cập nhật
+    // @return {boolean} - true nếu cập nhật thành công, false nếu lỗi
     capNhatUser(updatedUser) {
+        // Validate input
         if (!updatedUser || !updatedUser.tenDangNhap) {
             console.error("Lỗi: Dữ liệu người dùng cập nhật không hợp lệ.");
             return false;
         }
 
+        // Tìm index của user cần cập nhật
         const index = this.users.findIndex(u => u.tenDangNhap === updatedUser.tenDangNhap);
 
+        // Nếu tìm thấy user
         if (index !== -1) {
             const oldUser = this.users[index];
+            // Tạo User object mới với thông tin được cập nhật
+            // Giữ nguyên orders và isLocked, chỉ update các field khác
             this.users[index] = new User(
-                updatedUser.hoTen || oldUser.hoTen,
-                oldUser.tenDangNhap, 
-                updatedUser.email || oldUser.email,
-                updatedUser.matKhau || oldUser.matKhau,
-                oldUser.orders,
-                oldUser.isLocked
+                updatedUser.hoTen || oldUser.hoTen,      // Họ tên mới hoặc giữ nguyên
+                oldUser.tenDangNhap,                      // Username không đổi
+                updatedUser.email || oldUser.email,       // Email mới hoặc giữ nguyên
+                updatedUser.matKhau || oldUser.matKhau,   // Password mới hoặc giữ nguyên
+                oldUser.orders,                           // Giữ nguyên orders
+                oldUser.isLocked                          // Giữ nguyên lock status
             );
-            
+            // Lưu danh sách users đã cập nhật vào localStorage
             this.luuDanhSachUser();
             
-
+            // Nếu user đang đăng nhập chính là user vừa update
+            // thì cập nhật lại session current user
             const currentUser = this.layUserHienTai();
             if (currentUser && currentUser.tenDangNhap === updatedUser.tenDangNhap) {
                 this.luuUserHienTai(this.users[index]);
             }
             return true;
         }
-        return false;
+        return false; // Không tìm thấy user
     }
     
+    // Phương thức: Tìm tài khoản theo username/email và password
+    // @param {string} tenDangNhap - Username hoặc email để đăng nhập
+    // @param {string} matKhau - Password
+    // @return {User|null} - User object nếu tìm thấy và password đúng, null nếu không
     timTaiKhoan(tenDangNhap, matKhau) {
+        // Tìm user có username HOẶC email khớp với tenDangNhap
+        // VÀ password khớp (dùng method kiemTraMatKhau())
         const user = this.users.find(
             u =>
                 (u.tenDangNhap === tenDangNhap || u.email === tenDangNhap) &&
                 u.kiemTraMatKhau(matKhau)
         );
+        // Kiểm tra tài khoản có bị khóa không
         if (user && user.isLocked) {
              console.warn(`Tài khoản ${user.tenDangNhap} đã bị khóa.`);
-             return null;
+             return null; // Trả về null nếu tài khoản bị khóa
         }
-        return user;
+        return user; // Trả về user nếu tìm thấy và không bị khóa
     }
 
+    // Phương thức: Thêm tài khoản mới
+    // @param {string} hoTen - Họ tên
+    // @param {string} tenDangNhap - Username (unique)
+    // @param {string} email - Email (unique)
+    // @param {string} matKhau - Password
+    // @return {User} - User object vừa tạo
     themTaiKhoan(hoTen, tenDangNhap, email, matKhau) {
+        // Tạo User object mới
         const user = new User(hoTen, tenDangNhap, email, matKhau);
+        // Thêm vào mảng users
         this.users.push(user);
+        // Lưu vào localStorage
         this.luuDanhSachUser(); 
         return user;
     }
 
+    // Phương thức: Lấy lịch sử đơn hàng của user
+    // @param {string} username - Username của user cần lấy orders
+    // @return {Array} - Mảng orders hoặc [] nếu không tìm thấy user
     getOrderHistory(username) {
         const user = this.users.find(u => u.tenDangNhap === username);
         return user ? (user.orders || []) : [];
     }
 
+    // Phương thức: Lấy tất cả users (trừ admin)
+    // @return {Array} - Mảng users (không bao gồm admin)
     getAllUsers() {
+        // filter() loại bỏ user có tenDangNhap = 'admin'
         return this.users.filter(u => u.tenDangNhap !== 'admin'); 
     }
 
+    // Phương thức: Reset mật khẩu user về mặc định
+    // @param {string} username - Username của user cần reset
+    // @return {boolean} - true nếu reset thành công, false nếu không tìm thấy
     resetPassword(username) {
         const user = this.users.find(u => u.tenDangNhap === username);
         if (user) {
-            user.matKhau = '123456'; 
-            user.isLocked = false;
+            user.matKhau = '123456';  // Đặt lại password mặc định
+            user.isLocked = false;    // Mở khóa tài khoản (nếu đang khóa)
             this.luuDanhSachUser();
             return true;
         }
-        return false;
+        return false; // Không tìm thấy user
     }
 
+    // Phương thức: Cập nhật trạng thái khóa/mở khóa tài khoản
+    // @param {string} username - Username của user cần update
+    // @param {boolean} isLocked - true = khóa, false = mở khóa
+    // @return {boolean} - true nếu update thành công, false nếu không
     updateUserStatus(username, isLocked) {
         const user = this.users.find(u => u.tenDangNhap === username);
         
+        // Chỉ cho phép thay đổi status của user thường, không cho phép khóa admin
         if (user && user.tenDangNhap !== 'admin') { 
             user.isLocked = isLocked;
             this.luuDanhSachUser();
