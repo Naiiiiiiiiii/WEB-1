@@ -157,66 +157,95 @@ export class ProductManager {
     // @param id: ID của sản phẩm
     // @return: true nếu thành công, false nếu không tìm thấy
     toggleHideStatus(id) {
+        // Tìm sản phẩm theo ID
         const product = this.getProductById(id);
+        
         if (product) {
+            // Toggle trạng thái isHidden (true → false, false → true)
             product.isHidden = !product.isHidden;
+            
+            // Lưu thay đổi vào localStorage
             this.saveProducts();
-            return true;
+            
+            return true;  // Thành công
         }
-        return false;
+        
+        return false;  // Không tìm thấy sản phẩm
     }
 
+    // Phương thức: Xóa sản phẩm khỏi danh sách
+    // @param id: ID của sản phẩm cần xóa
+    // @return: true nếu xóa thành công, false nếu không tìm thấy
     deleteProduct(id) {
-
+        // Convert ID sang Number để so sánh chính xác
         const productIdNum = Number(id); 
+        
+        // Lưu độ dài ban đầu để kiểm tra sau
         const initialLength = this.products.length;
         
-
+        // Lọc bỏ sản phẩm có ID khớp
+        // filter() tạo mảng mới không chứa sản phẩm bị xóa
         this.products = this.products.filter(p => p.id !== productIdNum); 
         
+        // Nếu độ dài giảm (có sản phẩm bị xóa)
         if (this.products.length < initialLength) {
+            // Lưu vào localStorage
             this.saveProducts();
-            return true;
+            return true;  // Xóa thành công
         }
-        return false;
+        
+        return false;  // Không tìm thấy sản phẩm để xóa
     }
 
-    
+    // Phương thức: Xử lý nhập hàng (tăng tồn kho)
+    // @param productId: ID của sản phẩm nhập
+    // @param quantity: Số lượng nhập
+    // @param importPrice: Giá nhập (giá vốn)
+    // @param size: Size của variant (null nếu không có variant)
+    // @param note: Ghi chú nhập hàng
+    // @return: true nếu thành công, false nếu thất bại
     processProductImport(productId, quantity, importPrice, size = null, note = "") {
+        // Tìm sản phẩm
         const product = this.getProductById(productId);
 
+        // Validate: sản phẩm tồn tại và số lượng/giá hợp lệ
         if (product && quantity > 0 && importPrice > 0) {
+            // Trường hợp 1: Sản phẩm có variants VÀ đang nhập cho size cụ thể
             if (product.variants.length > 0 && size !== null) {
-
+                // Tìm variant theo size
                 const variant = product.variants.find(v => Number(v.size) === Number(size));
+                
                 if (variant) {
+                    // Variant đã tồn tại: Tăng stock
                     variant.stock = (variant.stock || 0) + quantity;
                 } else {
-
+                    // Variant chưa có: Tạo mới và thêm vào mảng
                     product.variants.push({ size: size, stock: quantity });
                 }
             } else {
-
+                // Trường hợp 2: Sản phẩm không có variants
                 if (product.variants.length === 0) {
+                    // Tăng initialStock
                     product.initialStock = (product.initialStock || 0) + quantity;
                 }
             }
             
-
+            // Cập nhật giá vốn (cost price) cho sản phẩm
             product.costPrice = importPrice; 
             
-
+            // Lưu lịch sử nhập hàng vào mảng imports
             product.imports.push({ 
-                date: new Date().toISOString(), 
-                qty: quantity, 
-                costPrice: importPrice, 
-                note: note || "Nhập hàng thủ công" + (size ? ` (Size: ${size})` : ""), 
-                type: "IMPORT",
-                variantSize: size 
+                date: new Date().toISOString(),  // Thời gian nhập
+                qty: quantity,                    // Số lượng
+                costPrice: importPrice,           // Giá nhập
+                note: note || "Nhập hàng thủ công" + (size ? ` (Size: ${size})` : ""),  // Ghi chú
+                type: "IMPORT",                   // Loại transaction
+                variantSize: size                 // Size của variant (nếu có)
             });
 
+            // Lưu vào localStorage
             this.saveProducts();
-            return true;
+            return true;  // Nhập hàng thành công
         }
         return false;
     }
