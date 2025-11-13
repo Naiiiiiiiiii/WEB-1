@@ -1,48 +1,74 @@
+// File: order-manager.js
+// Mục đích: Quản lý đơn hàng - CRUD operations và filter logic
+// Bao gồm: Lấy danh sách đơn hàng, lọc theo tiêu chí, cập nhật trạng thái
 
-
+// Constant: Key để lưu đơn hàng trong localStorage
 const ORDER_STORAGE_KEY = "orders";
 
+// Import ProductManager để giảm tồn kho khi tạo đơn
 import { productManager } from "./ProductManager.js";
 
+// Hàm export: Lấy tất cả đơn hàng từ localStorage
+// @return: Mảng chứa tất cả đơn hàng (Array)
 export function getOrders() {
   try {
+    // Đọc dữ liệu từ localStorage
     const ordersString = localStorage.getItem(ORDER_STORAGE_KEY);
+    
+    // Parse JSON, nếu null thì trả về mảng rỗng
     return JSON.parse(ordersString) || [];
   } catch (e) {
+    // Log lỗi nếu có vấn đề khi parse
     console.error("Lỗi khi tải đơn hàng:", e);
     return [];
   }
 }
 
+// Hàm export: Lấy đơn hàng đã lọc theo các tiêu chí
+// @param filters: Object chứa các tiêu chí lọc {status, startDate, endDate}
+// @return: Mảng đơn hàng đã lọc và sắp xếp (Array)
 export function getFilteredOrders(filters = {}) {
+  // Lấy tất cả đơn hàng
   let orders = getOrders();
+  
+  // Destructure các tiêu chí lọc từ param
   const { status, startDate, endDate } = filters;
 
+  // Filter 1: Lọc theo trạng thái đơn hàng
   if (status && status !== "all") {
-
+    // Trạng thái "new" (đơn mới)
     if (status === "new") {
       orders = orders.filter(
         (o) =>
           o.status.toLowerCase().trim() === "đang chờ xử lý" ||
           o.status.toLowerCase().trim() === "mới đặt"
       );
-    } else if (status === "canceled") {
+    } 
+    // Trạng thái "canceled" (đã hủy)
+    else if (status === "canceled") {
       orders = orders.filter((o) => o.status.toLowerCase().trim() === "đã hủy");
-    } else if (status === "processed") {
+    } 
+    // Trạng thái "processed" (đã xử lý)
+    else if (status === "processed") {
       orders = orders.filter(
         (o) => o.status.toLowerCase().trim() === "đã xử lý"
       );
-    } else if (status === "delivered") {
+    } 
+    // Trạng thái "delivered" (đã giao)
+    else if (status === "delivered") {
       orders = orders.filter(
         (o) => o.status.toLowerCase().trim() === "đã giao"
       );
     }
-
   }
 
+  // Filter 2: Lọc theo ngày bắt đầu
   if (startDate) {
     try {
+      // Set giờ về 00:00:00 để so sánh ngày
       const start = new Date(startDate).setHours(0, 0, 0, 0);
+      
+      // Lọc các đơn có ngày >= startDate
       orders = orders.filter((o) => {
         const orderDate = new Date(o.date).setHours(0, 0, 0, 0);
         return orderDate >= start;
@@ -52,9 +78,13 @@ export function getFilteredOrders(filters = {}) {
     }
   }
 
+  // Filter 3: Lọc theo ngày kết thúc
   if (endDate) {
     try {
+      // Set giờ về 23:59:59.999 để bao gồm cả ngày cuối
       const end = new Date(endDate).setHours(23, 59, 59, 999);
+      
+      // Lọc các đơn có ngày <= endDate
       orders = orders.filter((o) => {
         const orderDate = new Date(o.date);
         return orderDate <= end;
@@ -64,6 +94,8 @@ export function getFilteredOrders(filters = {}) {
     }
   }
 
+  // Sắp xếp đơn hàng theo thời gian (mới nhất trước)
+  // getTime() convert Date thành timestamp (milliseconds) để so sánh
   orders.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
@@ -71,11 +103,17 @@ export function getFilteredOrders(filters = {}) {
   return orders;
 }
 
+// Hàm export: Lấy danh sách đơn hàng của một user cụ thể
+// @param userId: ID của user cần lấy đơn hàng
+// @return: Mảng đơn hàng của user (Array)
 export function getUserOrders(userId) {
+  // Nếu không có userId, trả về mảng rỗng
   if (!userId) return [];
 
+  // Lấy tất cả đơn hàng
   const allOrders = getOrders();
 
+  // Lọc chỉ lấy đơn của user này
   const userOrders = allOrders.filter((order) => order.userId === userId);
 
   userOrders.sort(

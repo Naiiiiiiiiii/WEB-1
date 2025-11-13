@@ -1,28 +1,46 @@
 <!DOCTYPE html>
+<!-- Khai báo document type là HTML5 -->
 <html lang="vi">
+<!-- Thẻ html với thuộc tính lang="vi" để chỉ định ngôn ngữ tiếng Việt -->
 <head>
+    <!-- Phần head chứa metadata và các file CSS -->
+    
+    <!-- Thiết lập bộ mã ký tự UTF-8 để hiển thị tiếng Việt -->
     <meta charset="UTF-8">
+    
+    <!-- Thiết lập responsive cho mobile: width = chiều rộng thiết bị, zoom ban đầu = 1 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Tiêu đề trang web hiển thị trên tab trình duyệt -->
     <title>Giày Nam Cao Cấp - ShoeStore</title>
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/modal.css">
-    <link rel="stylesheet" href="./css/search-overlay.css">
-    <link rel="stylesheet" href="./css/dangnhap.css">
-    <link rel="stylesheet" href="./css/cart-and-user-ui.css">
-    <link rel="stylesheet" href="./css/checkout-modal.css">
+    
+    <!-- Link các file CSS để định dạng giao diện -->
+    <link rel="stylesheet" href="./css/style.css">              <!-- CSS chính cho trang -->
+    <link rel="stylesheet" href="./css/modal.css">              <!-- CSS cho modal popup -->
+    <link rel="stylesheet" href="./css/search-overlay.css">     <!-- CSS cho overlay tìm kiếm -->
+    <link rel="stylesheet" href="./css/dangnhap.css">           <!-- CSS cho form đăng nhập -->
+    <link rel="stylesheet" href="./css/cart-and-user-ui.css">   <!-- CSS cho giỏ hàng và user UI -->
+    <link rel="stylesheet" href="./css/checkout-modal.css">     <!-- CSS cho modal thanh toán -->
+    
+    <!-- Link thư viện Font Awesome để sử dụng icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
 </head>
 <body>
+    <!-- Phần body chứa nội dung chính của trang -->
+    <!-- Header: Phần đầu trang chứa logo, menu, và các icons chức năng -->
     <header class="header">
         <div class="nav-container">
+            <!-- Logo của website -->
             <div class="logo">
-                <i class="fas fa-shoe-prints"></i>
+                <i class="fas fa-shoe-prints"></i>  <!-- Icon giày -->
                 ShoeStore
             </div>
             
+            <!-- Menu điều hướng chính -->
             <nav class="nav-menu">
                 <ul>
+                    <!-- Các link điều hướng đến các section trên trang -->
                     <li><a href="#home">Trang chủ</a></li>
                     <li><a href="#products">Sản phẩm</a></li>
                     <li><a href="#brands">Thương hiệu</a></li>
@@ -31,85 +49,116 @@
                 </ul>
             </nav>
             
+            <!-- Các icons chức năng bên phải header -->
             <div class="nav-icons">
-    <a href="#search" id="search-link"><i class="fas fa-search"></i></a>
-    <a href="#wishlist"><i class="fas fa-heart"></i></a>
-    <a href="#orders" id="view-orders-link" class="nav-icon-link" title="Lịch sử đơn hàng">
-        <i class="fas fa-history"></i>
-    </a>
-        <a href="#cart" class="cart-icon-wrapper nav-icon-link">
-        <i class="fas fa-shopping-cart"></i>
-        <span class="cart-count">0</span>
-    </a>
-    <a href="#user" id="user-login-link"><i class="fas fa-user"></i></a>
-</div>
+                <!-- Icon tìm kiếm -->
+                <a href="#search" id="search-link"><i class="fas fa-search"></i></a>
+                
+                <!-- Icon danh sách yêu thích -->
+                <a href="#wishlist"><i class="fas fa-heart"></i></a>
+                
+                <!-- Icon xem lịch sử đơn hàng -->
+                <a href="#orders" id="view-orders-link" class="nav-icon-link" title="Lịch sử đơn hàng">
+                    <i class="fas fa-history"></i>
+                </a>
+                
+                <!-- Icon giỏ hàng với badge số lượng sản phẩm -->
+                <a href="#cart" class="cart-icon-wrapper nav-icon-link">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>  <!-- Số lượng sản phẩm trong giỏ -->
+                </a>
+                
+                <!-- Icon đăng nhập/tài khoản người dùng -->
+                <a href="#user" id="user-login-link"><i class="fas fa-user"></i></a>
+            </div>
         </div>
     </header>
 
+    <!-- Main: Phần nội dung chính của trang -->
     <main>
+        <!-- Section Hero: Phần banner chính ở đầu trang -->
         <section id="home" class="hero">
         <div class="hero-content">
+            <!-- Phần text giới thiệu -->
             <div>
                 <h1>Giày Nam Cao Cấp</h1>
                 <p>Khám phá bộ sưu tập giày nam chính hãng với thiết kế hiện đại và chất lượng vượt trội</p>
+                <!-- Nút call-to-action dẫn đến phần sản phẩm -->
                 <a href="#products" class="cta-button">Mua sắm ngay</a>
             </div>
             
+            <!-- Slider/Carousel hiển thị ảnh sản phẩm -->
             <div class="slider-container">
+                <!-- Wrapper chứa các slide -->
                 <div class="slides-wrapper">
+                    <!-- Slide 1: Ảnh giày thể thao CA Match -->
                     <div class="slide">
                         <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=600&fit=crop" alt="Giày thể thao CA Match">
                     </div>
+                    <!-- Slide 2: Ảnh giày Suede Classic -->
                     <div class="slide">
                         <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&h=600&fit=crop" alt="Giày thể thao Suede Classic Unisex">
                     </div>
+                    <!-- Slide 3: Ảnh giày da công sở -->
                     <div class="slide">
                         <img src="https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=800&h=600&fit=crop" alt="GIÀY DA CÔNG SỞ GERMANO BELLESI">
                     </div>
                 </div>
 
+                <!-- Nút điều khiển slider: Prev/Next -->
                 <div class="slider-controls">
-                    <button class="slider-btn prev-btn">‹</button>
-                    <button class="slider-btn next-btn">›</button>
+                    <button class="slider-btn prev-btn">‹</button>  <!-- Nút lùi -->
+                    <button class="slider-btn next-btn">›</button>  <!-- Nút tiến -->
                 </div>
 
+                <!-- Dots indicator để hiển thị slide hiện tại -->
                 <div class="slider-dots">
-                    <span class="dot active" data-slide="0"></span>
-                    <span class="dot" data-slide="1"></span>
-                    <span class="dot" data-slide="2"></span>
+                    <span class="dot active" data-slide="0"></span>  <!-- Dot cho slide 1 (active) -->
+                    <span class="dot" data-slide="1"></span>         <!-- Dot cho slide 2 -->
+                    <span class="dot" data-slide="2"></span>         <!-- Dot cho slide 3 -->
                 </div>
             </div>
         </div>
         </section>
 
+        <!-- Section Categories: Hiển thị các danh mục sản phẩm nổi bật -->
         <section class="categories">
             <div class="container">
                 <h2 class="section-title">Danh mục nổi bật</h2>
+                
+                <!-- Grid chứa các card danh mục -->
                 <div class="category-grid">
+                    <!-- Card 1: Giày thể thao -->
                     <div class="category-card">
                         <div class="category-icon">
-                            <i class="fas fa-running"></i>
+                            <i class="fas fa-running"></i>  <!-- Icon chạy bộ -->
                         </div>
                         <h3>Giày thể thao</h3>
                         <p>Năng động, thoải mái</p>
                     </div>
+                    
+                    <!-- Card 2: Giày công sở -->
                     <div class="category-card">
                         <div class="category-icon">
-                            <i class="fas fa-briefcase"></i>
+                            <i class="fas fa-briefcase"></i>  <!-- Icon cặp công sở -->
                         </div>
                         <h3>Giày công sở</h3>
                         <p>Lịch lãm, chuyên nghiệp</p>
                     </div>
+                    
+                    <!-- Card 3: Giày outdoor -->
                     <div class="category-card">
                         <div class="category-icon">
-                            <i class="fas fa-mountain"></i>
+                            <i class="fas fa-mountain"></i>  <!-- Icon núi -->
                         </div>
                         <h3>Giày outdoor</h3>
                         <p>Bền bỉ, chống nước</p>
                     </div>
+                    
+                    <!-- Card 4: Giày cao cấp -->
                     <div class="category-card">
                         <div class="category-icon">
-                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>  <!-- Icon ngôi sao -->
                         </div>
                         <h3>Giày cao cấp</h3>
                         <p>Sang trọng, đẳng cấp</p>
@@ -118,17 +167,22 @@
             </div>
         </section>
 
+        <!-- Section Products: Phần hiển thị danh sách sản phẩm -->
         <section id="products" class="products">
             <div class="container">
                 <h2 class="section-title">Sản phẩm nổi bật</h2>
                 
+                <!-- Thanh lọc và sắp xếp sản phẩm -->
                 <div class="filter-bar">
+                    <!-- Nhóm các nút lọc theo danh mục -->
                     <div class="filter-group">
                         <button class="filter-btn active" data-filter="all">Tất cả</button>
                         <button class="filter-btn" data-filter="Giày thể thao">Thể thao</button>
                         <button class="filter-btn" data-filter="Giày công sở">Công sở</button>
                         <button class="filter-btn" data-filter="Giày casual">Casual</button>
                     </div>
+                    
+                    <!-- Dropdown sắp xếp sản phẩm -->
                     <div class="sort-group">
                         <select class="sort-select">
                             <option value="">Sắp xếp theo</option>
@@ -140,18 +194,35 @@
                     </div>
                 </div>
 
+                <!-- Grid chứa các card sản phẩm (được render bởi JavaScript) -->
                 <div class="product-grid"></div>
+                
+                <!-- Phần phân trang (pagination controls) -->
                 <div id="pagination-controls" class="pagination-controls">
     </div>
 
+                <!-- Modal Quick View: Hiển thị thông tin sản phẩm nhanh khi click -->
                 <div id="quick-view-modal" class="modal">
                     <div class="modal-content">
+                        <!-- Nút đóng modal -->
                         <span class="close-btn">&times;</span>
+                        
+                        <!-- Ảnh sản phẩm -->
                         <img id="modal-img" src="" alt="Ảnh sản phẩm">
+                        
+                        <!-- Tên sản phẩm -->
                         <h3 id="modal-name"></h3>
+                        
+                        <!-- Rating (đánh giá sao) -->
                         <div id="modal-rating"></div>
+                        
+                        <!-- Giá sản phẩm -->
                         <div id="modal-price"></div>
+                        
+                        <!-- Nút thêm vào giỏ hàng -->
                         <button class="add-to-cart" id="modal-add-to-cart">Thêm vào giỏ</button>
+                        
+                        <!-- Link đến trang chi tiết sản phẩm -->
                         <a href="./product-detail.html" id="modal-view-detail" class="view-detail-btn">Xem chi tiết</a>
                     </div>
                 </div>
