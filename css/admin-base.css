@@ -461,8 +461,6 @@ textarea:focus {
 .btn-lock,
 .btn-unlock,
 .btn-edit-category,
-.btn-edit-product,
-.btn-delete-product,
 .btn-delete-category,
 .btn-view-movements {
   padding: 6px 12px;
@@ -1142,33 +1140,27 @@ textarea:focus {
   text-overflow: ellipsis;
   vertical-align: bottom;
 }
-/* --- Định nghĩa Hành vi Không Ngắt Dòng và Căn chỉnh --- */
 
-/* Lớp này áp dụng white-space: nowrap và căn chỉnh cho tất cả các cột được định nghĩa mới */
 .userTable th[class*="col-"],
 .userTable td[class*="col-"],
 .import-slips-table th[class*="col-"],
 .import-slips-table td[class*="col-"] {
-  white-space: nowrap; /* Ngăn không cho nội dung bị ngắt xuống dòng */
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Thêm dấu ... nếu nội dung quá dài (Tùy chọn) */
+  text-overflow: ellipsis;
 }
 
-/* Căn lề phải cho cột giá trị tiền tệ/số lượng */
 .userTable .right,
 .price-table .right,
 .import-slips-table .right {
   text-align: right !important;
 }
 
-/* Căn lề giữa cho cột số lượng/ID */
 .userTable .center,
 .price-table .center,
 .import-slips-table .center {
   text-align: center !important;
 }
-
-/* --- Định nghĩa Chiều rộng cố định cho từng loại cột  --- */
 
 .col-id,
 .col-stock,
