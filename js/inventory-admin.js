@@ -156,13 +156,26 @@ function computeRows(filters) {
   let filtered = rows;
   const name = (filters.name || "").toLowerCase().trim();
   const cat = filters.category || "all";
+  const lowOnly = filters.lowOnly || false;
 
   if (name)
     filtered = filtered.filter((r) => r.name.toLowerCase().includes(name));
   if (cat !== "all") filtered = filtered.filter((r) => r.category === cat);
+  if (lowOnly) filtered = filtered.filter((r) => r.isLow);
+
+  // Sort: low-first, then by stock ascending, then by name
+  filtered.sort((a, b) => {
+    if (a.isLow !== b.isLow) return b.isLow - a.isLow; // low first
+    if (a.stock !== b.stock) return a.stock - b.stock; // stock ascending
+    return a.name.localeCompare(b.name); // name ascending
+  });
 
   return filtered;
 }
+
+// Pagination state
+let currentPage = 1;
+let pageSize = 25;
 
 function renderInventoryTable() {
   const tbody = document.getElementById("inventoryTableBody");
@@ -170,17 +183,35 @@ function renderInventoryTable() {
 
   const invFilterCategory = document.getElementById("invFilterCategory");
   const invFilterName = document.getElementById("invFilterName");
+  const invFilterLowOnly = document.getElementById("invFilterLowOnly");
 
   const filters = {
     category: invFilterCategory?.value || "all",
     name: invFilterName?.value || "",
+    lowOnly: invFilterLowOnly?.checked || false,
   };
 
-  const data = computeRows(filters);
+  const allData = computeRows(filters);
+  
+  // Pagination logic
+  const totalItems = allData.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
+  
+  // Ensure currentPage is valid
+  if (currentPage > totalPages && totalPages > 0) {
+    currentPage = totalPages;
+  }
+  if (currentPage < 1) {
+    currentPage = 1;
+  }
+  
+  const startIdx = (currentPage - 1) * pageSize;
+  const endIdx = startIdx + pageSize;
+  const data = allData.slice(startIdx, endIdx);
 
   tbody.innerHTML = "";
 
-  if (!data.length) {
+  if (!allData.length) {
     tbody.innerHTML = `
       <tr>
         <td colspan="7" class="center" style="padding: 24px; color: #666;">
@@ -188,8 +219,11 @@ function renderInventoryTable() {
         </td>
       </tr>
     `;
+    renderPaginationControls(0, 0);
     return;
   }
+
+  const fragment = document.createDocumentFragment();
 
   for (const r of data) {
     const statusBadge = r.isLow
@@ -200,6 +234,10 @@ function renderInventoryTable() {
     const product = productManager.getProductById(r.productId);
 
     const row = document.createElement("tr");
+    // Add table-warning class for low-stock rows
+    if (r.isLow) {
+      row.classList.add("table-warning");
+    }
     row.innerHTML = `
       <td class="col-id">${r.productId}</td>
       <td>${r.name}</td>
@@ -234,7 +272,92 @@ function renderInventoryTable() {
         </div>
       </td>
     `;
-    tbody.appendChild(row);
+    fragment.appendChild(row);
+  }
+  
+  tbody.appendChild(fragment);
+  renderPaginationControls(totalItems, totalPages);
+}
+
+function renderPaginationControls(totalItems, totalPages) {
+  const container = document.getElementById("inventoryPagination");
+  if (!container) return;
+
+  if (totalItems === 0) {
+    container.innerHTML = "";
+    return;
+  }
+
+  const startItem = (currentPage - 1) * pageSize + 1;
+  const endItem = Math.min(currentPage * pageSize, totalItems);
+
+  container.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 15px; justify-content: space-between; padding: 15px 0;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <label for="pageSizeSelect" style="font-size: 14px; color: #666;">Hiển thị:</label>
+        <select id="pageSizeSelect" style="padding: 6px 10px; border: 1px solid #ddd; border-radius: 4px;">
+          <option value="10" ${pageSize === 10 ? "selected" : ""}>10</option>
+          <option value="25" ${pageSize === 25 ? "selected" : ""}>25</option>
+          <option value="50" ${pageSize === 50 ? "selected" : ""}>50</option>
+          <option value="100" ${pageSize === 100 ? "selected" : ""}>100</option>
+        </select>
+        <span style="font-size: 14px; color: #666;">
+          Hiển thị ${startItem}-${endItem} trên ${totalItems} mục
+        </span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button 
+          id="prevPageBtn" 
+          class="btn" 
+          ${currentPage <= 1 ? "disabled" : ""}
+          style="padding: 6px 12px;"
+        >
+          <i class="fa-solid fa-chevron-left"></i> Trước
+        </button>
+        <span style="font-size: 14px; color: #666;">
+          Trang ${currentPage} / ${totalPages}
+        </span>
+        <button 
+          id="nextPageBtn" 
+          class="btn" 
+          ${currentPage >= totalPages ? "disabled" : ""}
+          style="padding: 6px 12px;"
+        >
+          Sau <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Bind pagination events
+  const prevBtn = document.getElementById("prevPageBtn");
+  const nextBtn = document.getElementById("nextPageBtn");
+  const pageSizeSelect = document.getElementById("pageSizeSelect");
+
+  if (prevBtn) {
+    prevBtn.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderInventoryTable();
+      }
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderInventoryTable();
+      }
+    });
+  }
+
+  if (pageSizeSelect) {
+    pageSizeSelect.addEventListener("change", (e) => {
+      pageSize = Number(e.target.value);
+      currentPage = 1; // Reset to first page when changing page size
+      renderInventoryTable();
+    });
   }
 }
 
@@ -267,9 +390,11 @@ function bindFilters() {
   const invFilterReset = document.getElementById("invFilterReset");
   const invFilterName = document.getElementById("invFilterName");
   const invFilterCategory = document.getElementById("invFilterCategory");
+  const invFilterLowOnly = document.getElementById("invFilterLowOnly");
 
   invFilterApply?.addEventListener("click", (e) => {
     e.preventDefault();
+    currentPage = 1; // Reset to first page when applying filters
     renderInventoryTable();
   });
 
@@ -277,6 +402,14 @@ function bindFilters() {
     e.preventDefault();
     if (invFilterName) invFilterName.value = "";
     if (invFilterCategory) invFilterCategory.value = "all";
+    if (invFilterLowOnly) invFilterLowOnly.checked = false;
+    currentPage = 1; // Reset to first page when resetting filters
+    renderInventoryTable();
+  });
+
+  // Also trigger render when low-only checkbox is toggled
+  invFilterLowOnly?.addEventListener("change", () => {
+    currentPage = 1; // Reset to first page when toggling low-only
     renderInventoryTable();
   });
 }
