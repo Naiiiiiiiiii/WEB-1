@@ -1,5 +1,3 @@
-
-
 .table-warning {
   background-color: #fff3cd !important;
 }
@@ -184,7 +182,7 @@
 #inventoryTable th:nth-child(3),
 #inventoryTable td:nth-child(3) {
   text-align: center;
-  width: 10%;
+  width: 9%;
   color: #555;
 }
 
@@ -198,22 +196,21 @@
 #inventoryTable th:nth-child(5),
 #inventoryTable td:nth-child(5) {
   text-align: center;
-  width: 10%;
+  width: 8%;
   color: #34495e;
 }
 
 #inventoryTable th:nth-child(6),
 #inventoryTable td:nth-child(6) {
   text-align: center;
-  width: 8%;
+  width: 9%;
 }
 
 #inventoryTable th:nth-child(7),
 #inventoryTable td:nth-child(7) {
   text-align: center;
-  width: 7%;
+  width: 13%;
 }
-
 .stock-status-low {
   color: #e74c3c;
   font-weight: 700;
@@ -297,13 +294,11 @@
 }
 
 @media (max-width: 768px) {
-  
   #inventoryTable {
     min-width: 100%;
     width: max-content;
   }
 
-  
   #inventoryTable th,
   #inventoryTable td {
     white-space: nowrap;
@@ -312,7 +307,6 @@
     max-width: 320px;
   }
 
-  
   #inventoryTable td:last-child {
     white-space: normal;
   }
@@ -333,4 +327,115 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+/* Modal chi tiết biến thể */
+#variantStockModal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+#variantStockModal .modal-content {
+  background: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  max-width: 700px;
+  position: relative;
+}
+
+#variantStockModal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e8e8e8;
+}
+
+#variantStockModal .modal-header h5 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+#variantStockModal .modal-body {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+#variantStockModal table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  background: #fff;
+}
+
+#variantStockModal th,
+#variantStockModal td {
+  border: 1px solid #eee;
+  padding: 10px 12px;
+  font-size: 13px;
+  text-align: left;
+}
+
+#variantStockModal th {
+  background: #fafafa;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 700;
+  color: #555;
+}
+
+#variantStockModal .close-btn {
+  cursor: pointer;
+  background: #e0e0e0;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+#variantStockModal .close-btn:hover {
+  background: #d0d0d0;
+}
+
+#variantStockModal .btn-save-threshold {
+  background: #48bb78;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#variantStockModal .btn-save-threshold:hover {
+  background: #38a169;
+}
+
+#variantStockModal .no-variants-message {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+  font-size: 14px;
+}
+
+#variantStockModal input[type="number"] {
+  width: 80px;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
 }

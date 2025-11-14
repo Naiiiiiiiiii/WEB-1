@@ -53,6 +53,11 @@ const thresholds = {
     if (typeof p === "number") return p;
     return thresholds.getDefault();
   },
+  effectiveProduct(productId) {
+    const p = thresholds.getProduct(productId);
+    if (typeof p === "number") return p;
+    return thresholds.getDefault();
+  },
 };
 
 function formatPrice(n) {
@@ -113,7 +118,8 @@ function ensureDefaultThresholdControls() {
   }
 }
 
-function computeRows(filters) {
+// Compute aggregated product rows (one row per product)
+function computeAggregatedRows(filters) {
   const rows = [];
   const products = productManager.getVisibleProducts();
 
@@ -121,36 +127,28 @@ function computeRows(filters) {
     const categoryName =
       productManager.getCategoryName?.(p.categoryId) || "Khác";
 
+    let totalStock = 0;
+    
+    // Calculate total stock: sum of variants OR initialStock
     if (Array.isArray(p.variants) && p.variants.length > 0) {
-      for (const v of p.variants) {
-        const size = v && typeof v.size !== "undefined" ? Number(v.size) : null;
-        const stock = Number(v?.stock || 0);
-        const thr = thresholds.effective(p.id, size);
-        rows.push({
-          productId: p.id,
-          name: p.name,
-          category: categoryName,
-          size,
-          stock,
-          threshold: thr,
-          isLow: stock <= thr,
-          price: p.price,
-        });
-      }
+      totalStock = p.variants.reduce((sum, v) => sum + (Number(v.stock) || 0), 0);
     } else {
-      const stock = Number(p.initialStock || 0);
-      const thr = thresholds.effective(p.id, null);
-      rows.push({
-        productId: p.id,
-        name: p.name,
-        category: categoryName,
-        size: null,
-        stock,
-        threshold: thr,
-        isLow: stock <= thr,
-        price: p.price,
-      });
+      totalStock = Number(p.initialStock || 0);
     }
+
+    // Use product-level threshold (or default) for row status
+    const productThreshold = thresholds.effectiveProduct(p.id);
+    
+    rows.push({
+      productId: p.id,
+      name: p.name,
+      category: categoryName,
+      totalStock,
+      threshold: productThreshold,
+      isLow: totalStock <= productThreshold,
+      costPrice: p.costPrice || 0,
+      hasVariants: Array.isArray(p.variants) && p.variants.length > 0,
+    });
   }
 
   let filtered = rows;
@@ -176,7 +174,7 @@ function renderInventoryTable() {
     name: invFilterName?.value || "",
   };
 
-  const data = computeRows(filters);
+  const data = computeAggregatedRows(filters);
 
   tbody.innerHTML = "";
 
@@ -191,62 +189,197 @@ function renderInventoryTable() {
     return;
   }
 
+  // Use DocumentFragment for performance
+  const fragment = document.createDocumentFragment();
+
   for (const r of data) {
     const statusBadge = r.isLow
       ? `<span class="status-badge status-draft" title="Sắp hết">Sắp hết</span>`
       : `<span class="status-badge status-completed" title="Ổn">Ổn</span>`;
 
-    const sizeDisplay = r.size != null ? `Size ${r.size}` : "-";
-    const product = productManager.getProductById(r.productId);
-
     const row = document.createElement("tr");
+    if (r.isLow) {
+      row.classList.add("table-warning");
+    }
+    
     row.innerHTML = `
       <td class="col-id">${r.productId}</td>
       <td>${r.name}</td>
       <td class="col-category">${r.category}</td>
-      <td class="col-stock right">${r.stock}</td>
-      <td class="col-price right">${formatPrice(product?.costPrice || 0)}</td>
+      <td class="col-stock right">${r.totalStock}</td>
+      <td class="col-price right">${formatPrice(r.costPrice)}</td>
       <td class="col-status">${statusBadge}</td>
       <td class="col-actions">
-        <div class="actions" style="display:flex; gap:8px; align-items:center;">
-          <span>${sizeDisplay}</span>
+        <div class="actions" style="display:flex; gap:8px; align-items:center; justify-content:center;">
           <input 
             type="number" 
             min="0" 
             step="1" 
-            class="row-threshold-input" 
+            class="product-threshold-input" 
             value="${r.threshold}"
             data-product-id="${r.productId}"
-            data-size="${r.size != null ? r.size : ""}"
-            style="width:90px"
-            title="Ngưỡng cảnh báo cho ${
-              r.size != null ? "Size " + r.size : "sản phẩm"
-            }"
+            style="width:80px"
+            title="Ngưỡng cảnh báo sản phẩm"
           />
           <button 
             class="btn" 
-            data-action="save-threshold"
+            data-action="save-product-threshold"
             data-product-id="${r.productId}"
-            data-size="${r.size != null ? r.size : ""}"
-            title="Lưu ngưỡng">
+            title="Lưu ngưỡng sản phẩm"
+            style="min-width:50px;">
             Lưu
+          </button>
+          <button 
+            class="btn btn-view-movements" 
+            data-action="view-variants"
+            data-product-id="${r.productId}"
+            title="Xem chi tiết biến thể"
+            style="min-width:60px;">
+            <i class="fa-solid fa-eye"></i> Xem
           </button>
         </div>
       </td>
     `;
-    tbody.appendChild(row);
+    fragment.appendChild(row);
+  }
+
+  tbody.appendChild(fragment);
+}
+
+function handleTableClick(e) {
+  // Handle product threshold save
+  const saveBtn = e.target.closest('button[data-action="save-product-threshold"]');
+  if (saveBtn) {
+    const productId = Number(saveBtn.dataset.productId);
+    const input = saveBtn.parentElement.querySelector("input.product-threshold-input");
+    if (!input) return;
+    const val = Number(input.value);
+
+    if (Number.isNaN(val) || val < 0) {
+      alert("Ngưỡng phải là số >= 0");
+      return;
+    }
+
+    thresholds.setProduct(productId, val);
+    alert("Đã lưu ngưỡng cảnh báo sản phẩm");
+    renderInventoryTable();
+    return;
+  }
+
+  // Handle view variants button
+  const viewBtn = e.target.closest('button[data-action="view-variants"]');
+  if (viewBtn) {
+    const productId = Number(viewBtn.dataset.productId);
+    renderVariantModal(productId);
+    return;
   }
 }
 
-function handleThresholdSave(e) {
-  const btn = e.target.closest('button[data-action="save-threshold"]');
+// Render the variant details modal
+function renderVariantModal(productId) {
+  const product = productManager.getProductById(productId);
+  if (!product) {
+    alert("Không tìm thấy sản phẩm");
+    return;
+  }
+
+  const modal = document.getElementById("variantStockModal");
+  const modalTitle = document.getElementById("variantModalTitle");
+  const modalBody = document.getElementById("variantModalBody");
+
+  if (!modal || !modalTitle || !modalBody) return;
+
+  modalTitle.textContent = `Chi tiết tồn kho: ${product.name}`;
+
+  // Check if product has variants
+  if (!product.variants || product.variants.length === 0) {
+    modalBody.innerHTML = `
+      <div class="no-variants-message">
+        <i class="fa-solid fa-info-circle"></i>
+        <p>Sản phẩm này không có biến thể (size).</p>
+        <p>Tồn kho: <strong>${product.initialStock || 0}</strong></p>
+        <p>Chỉ có thể đặt ngưỡng cảnh báo ở cấp sản phẩm (trong bảng chính).</p>
+      </div>
+    `;
+  } else {
+    // Build variant table
+    let tableHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Size</th>
+            <th style="text-align:center;">Tồn kho</th>
+            <th style="text-align:center;">Ngưỡng cảnh báo</th>
+            <th style="text-align:center;">Trạng thái</th>
+            <th style="text-align:center;">Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    for (const variant of product.variants) {
+      const size = variant.size;
+      const stock = Number(variant.stock || 0);
+      const variantThreshold = thresholds.effective(productId, size);
+      const isLow = stock <= variantThreshold;
+      const statusText = isLow ? "Sắp hết" : "Ổn";
+      const statusClass = isLow ? "stock-status-low" : "stock-status-ok";
+
+      tableHTML += `
+        <tr>
+          <td style="font-weight:600;">Size ${size}</td>
+          <td style="text-align:center;">${stock}</td>
+          <td style="text-align:center;">
+            <input 
+              type="number" 
+              min="0" 
+              step="1" 
+              class="variant-threshold-input" 
+              value="${variantThreshold}"
+              data-product-id="${productId}"
+              data-size="${size}"
+            />
+          </td>
+          <td style="text-align:center;">
+            <span class="${statusClass}">${statusText}</span>
+          </td>
+          <td style="text-align:center;">
+            <button 
+              class="btn-save-threshold" 
+              data-action="save-variant-threshold"
+              data-product-id="${productId}"
+              data-size="${size}">
+              Lưu
+            </button>
+          </td>
+        </tr>
+      `;
+    }
+
+    tableHTML += `
+        </tbody>
+      </table>
+    `;
+
+    modalBody.innerHTML = tableHTML;
+
+    // Add event listener for save buttons in modal
+    modalBody.addEventListener("click", handleVariantThresholdSave);
+  }
+
+  // Show modal
+  modal.style.display = "block";
+}
+
+// Handle variant threshold save in modal
+function handleVariantThresholdSave(e) {
+  const btn = e.target.closest('button[data-action="save-variant-threshold"]');
   if (!btn) return;
 
   const productId = Number(btn.dataset.productId);
-  const sizeRaw = btn.dataset.size;
-  const size = sizeRaw === "" ? null : Number(sizeRaw);
-
-  const input = btn.parentElement.querySelector("input.row-threshold-input");
+  const size = Number(btn.dataset.size);
+  const input = btn.parentElement.parentElement.querySelector(".variant-threshold-input");
+  
   if (!input) return;
   const val = Number(input.value);
 
@@ -255,11 +388,33 @@ function handleThresholdSave(e) {
     return;
   }
 
-  if (size == null) thresholds.setProduct(productId, val);
-  else thresholds.setVariant(productId, size, val);
-
-  alert("Đã lưu ngưỡng cảnh báo");
+  thresholds.setVariant(productId, size, val);
+  alert("Đã lưu ngưỡng cảnh báo cho biến thể");
+  
+  // Re-render modal to update status
+  renderVariantModal(productId);
+  
+  // Also refresh main table
   renderInventoryTable();
+}
+
+// Ensure variant modal structure and bind close button
+function ensureVariantModalStructure() {
+  const modal = document.getElementById("variantStockModal");
+  const closeBtn = document.getElementById("variantModalClose");
+
+  if (closeBtn) {
+    closeBtn.onclick = () => {
+      if (modal) modal.style.display = "none";
+    };
+  }
+
+  // Close modal when clicking outside
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.style.display = "none";
+    }
+  });
 }
 
 function bindFilters() {
@@ -283,11 +438,12 @@ function bindFilters() {
 
 function initInventoryAdmin() {
   ensureDefaultThresholdControls();
+  ensureVariantModalStructure();
   bindFilters();
 
   const tbody = document.getElementById("inventoryTableBody");
   if (tbody) {
-    tbody.addEventListener("click", handleThresholdSave);
+    tbody.addEventListener("click", handleTableClick);
   }
 
   // Public API cho các module khác có thể trigger refresh
