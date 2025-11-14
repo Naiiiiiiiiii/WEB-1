@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="./css/admin-product.css">
     <link rel="stylesheet" href="./css/admin-inventory.css">
     <link rel="stylesheet" href="./css/category-admin.css">
-    <!-- ĐÃ GỠ: <link rel="stylesheet" href="./css/admin-import.css"> -->
     <link rel="stylesheet" href="./css/admin-price.css">
     <link rel="stylesheet" href="./css/admin-order.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -45,7 +44,6 @@
                         <li><a href="#orders"><i class="fa-solid fa-cart-shopping"></i> Quản lý đơn đặt hàng</a></li>
                         <li><a href="#inventory"><i class="fa-solid fa-warehouse"></i> Quản lý tồn kho</a></li>
                         <li><a href="#price"><i class="fa-solid fa-dollar-sign"></i> Quản lý Giá bán</a></li>
-                        <!-- ĐÃ GỠ: <li><a href="#import-slips"><i class="fa-solid fa-file-import"></i> Quản lý Phiếu nhập</a></li> -->
                     </ul>
                 </nav>
             </div>
@@ -249,8 +247,6 @@
             <section class="inventory" id="inventory">
                 <h2>Quản lý Tồn kho</h2>
 
-                <!-- ĐÃ GỠ: Khối "Thêm Phiếu Nhập Hàng" -->
-                <!-- Giữ lại toolbar lọc tồn kho -->
                 <h3 class="mt-40">Bảng Tổng hợp Tồn kho</h3>
 
                 <div class="section-toolbar">
@@ -263,6 +259,10 @@
                     <div class="field">
                         <label for="invFilterName">Tên sản phẩm</label>
                         <input type="text" id="invFilterName" placeholder="Nhập tên sản phẩm...">
+                    </div>
+                    <div class="field">
+                        <input type="checkbox" id="invFilterLowOnly">
+                        <label for="invFilterLowOnly">Chỉ hiển thị sắp hết</label>
                     </div>
                     <div class="field">
                         <button class="btn primary" id="invFilterApply">Tra cứu</button>
@@ -286,6 +286,8 @@
                     </thead>
                     <tbody id="inventoryTableBody"></tbody>
                 </table>
+
+                <div class="pagination" id="inventoryPagination"></div>
 
                 <div id="stockMovementModal" class="modal">
                     <div class="modal-content">
@@ -506,21 +508,16 @@
         </div>
     </div>
 
-    <!-- ĐÃ GỠ: Modal chỉnh sửa Phiếu Nhập (editImportSlipModal) -->
-
     <script type="module" src="./js/user.js"></script>
     <script type="module" src="./js/category.js"></script>
     <script type="module" src="./js/Product.js"></script>
     <script type="module" src="./js/ProductManager.js"></script>
     <script type="module" src="./js/order-manager.js"></script>
-    <!-- ĐÃ GỠ: <script type="module" src="./js/ImportSlip.js"></script> -->
     <script type="module" src="./js/admin.js"></script>
     <script type="module" src="./js/category-admin.js"></script>
     <script type="module" src="./js/product-admin.js"></script>
     <script type="module" src="./js/order-admin.js"></script>
-    <!-- ĐÃ GỠ: <script type="module" src="./js/import-admin.js"></script> -->
     <script type="module" src="./js/price-admin.js"></script>
-    <!-- THÊM MỚI: Quản lý tồn kho + ngưỡng cảnh báo -->
     <script type="module" src="./js/inventory-admin.js"></script>
 
 </body>
