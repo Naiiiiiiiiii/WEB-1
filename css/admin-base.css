@@ -1,5 +1,3 @@
-
-
 * {
   margin: 0;
   padding: 0;
@@ -460,7 +458,6 @@ textarea:focus {
   grid-column: 1 / -1;
 }
 
-.btn-reset,
 .btn-lock,
 .btn-unlock,
 .btn-edit-category,
@@ -982,7 +979,6 @@ textarea:focus {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  
   .userTable,
   #ordersTable,
   #inventoryTable {
@@ -1082,22 +1078,19 @@ textarea:focus {
 }
 
 @media (max-width: 768px) {
-  
   .main-content section {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  
   .userTable,
   #ordersTable,
   #inventoryTable,
   .price-table {
     min-width: 100%;
-    width: max-content; 
+    width: max-content;
   }
 
-  
   .userTable th,
   .userTable td,
   #ordersTable th,
@@ -1107,13 +1100,12 @@ textarea:focus {
   .price-table th,
   .price-table td {
     white-space: nowrap;
-    
+
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 340px; 
+    max-width: 340px;
   }
 
-  
   .userTable td:last-child,
   #ordersTable td:last-child,
   #inventoryTable td:last-child,
@@ -1135,7 +1127,6 @@ textarea:focus {
     width: 100%;
   }
 
-  
   .nowrap {
     white-space: nowrap !important;
     text-overflow: ellipsis;
@@ -1158,85 +1149,76 @@ textarea:focus {
 .userTable td[class*="col-"],
 .import-slips-table th[class*="col-"],
 .import-slips-table td[class*="col-"] {
-    white-space: nowrap; /* Ngăn không cho nội dung bị ngắt xuống dòng */
-    overflow: hidden;
-    text-overflow: ellipsis; /* Thêm dấu ... nếu nội dung quá dài (Tùy chọn) */
+  white-space: nowrap; /* Ngăn không cho nội dung bị ngắt xuống dòng */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Thêm dấu ... nếu nội dung quá dài (Tùy chọn) */
 }
 
 /* Căn lề phải cho cột giá trị tiền tệ/số lượng */
 .userTable .right,
 .price-table .right,
 .import-slips-table .right {
-    text-align: right !important;
+  text-align: right !important;
 }
 
 /* Căn lề giữa cho cột số lượng/ID */
 .userTable .center,
 .price-table .center,
 .import-slips-table .center {
-    text-align: center !important;
+  text-align: center !important;
 }
-
 
 /* --- Định nghĩa Chiều rộng cố định cho từng loại cột  --- */
 
 .col-id,
 .col-stock,
 .col-size {
-    width: 80px;
-    min-width: 80px;
+  width: 80px;
+  min-width: 80px;
 }
-
 
 .col-orders,
 .col-status,
 .col-price,
 .col-category {
-    width: 120px;
-    min-width: 120px;
+  width: 120px;
+  min-width: 120px;
 }
-
 
 .col-date,
 .col-slip-num {
-    width: 160px;
-    min-width: 160px;
+  width: 160px;
+  min-width: 160px;
 }
-
 
 .col-actions-sm {
-    width: 160px;
-    min-width: 160px;
+  width: 160px;
+  min-width: 160px;
 }
-
 
 .col-total-value,
 .col-status-lg {
-    width: 180px;
-    min-width: 180px;
+  width: 180px;
+  min-width: 180px;
 }
-
 
 .col-actions-md {
-    width: 500px;
-    min-width: 220px;
+  width: 500px;
+  min-width: 220px;
 }
 
-
-.col-actions, 
+.col-actions,
 .col-actions-lg {
-    width: 240px;
-    min-width: 240px;
+  width: 240px;
+  min-width: 240px;
 }
-
 
 .col-slip-num-lg {
-    width: 180px;
-    min-width: 180px;
+  width: 180px;
+  min-width: 180px;
 }
 
-
 .col-margin-input {
-    width: 150px;
-    min-width: 150px;
+  width: 150px;
+  min-width: 150px;
 }
