@@ -1,10 +1,11 @@
-
+/* ========== GLOBAL RESET ========== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* ========== BODY + BACKGROUND ========== */
 body {
     font-family: 'Segoe UI', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -16,6 +17,7 @@ body {
     position: relative;
 }
 
+/* ========== NÚT TRỞ VỀ ========== */
 .nut-tro-ve {
     position: absolute;
     top: 30px;
@@ -40,6 +42,7 @@ body {
     transform: translateY(-2px);
 }
 
+/* ========== KHUNG PROFILE ========== */
 .khung-profile {
     background: white;
     border-radius: 20px;
@@ -61,6 +64,7 @@ body {
     }
 }
 
+/* ========== TIÊU ĐỀ PROFILE ========== */
 .tieu-de-profile {
     background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
     color: white;
@@ -77,7 +81,7 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.15), transparent);
     animation: quetSang 3s infinite;
 }
 
@@ -111,10 +115,12 @@ body {
     font-size: 0.9rem;
 }
 
+/* ========== NỘI DUNG PROFILE ========== */
 .noi-dung-profile {
     padding: 1.5rem;
 }
 
+/* ========== AVATAR ========== */
 .avatar-section {
     display: flex;
     flex-direction: column;
@@ -144,6 +150,7 @@ body {
     display: none;
 }
 
+/* ========== NHÓM THÔNG TIN ========== */
 .thong-tin-section,
 .mat-khau-section {
     margin-bottom: 1.2rem;
@@ -174,6 +181,7 @@ body {
     margin-bottom: 1rem;
 }
 
+/* ========== LABELS & ICONS ========== */
 .thong-tin-item label {
     display: flex;
     align-items: center;
@@ -190,6 +198,7 @@ body {
     font-size: 0.9rem;
 }
 
+/* ========== GIÁ TRỊ HIỂN THỊ ========== */
 .gia-tri {
     display: block;
     padding: 10px 14px;
@@ -197,12 +206,15 @@ body {
     border-radius: 10px;
     color: #2c3e50;
     font-size: 0.95rem;
+    word-break: break-word;
+    line-height: 1.35;
 }
 
 .gia-tri.chi-doc {
     border: 2px solid #e9ecef;
 }
 
+/* ========== GHI CHÚ ========== */
 .ghi-chu {
     font-size: 0.8rem;
     color: #868e96;
@@ -210,6 +222,7 @@ body {
     font-style: italic;
 }
 
+/* ========== FLEX BOX CHO Ô NHẬP & NÚT ========== */
 .ho-ten-box {
     display: flex;
     align-items: center;
@@ -217,11 +230,16 @@ body {
 }
 
 .ho-ten-box .gia-tri,
-.ho-ten-box .input-sua {
+.ho-ten-box .input-sua,
+.ho-ten-box textarea {
     flex: 1;
 }
 
-.input-sua {
+/* ========== INPUT TEXT CHUNG ========== */
+.input-sua,
+.thong-tin-item input[type="tel"],
+.thong-tin-item textarea,
+.thong-tin-item input[type="email"] {
     padding: 10px 14px;
     border: 2px solid #ff6b35;
     border-radius: 10px;
@@ -229,12 +247,36 @@ body {
     outline: none;
     background: white;
     transition: all 0.3s ease;
+    resize: vertical;
+    min-height: 44px;
 }
 
-.input-sua:focus {
-    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+.thong-tin-item textarea {
+    line-height: 1.4;
 }
 
+.input-sua:focus,
+.thong-tin-item input:focus,
+.thong-tin-item textarea:focus {
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15);
+}
+
+/* Placeholder style */
+.thong-tin-item input::placeholder,
+.thong-tin-item textarea::placeholder {
+    color: #adb5bd;
+    font-size: 0.85rem;
+}
+
+/* Disabled */
+.thong-tin-item input:disabled,
+.thong-tin-item textarea:disabled {
+    background: #f1f3f5;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* ========== NÚT SỬA / LƯU CHUNG ========== */
 .nut-sua {
     padding: 10px 16px;
     background: linear-gradient(45deg, #ff6b35, #f7931e);
@@ -265,6 +307,13 @@ body {
     background: linear-gradient(45deg, #40c057, #2f9e44);
 }
 
+/* Nút lưu riêng cho địa chỉ / SĐT */
+#nutLuuDiaChiMacDinh,
+#nutLuuSoDienThoai {
+    min-width: 130px;
+}
+
+/* ========== THÔNG BÁO LỖI ========== */
 .thong-bao-loi {
     color: #e74c3c;
     font-size: 0.8rem;
@@ -288,6 +337,13 @@ body {
     }
 }
 
+/* Highlight lỗi cho input */
+.input-loi {
+    border-color: #e74c3c !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.12);
+}
+
+/* ========== BẢO MẬT (MẬT KHẨU) ========== */
 .nut-doi-mat-khau {
     padding: 10px 20px;
     background: linear-gradient(45deg, #495057, #343a40);
@@ -430,6 +486,7 @@ body {
     transform: translateY(-1px);
 }
 
+/* ========== HÀNH ĐỘNG ========== */
 .hanh-dong {
     display: flex;
     justify-content: center;
@@ -462,20 +519,18 @@ body {
     transform: translateY(0);
 }
 
+/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     .khung-profile {
         margin: 0 10px;
         max-width: 100%;
     }
-    
     .noi-dung-profile {
         padding: 1.2rem;
     }
-    
     .tieu-de-profile {
         padding: 1.2rem 1rem 1rem;
     }
-    
     .nut-tro-ve {
         top: 20px;
         left: 20px;
@@ -488,30 +543,31 @@ body {
     body {
         padding: 10px;
     }
-    
     .logo-profile h1 {
         font-size: 1.5rem;
     }
-    
     .logo-profile i {
         font-size: 1.5rem;
     }
-
     .ho-ten-box {
         flex-direction: column;
         align-items: stretch;
     }
-
-    .nut-sua {
+    .nut-sua,
+    #nutLuuDiaChiMacDinh,
+    #nutLuuSoDienThoai {
         width: 100%;
         justify-content: center;
     }
-
     .nhom-nut-mat-khau {
         flex-direction: column;
     }
+    .thong-tin-item textarea {
+        min-height: 70px;
+    }
 }
 
+/* ========== LỊCH SỬ ĐƠN HÀNG (PHẦN CŨ) ========== */
 .order-history-wrapper {
     max-width: 800px;
     margin: 20px auto;
@@ -567,10 +623,10 @@ body {
     color: #fff;
 }
 
-.status-pending { background-color: #ffc107; color: #333; } 
-.status-shipping { background-color: #007bff; } 
-.status-completed { background-color: #28a745; } 
-.status-cancelled { background-color: #dc3545; } 
+.status-pending { background-color: #ffc107; color: #333; }
+.status-shipping { background-color: #007bff; }
+.status-completed { background-color: #28a745; }
+.status-cancelled { background-color: #dc3545; }
 
 .order-items-list {
     border-top: 1px solid #eee;
@@ -651,7 +707,7 @@ body {
 
 .lich-su-don-hang-section h3 .fas {
     margin-right: 10px;
-    color: #ff5722; 
+    color: #ff5722;
 }
 
 .danh-sach-don-hang {
@@ -764,4 +820,14 @@ body {
     text-align: center;
     color: #777;
     padding: 20px;
+}
+
+/* Focus outlines */
+.nut-sua:focus,
+.nut-doi-mat-khau:focus,
+.nut-dang-xuat:focus,
+#nutLuuDiaChiMacDinh:focus,
+#nutLuuSoDienThoai:focus {
+    outline: 3px solid rgba(255,107,53,0.4);
+    outline-offset: 2px;
 }

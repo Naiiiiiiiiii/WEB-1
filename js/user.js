@@ -5,7 +5,9 @@ class User {
     email,
     matKhau,
     orders = [],
-    isLocked = false
+    isLocked = false,
+    soDienThoai = "",
+    diaChiMacDinh = ""
   ) {
     this.hoTen = hoTen;
     this.tenDangNhap = tenDangNhap;
@@ -13,6 +15,8 @@ class User {
     this.matKhau = matKhau;
     this.orders = orders;
     this.isLocked = isLocked;
+    this.soDienThoai = soDienThoai;
+    this.diaChiMacDinh = diaChiMacDinh;
   }
 
   kiemTraMatKhau(matKhauNhap) {
@@ -37,7 +41,6 @@ class UserManager {
       const data = localStorage.getItem(this.STORAGE_KEY);
       if (data) {
         const usersData = JSON.parse(data);
-
         return usersData.map(
           (u) =>
             new User(
@@ -46,7 +49,9 @@ class UserManager {
               u.email,
               u.matKhau,
               u.orders || [],
-              u.isLocked || false
+              u.isLocked || false,
+              u.soDienThoai || "",
+              u.diaChiMacDinh || ""
             )
         );
       }
@@ -54,23 +59,7 @@ class UserManager {
       console.error("Lỗi khi tải danh sách user:", error);
     }
 
-    const adminOrders = [
-      // {
-      //     id: 'ORD-2025-001',
-      //     date: new Date(Date.now() - 86400000 * 2).toISOString(),
-      //     status: 'delivered',
-      //     total: 1500000,
-      //     items: [{ id: 'S001', name: 'Giày Thể Thao Cao Cấp', size: '42', price: 1500000, quantity: 1 }]
-      // },
-      // {
-      //     id: 'ORD-2025-002',
-      //     date: new Date().toISOString(),
-      //     status: 'new',
-      //     total: 2800000,
-      //     items: [{ id: 'S003', name: 'Giày Da Oxford Đen', size: '41', price: 1400000, quantity: 2 }]
-      // }
-    ];
-
+    const adminOrders = [];
     return [
       new User(
         "Admin ShoeStore",
@@ -78,16 +67,11 @@ class UserManager {
         "admin@shoestore.com",
         "Admin123",
         adminOrders,
-        false
+        false,
+        "",
+        ""
       ),
-      new User(
-        "Người Dùng Thử",
-        "testuser",
-        "test@user.com",
-        "123456",
-        [],
-        false
-      ),
+      new User("Người Dùng Thử", "testuser", "test@user.com", "123456", [], false, "", ""),
     ];
   }
 
@@ -100,6 +84,8 @@ class UserManager {
         matKhau: u.matKhau,
         orders: u.orders,
         isLocked: u.isLocked,
+        soDienThoai: u.soDienThoai || "",
+        diaChiMacDinh: u.diaChiMacDinh || "",
       }));
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usersData));
       return true;
@@ -115,6 +101,8 @@ class UserManager {
         hoTen: user.hoTen,
         tenDangNhap: user.tenDangNhap,
         email: user.email,
+        soDienThoai: user.soDienThoai || "",
+        diaChiMacDinh: user.diaChiMacDinh || "",
         thoiGianDangNhap: new Date().toISOString(),
       };
       localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(userData));
@@ -173,9 +161,7 @@ class UserManager {
   }
 
   tonTaiEmail(email) {
-    return this.users.some(
-      (user) => user.email.toLowerCase() === email.toLowerCase()
-    );
+    return this.users.some((user) => user.email.toLowerCase() === email.toLowerCase());
   }
 
   capNhatUser(updatedUser) {
@@ -184,19 +170,18 @@ class UserManager {
       return false;
     }
 
-    const index = this.users.findIndex(
-      (u) => u.tenDangNhap === updatedUser.tenDangNhap
-    );
-
+    const index = this.users.findIndex((u) => u.tenDangNhap === updatedUser.tenDangNhap);
     if (index !== -1) {
       const oldUser = this.users[index];
       this.users[index] = new User(
-        updatedUser.hoTen || oldUser.hoTen,
+        updatedUser.hoTen ?? oldUser.hoTen,
         oldUser.tenDangNhap,
-        updatedUser.email || oldUser.email,
-        updatedUser.matKhau || oldUser.matKhau,
+        updatedUser.email ?? oldUser.email,
+        updatedUser.matKhau ?? oldUser.matKhau,
         oldUser.orders,
-        oldUser.isLocked
+        oldUser.isLocked,
+        updatedUser.soDienThoai ?? oldUser.soDienThoai,
+        updatedUser.diaChiMacDinh ?? oldUser.diaChiMacDinh
       );
 
       this.luuDanhSachUser();
@@ -212,9 +197,7 @@ class UserManager {
 
   timTaiKhoan(tenDangNhap, matKhau) {
     const user = this.users.find(
-      (u) =>
-        (u.tenDangNhap === tenDangNhap || u.email === tenDangNhap) &&
-        u.kiemTraMatKhau(matKhau)
+      (u) => (u.tenDangNhap === tenDangNhap || u.email === tenDangNhap) && u.kiemTraMatKhau(matKhau)
     );
     if (user && user.isLocked) {
       console.warn(`Tài khoản ${user.tenDangNhap} đã bị khóa.`);
@@ -224,7 +207,7 @@ class UserManager {
   }
 
   themTaiKhoan(hoTen, tenDangNhap, email, matKhau) {
-    const user = new User(hoTen, tenDangNhap, email, matKhau);
+    const user = new User(hoTen, tenDangNhap, email, matKhau, [], false, "", "");
     this.users.push(user);
     this.luuDanhSachUser();
     return user;
@@ -252,11 +235,9 @@ class UserManager {
 
   updateUserStatus(username, isLocked) {
     const user = this.users.find((u) => u.tenDangNhap === username);
-
     if (user && user.tenDangNhap !== "admin") {
       user.isLocked = isLocked;
       this.luuDanhSachUser();
-
       const currentUser = this.layUserHienTai();
       if (currentUser && currentUser.tenDangNhap === username && isLocked) {
         localStorage.removeItem(this.CURRENT_USER_KEY);
@@ -264,6 +245,30 @@ class UserManager {
       return true;
     }
     return false;
+  }
+
+  capNhatDiaChiMacDinh(username, diaChiMacDinh) {
+    const u = this.users.find((x) => x.tenDangNhap === username);
+    if (!u) return false;
+    u.diaChiMacDinh = (diaChiMacDinh || "").trim();
+    this.luuDanhSachUser();
+    const currentUser = this.layUserHienTai();
+    if (currentUser && currentUser.tenDangNhap === username) {
+      this.luuUserHienTai(u);
+    }
+    return true;
+  }
+
+  capNhatSoDienThoai(username, soDienThoai) {
+    const u = this.users.find((x) => x.tenDangNhap === username);
+    if (!u) return false;
+    u.soDienThoai = (soDienThoai || "").trim();
+    this.luuDanhSachUser();
+    const currentUser = this.layUserHienTai();
+    if (currentUser && currentUser.tenDangNhap === username) {
+      this.luuUserHienTai(u);
+    }
+    return true;
   }
 }
 
@@ -273,17 +278,26 @@ const userManagerInstance = new UserManager();
 window.userManager = userManagerInstance;
 
 function kiemTraDangNhap() {
-  const user = userManagerInstance.layUserHienTai();
-  if (user) {
-    const fullUser = userManagerInstance.users.find(
-      (u) => u.tenDangNhap === user.tenDangNhap
-    );
-    if (fullUser && fullUser.isLocked) {
-      localStorage.removeItem(userManagerInstance.CURRENT_USER_KEY);
-      return null;
+  const saved = userManagerInstance.layUserHienTai();
+  if (saved) {
+    const fullUser = userManagerInstance.users.find((u) => u.tenDangNhap === saved.tenDangNhap);
+    if (fullUser) {
+      if (fullUser.isLocked) {
+        localStorage.removeItem(userManagerInstance.CURRENT_USER_KEY);
+        return null;
+      }
+      return {
+        hoTen: fullUser.hoTen,
+        tenDangNhap: fullUser.tenDangNhap,
+        email: fullUser.email,
+        isLocked: fullUser.isLocked,
+        soDienThoai: fullUser.soDienThoai || "",
+        diaChiMacDinh: fullUser.diaChiMacDinh || "",
+        thoiGianDangNhap: saved.thoiGianDangNhap || null,
+      };
     }
   }
-  return user;
+  return null;
 }
 
 window.kiemTraDangNhap = kiemTraDangNhap;
