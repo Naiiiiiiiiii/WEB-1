@@ -1,5 +1,3 @@
-
-
 .table-warning {
   background-color: #fff3cd !important;
 }
@@ -184,7 +182,7 @@
 #inventoryTable th:nth-child(3),
 #inventoryTable td:nth-child(3) {
   text-align: center;
-  width: 10%;
+  width: 9%;
   color: #555;
 }
 
@@ -198,22 +196,21 @@
 #inventoryTable th:nth-child(5),
 #inventoryTable td:nth-child(5) {
   text-align: center;
-  width: 10%;
+  width: 8%;
   color: #34495e;
 }
 
 #inventoryTable th:nth-child(6),
 #inventoryTable td:nth-child(6) {
   text-align: center;
-  width: 8%;
+  width: 9%;
 }
 
 #inventoryTable th:nth-child(7),
 #inventoryTable td:nth-child(7) {
   text-align: center;
-  width: 7%;
+  width: 13%;
 }
-
 .stock-status-low {
   color: #e74c3c;
   font-weight: 700;
@@ -297,13 +294,11 @@
 }
 
 @media (max-width: 768px) {
-  
   #inventoryTable {
     min-width: 100%;
     width: max-content;
   }
 
-  
   #inventoryTable th,
   #inventoryTable td {
     white-space: nowrap;
@@ -312,7 +307,6 @@
     max-width: 320px;
   }
 
-  
   #inventoryTable td:last-child {
     white-space: normal;
   }
