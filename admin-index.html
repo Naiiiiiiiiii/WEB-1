@@ -285,7 +285,6 @@
                             <th><i class="fa-solid fa-tag"></i> Tên</th>
                             <th class="col-category"><i class="fa-solid fa-tags"></i> Loại</th>
                             <th class="col-stock right"><i class="fa-solid fa-warehouse"></i> Tồn</th>
-                            <th class="col-price right"><i class="fa-solid fa-dollar-sign"></i> Giá Vốn</th>
                             <th class="col-status"><i class="fa-solid fa-circle-info"></i> Trạng thái</th>
                             <th class="col-actions"><i class="fa-solid fa-gear"></i> Hành động</th>
                             <th class="col-times"><i class="fa-solid fa-clock"></i> Thời gian nhập</th>
@@ -373,7 +372,7 @@
                     Công thức: <code>Giá Bán = Giá Vốn / (1 - (Tỉ lệ Lợi nhuận % / 100))</code>
                 </p>
 
-               <h3 class="mt-40">Bộ lọc & Tra cứu</h3>
+                <h3 class="mt-40">Bộ lọc & Tra cứu</h3>
                 <div class="section-toolbar filter-toolbar">
                     <div class="field">
                         <label for="priceFilterCategory">
@@ -416,15 +415,8 @@
                             <i class="fa-solid fa-percent"></i> Nhập % Lợi nhuận mới
                         </label>
                         <div class="input-group-append">
-                            <input 
-                                type="number" 
-                                id="bulkMarginInput" 
-                                placeholder="VD: 25" 
-                                min="1" 
-                                max="99"
-                                step="0.5"
-                                class="w-100"
-                            >
+                            <input type="number" id="bulkMarginInput" placeholder="VD: 25" min="1" max="99" step="0.5"
+                                class="w-100">
                             <span class="input-unit">%</span>
                         </div>
                     </div>
@@ -477,23 +469,28 @@
                                 <span class="label"><i class="fa-solid fa-box"></i> Danh sách Sản phẩm</span>
                                 <div id="importSlipItemsContainer" class="items-list"></div>
                                 <div class="actions-row" style="margin-top:8px;">
-                                    <button type="button" id="addImportSlipItemBtn" class="btn btn-primary add-item-btn">
+                                    <button type="button" id="addImportSlipItemBtn"
+                                        class="btn btn-primary add-item-btn">
                                         <i class="fa-solid fa-plus"></i>
                                         Thêm sản phẩm
                                     </button>
-                                    <small class="muted" style="margin-left:12px;">Thêm nhiều hàng vào cùng 1 phiếu nhập</small>
+                                    <small class="muted" style="margin-left:12px;">Thêm nhiều hàng vào cùng 1 phiếu
+                                        nhập</small>
                                 </div>
                             </label>
 
                             <div class="form-row">
                                 <div class="field">
-                                    <label for="importSlipSupplier"><i class="fa-solid fa-truck"></i> Nhà cung cấp</label>
-                                    <input type="text" id="importSlipSupplier" placeholder="VD: Công ty ABC" maxlength="100">
+                                    <label for="importSlipSupplier"><i class="fa-solid fa-truck"></i> Nhà cung
+                                        cấp</label>
+                                    <input type="text" id="importSlipSupplier" placeholder="VD: Công ty ABC"
+                                        maxlength="100">
                                 </div>
 
                                 <div class="field">
                                     <label for="importSlipNote"><i class="fa-solid fa-note-sticky"></i> Ghi chú</label>
-                                    <textarea id="importSlipNote" rows="2" placeholder="Ghi chú thêm về lô hàng..."></textarea>
+                                    <textarea id="importSlipNote" rows="2"
+                                        placeholder="Ghi chú thêm về lô hàng..."></textarea>
                                 </div>
                             </div>
 
@@ -634,7 +631,8 @@
                 <form id="editImportSlipForm" class="modal-form">
                     <div class="form-group">
                         <label>Số Phiếu</label>
-                        <div id="editSlipNumber" style="padding:10px; background:#f0f0f0; border-radius:6px; font-weight:600;"></div>
+                        <div id="editSlipNumber"
+                            style="padding:10px; background:#f0f0f0; border-radius:6px; font-weight:600;"></div>
                     </div>
 
                     <!-- Container for editing multiple items; if single item, this can be left empty and fields below used -->
@@ -643,7 +641,8 @@
                     <div id="editSingleItemGroup">
                         <div class="form-group">
                             <label>Tên Sản phẩm</label>
-                            <div id="editProductName" style="padding:10px; background:#f0f0f0; border-radius:6px;"></div>
+                            <div id="editProductName" style="padding:10px; background:#f0f0f0; border-radius:6px;">
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="editImportSlipQuantity">Số Lượng <span class="required">*</span></label>
@@ -655,7 +654,8 @@
                         </div>
                         <div class="form-group">
                             <label for="editImportSlipSize">Size</label>
-                            <input type="number" id="editImportSlipSize" placeholder="Không bắt buộc nếu sản phẩm không có variant">
+                            <input type="number" id="editImportSlipSize"
+                                placeholder="Không bắt buộc nếu sản phẩm không có variant">
                         </div>
                     </div>
 
@@ -725,7 +725,7 @@
                             Tải lên Hình ảnh
                             <span class="required">*</span>
                         </label>
-                        
+
                         <input type="file" id="modalProductUpload" accept="image/*" required>
                         <small>Tải ảnh lên từ máy tính của bạn</small>
 
@@ -766,53 +766,54 @@
                 <button id="variantModalClose" class="btn" style="min-width:60px">Đóng</button>
             </div>
             <div class="modal-body" id="variantModalBody">
-                </div>
+            </div>
         </div>
     </div>
     <!-- danh mục sửa -->
-<div id="editCategoryModal" class="category-modal-overlay">
-    <div class="category-modal-content">
-        <div class="category-modal-header">
-            <h3><i class="fa-solid fa-pen-to-square"></i> Sửa Danh mục</h3>
-            <button class="category-modal-close" type="button" title="Đóng">&times;</button>
-        </div>
-        <div class="category-modal-body">
-            <form id="editCategoryForm" novalidate>
-                <div class="category-current-info">
-                    <i class="fa-solid fa-tag"></i>
-                    <div>
-                        <small style="color: #555; font-size: 13px;">Tên danh mục hiện tại:</small>
-                        <div id="currentCategoryName" class="category-current-info-value"></div>
+    <div id="editCategoryModal" class="category-modal-overlay">
+        <div class="category-modal-content">
+            <div class="category-modal-header">
+                <h3><i class="fa-solid fa-pen-to-square"></i> Sửa Danh mục</h3>
+                <button class="category-modal-close" type="button" title="Đóng">&times;</button>
+            </div>
+            <div class="category-modal-body">
+                <form id="editCategoryForm" novalidate>
+                    <div class="category-current-info">
+                        <i class="fa-solid fa-tag"></i>
+                        <div>
+                            <small style="color: #555; font-size: 13px;">Tên danh mục hiện tại:</small>
+                            <div id="currentCategoryName" class="category-current-info-value"></div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="category-form-group">
-                    <label for="editCategoryNameInput" style="font-weight: 600; display: block; margin-bottom: 10px;">
-                        Tên danh mục mới
-                    </label>
-                    
-                    <input type="text" id="editCategoryNameInput" class="category-form-input" placeholder="Nhập tên mới..."
-                        required minlength="2" maxlength="50">
-                    
-                    <div id="editCategoryHelper" class="helper-text">
-                        <span id="editCategoryHelperText">
-                            <i class="fa-solid fa-circle-info"></i> Tối thiểu 2, tối đa 50 ký tự.
-                        </span>
-                        <span id="editCategoryCharCounter" class="char-counter">0/50</span>
+                    <div class="category-form-group">
+                        <label for="editCategoryNameInput"
+                            style="font-weight: 600; display: block; margin-bottom: 10px;">
+                            Tên danh mục mới
+                        </label>
+
+                        <input type="text" id="editCategoryNameInput" class="category-form-input"
+                            placeholder="Nhập tên mới..." required minlength="2" maxlength="50">
+
+                        <div id="editCategoryHelper" class="helper-text">
+                            <span id="editCategoryHelperText">
+                                <i class="fa-solid fa-circle-info"></i> Tối thiểu 2, tối đa 50 ký tự.
+                            </span>
+                            <span id="editCategoryCharCounter" class="char-counter">0/50</span>
+                        </div>
                     </div>
-                </div>
-            </form>
-        </div>
-        <div class="category-modal-footer">
-            <button type="button" class="btn category-modal-cancel btn-cancel">
-                <i class="fa-solid fa-xmark"></i> Hủy
-            </button>
-            <button type="submit" id="editCategorySaveBtn" class="btn btn-save" form="editCategoryForm" disabled>
-                <i class="fa-solid fa-check"></i> Lưu Thay Đổi
-            </button>
+                </form>
+            </div>
+            <div class="category-modal-footer">
+                <button type="button" class="btn category-modal-cancel btn-cancel">
+                    <i class="fa-solid fa-xmark"></i> Hủy
+                </button>
+                <button type="submit" id="editCategorySaveBtn" class="btn btn-save" form="editCategoryForm" disabled>
+                    <i class="fa-solid fa-check"></i> Lưu Thay Đổi
+                </button>
+            </div>
         </div>
     </div>
-</div>
     <script type="module" src="./js/user.js"></script>
     <script type="module" src="./js/category.js"></script>
     <script type="module" src="./js/ThresholdManager.js"></script>

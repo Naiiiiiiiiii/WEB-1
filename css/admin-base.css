@@ -514,7 +514,7 @@ textarea:focus {
 #ordersTable,
 #inventoryTable {
   width: 100%;
-  border-collapse: collapse;
+  border: rgb(0, 0, 0) 1px solid;
   margin-top: 20px;
   font-size: 14px;
   table-layout: auto;

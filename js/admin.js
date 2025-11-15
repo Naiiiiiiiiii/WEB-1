@@ -15,6 +15,184 @@ import { initPriceAdmin, renderPriceList } from "./price-admin.js";
 import { getOrders } from "./order-manager.js";
 import { initOrderAdmin, loadAndRenderOrders } from "./order-admin.js";
 
+// === AUTO-SYNC LOCALSTORAGE UTILITY ===
+// Tự động đồng bộ dữ liệu với localStorage và broadcast đến các tab khác
+
+/**
+ * Lưu dữ liệu vào localStorage với metadata
+ * @param {string} key - Storage key (vd: 'products', 'categories')
+ * @param {any} data - Dữ liệu cần lưu
+ * @param {boolean} silent - Không hiển thị log (default: false)
+ * @returns {boolean} - Thành công hay không
+ */
+export function syncToStorage(key, data, silent = false) {
+  try {
+    const currentUser = userManager?.layAdminHienTai?.();
+
+    const payload = {
+      data: data,
+      timestamp: Date.now(),
+      updatedBy: currentUser?.tenDangNhap || "admin",
+      version: "1.0",
+    };
+
+    // Lưu vào localStorage
+    localStorage.setItem(key, JSON.stringify(payload));
+
+    // Broadcast để các tab khác biết
+    window.dispatchEvent(
+      new CustomEvent("storage-sync", {
+        detail: { key, data, timestamp: payload.timestamp },
+      })
+    );
+
+    if (!silent) {
+      console.log(
+        `✅ [Storage Sync] Đã lưu "${key}" lúc ${new Date().toLocaleTimeString()}`
+      );
+    }
+
+    return true;
+  } catch (error) {
+    console.error(`❌ [Storage Sync] Lỗi khi lưu "${key}":`, error);
+
+    // Xử lý quota exceeded
+    if (error.name === "QuotaExceededError") {
+      alert("⚠️ Dung lượng LocalStorage đã đầy! Hãy dọn dẹp dữ liệu cũ.");
+      return false;
+    }
+
+    return false;
+  }
+}
+
+/**
+ * Đọc dữ liệu từ localStorage
+ * @param {string} key - Storage key
+ * @param {any} defaultValue - Giá trị mặc định nếu không tìm thấy
+ * @returns {any} - Dữ liệu đã parse
+ */
+export function getFromStorage(key, defaultValue = null) {
+  try {
+    const item = localStorage.getItem(key);
+
+    if (!item) {
+      return defaultValue;
+    }
+
+    const parsed = JSON.parse(item);
+
+    // Nếu có cấu trúc payload với metadata
+    if (parsed && typeof parsed === "object" && "data" in parsed) {
+      return parsed.data;
+    }
+
+    // Fallback: trả về data gốc
+    return parsed;
+  } catch (error) {
+    console.error(`❌ [Storage Sync] Lỗi khi đọc "${key}":`, error);
+    return defaultValue;
+  }
+}
+
+/**
+ * Xóa item khỏi localStorage
+ * @param {string} key - Storage key
+ */
+export function removeFromStorage(key) {
+  try {
+    localStorage.removeItem(key);
+    console.log(`🗑️ [Storage Sync] Đã xóa "${key}"`);
+
+    // Broadcast event
+    window.dispatchEvent(
+      new CustomEvent("storage-sync", {
+        detail: { key, data: null, timestamp: Date.now(), action: "remove" },
+      })
+    );
+
+    return true;
+  } catch (error) {
+    console.error(`❌ [Storage Sync] Lỗi khi xóa "${key}":`, error);
+    return false;
+  }
+}
+
+/**
+ * Batch update - Lưu nhiều items cùng lúc
+ * @param {Object} updates - Object chứa các cặp key-value
+ */
+export function batchSyncToStorage(updates) {
+  const results = [];
+
+  Object.entries(updates).forEach(([key, value]) => {
+    results.push(syncToStorage(key, value, true)); // silent mode
+  });
+
+  console.log(
+    `✅ [Storage Sync] Batch update: ${results.filter((r) => r).length}/${
+      results.length
+    } thành công`
+  );
+
+  return results.every((r) => r === true);
+}
+
+/**
+ * Hiển thị thông tin storage usage
+ */
+export function showStorageStats() {
+  try {
+    let totalSize = 0;
+    const items = {};
+
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        const size = localStorage.getItem(key).length;
+        totalSize += size;
+        items[key] = (size / 1024).toFixed(2) + " KB";
+      }
+    }
+
+    const totalKB = (totalSize / 1024).toFixed(2);
+    const totalMB = (totalSize / (1024 * 1024)).toFixed(2);
+    const percentUsed = ((totalSize / (5 * 1024 * 1024)) * 100).toFixed(2);
+
+    console.group("📊 LocalStorage Usage");
+    console.table(items);
+    console.log(`Tổng: ${totalKB} KB (${totalMB} MB)`);
+    console.log(`Đã sử dụng: ${percentUsed}% / 5MB`);
+    console.groupEnd();
+
+    // Warning nếu > 80%
+    if (parseFloat(percentUsed) > 80) {
+      console.warn("⚠️ LocalStorage sắp đầy!");
+    }
+
+    return { totalSize, items, percentUsed };
+  } catch (error) {
+    console.error("❌ Không thể lấy storage stats:", error);
+    return null;
+  }
+}
+
+// Setup cross-tab sync listener
+window.addEventListener("storage", (e) => {
+  if (e.key && e.newValue) {
+    console.log(`🔄 [Cross-Tab Sync] "${e.key}" đã được cập nhật từ tab khác`);
+
+    // Có thể trigger re-render tại đây
+    // VD: if (e.key === 'products') renderProductList();
+  }
+});
+
+// Custom event listener cho same-tab updates
+window.addEventListener("storage-sync", (e) => {
+  console.log(`🔔 [Storage Event] "${e.detail.key}" đã thay đổi`, e.detail);
+});
+
+// === END STORAGE UTILITY ===
+
 const userManager = new UserManager();
 const productManager = new ProductManager();
 const inventoryModule = setupInventoryModule(productManager, categoryManager);
@@ -367,42 +545,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   displayAdminPanel();
 });
-// ... code hiện tại ...
-
-// ✨ THÊM: Helper tự động sync localStorage
-export function syncToStorage(key, data) {
-  try {
-    const payload = {
-      data,
-      timestamp: Date.now(),
-      updatedBy: userManager.layAdminHienTai()?.tenDangNhap || "admin",
-    };
-
-    localStorage.setItem(key, JSON.stringify(payload));
-
-    // Broadcast để các tab khác cập nhật
-    window.dispatchEvent(
-      new StorageEvent("storage", {
-        key,
-        newValue: JSON.stringify(payload),
-        url: window.location.href,
-      })
-    );
-
-    console.log(`✅ Synced "${key}" to localStorage`);
-    return true;
-  } catch (error) {
-    console.error(`❌ Sync failed for "${key}":`, error);
-    return false;
-  }
-}
-
-// Lắng nghe thay đổi từ tab khác
-window.addEventListener("storage", (e) => {
-  if (e.key && e.newValue) {
-    console.log(`🔄 Storage updated from another tab: "${e.key}"`);
-    // Có thể trigger re-render tại đây nếu cần
-  }
-});
-
-// ... rest of code ...

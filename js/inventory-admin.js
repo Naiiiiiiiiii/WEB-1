@@ -272,9 +272,7 @@ function renderInventoryTable() {
                     <span class="stock-threshold">/ ${status.threshold}</span>
                 </div>
             </td>
-            <td class="col-price text-right">${formatPrice(
-              product.costPrice
-            )}</td>
+
             <td class="col-status">${statusBadge}</td>
             <td class="col-actions">
                 <div class="action-buttons-inventory">
@@ -288,19 +286,24 @@ function renderInventoryTable() {
                         title="Ngưỡng riêng cho sản phẩm này"
                         data-product-id="${product.id}"
                     />
-<button 
-    class="btn btn-sm btn-primary" 
-    onclick="saveProductThreshold(${product.id})"
-    title="Lưu ngưỡng">
-    <i class="fa-solid fa-floppy-disk"></i>
-</button>
-
-<button 
-    class="btn btn-sm btn-ghost" 
-    onclick="clearProductThreshold(${product.id})"
-    title="Xóa ngưỡng riêng">
-    <i class="fa-solid fa-xmark"></i>
-</button>
+                    <button 
+                        class="btn btn-sm btn-primary" 
+                        onclick="saveProductThreshold(${product.id})"
+                        title="Lưu ngưỡng">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                    </button>
+                    ${
+                      product.lowStockThreshold !== null
+                        ? `
+                        <button 
+                            class="btn btn-sm btn-ghost" 
+                            onclick="clearProductThreshold(${product.id})"
+                            title="Xóa ngưỡng riêng">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    `
+                        : ""
+                    }
                 </div>
             </td>
             <td class="col-times">${formatImportTime(lastImportTime)}</td>
@@ -540,7 +543,6 @@ function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
           <span class="stock-threshold">/ ${status.threshold}</span>
         </div>
       </td>
-      <td class="col-price text-right">${formatPrice(product.costPrice)}</td>
       <td class="col-status">${statusBadge}</td>
       <td class="col-actions">
         <div class="action-buttons-inventory">
@@ -554,19 +556,24 @@ function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
             title="Ngưỡng riêng cho sản phẩm này"
             data-product-id="${product.id}"
           />
-<button 
-    class="btn btn-sm btn-primary" 
-    onclick="saveProductThreshold(${product.id})"
-    title="Lưu ngưỡng">
-    <i class="fa-solid fa-floppy-disk"></i>
-</button>
-
-<button 
-    class="btn btn-sm btn-ghost" 
-    onclick="clearProductThreshold(${product.id})"
-    title="Xóa ngưỡng riêng">
-    <i class="fa-solid fa-xmark"></i>
-</button>
+          <button 
+            class="btn btn-sm btn-primary" 
+            onclick="saveProductThreshold(${product.id})"
+            title="Lưu ngưỡng">
+            <i class="fa-solid fa-floppy-disk"></i>
+          </button>
+          ${
+            product.lowStockThreshold !== null
+              ? `
+            <button 
+              class="btn btn-sm btn-ghost" 
+              onclick="clearProductThreshold(${product.id})"
+              title="Xóa ngưỡng riêng">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          `
+              : ""
+          }
         </div>
       </td>
       <td class="col-times">${formatImportTime(lastImportTime)}</td>
