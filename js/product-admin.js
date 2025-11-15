@@ -1,4 +1,3 @@
-
 import { productManager, categoryManager, DOM, updateGeneralStats } from './admin.js';
 
 let currentEditingProductId = null;
@@ -19,6 +18,11 @@ export function showAddProductModal() {
     loadCategoriesToModalSelect();
     
 
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    if (preview) preview.style.display = 'none';
+    if (previewImg) previewImg.src = '';
+    
     modal.style.display = 'flex';
     setTimeout(() => modal.classList.add('show'), 10);
     
@@ -51,9 +55,7 @@ export function showEditProductModal(productId) {
     document.getElementById('modalProductCategory').value = product.categoryId;
     document.getElementById('modalProductPrice').value = product.price;
     document.getElementById('modalProductDescription').value = product.description;
-    document.getElementById('modalProductImage').value = product.img;
     
-
     updateImagePreview(product.img);
     
 
@@ -69,6 +71,15 @@ export function closeProductModal() {
     setTimeout(() => {
         modal.style.display = 'none';
         currentEditingProductId = null;
+        
+        const preview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const fileInput = document.getElementById('modalProductUpload');
+        
+        if (preview) preview.style.display = 'none';
+        if (previewImg) previewImg.src = '';
+        if (fileInput) fileInput.value = ''; 
+        
     }, 300);
 }
 
@@ -96,13 +107,12 @@ export function handleProductFormSubmit(e) {
     
     const form = e.target;
     
-
     const productData = {
         name: form.querySelector('#modalProductName').value.trim(),
         categoryId: form.querySelector('#modalProductCategory').value,
         price: parseFloat(form.querySelector('#modalProductPrice').value),
         description: form.querySelector('#modalProductDescription').value.trim(),
-        img: form.querySelector('#modalProductImage').value.trim(), 
+        img: form.querySelector('#previewImg').src, 
     };
     
 
@@ -149,9 +159,9 @@ function validateProductData(data) {
         return false;
     }
     
-    if (!data.img) { 
-        showNotification('⚠️ Vui lòng nhập URL hình ảnh!', 'error');
-        document.getElementById('modalProductImage')?.focus();
+    if (!data.img || !data.img.startsWith('data:image')) { 
+        showNotification('⚠️ Vui lòng tải lên một hình ảnh!', 'error');
+        document.getElementById('modalProductUpload')?.focus(); 
         return false;
     }
     
@@ -511,11 +521,28 @@ export function initProductAdmin() {
         });
     }
     
-
-    const imageInput = document.getElementById('modalProductImage');
-    if (imageInput) {
-        imageInput.addEventListener('input', (e) => {
-            updateImagePreview(e.target.value);
+    const imageUpload = document.getElementById('modalProductUpload'); 
+    if (imageUpload) {
+        imageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0]; 
+            if (file) {
+                const reader = new FileReader(); 
+                
+                reader.onload = function(event) {
+                    const previewImg = document.getElementById('previewImg');
+                    const preview = document.getElementById('imagePreview');
+                    
+                    previewImg.src = event.target.result; 
+                    preview.style.display = 'block'; 
+                }
+                
+                reader.readAsDataURL(file);
+            } else {
+                const previewImg = document.getElementById('previewImg');
+                const preview = document.getElementById('imagePreview');
+                previewImg.src = '';
+                preview.style.display = 'none';
+            }
         });
     }
     
