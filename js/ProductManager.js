@@ -14,6 +14,21 @@ export class ProductManager {
         return categoryManager.getCategoryNameById(categoryId);
     }
 
+    /**
+     * Lấy tất cả danh mục từ categoryManager
+     * @returns {Array} Danh sách categories
+     */
+    getAllCategories() {
+        return categoryManager.getAllCategories();
+    }
+
+    /**
+     * Alias của saveProducts() để tương thích
+     */
+    saveAllProducts() {
+        return this.saveProducts();
+    }
+
     loadProducts() {
         try {
             const data = localStorage.getItem(this.STORAGE_KEY);

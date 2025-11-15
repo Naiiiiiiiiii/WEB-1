@@ -489,6 +489,26 @@ window.resetAllThresholds = function () {
 
 // ==================== UTILITY FUNCTIONS ====================
 
+/**
+ * Populate category filter dropdown
+ */
+function populateCategoryFilter() {
+  const select = document.getElementById("invFilterCategory");
+  if (!select) return;
+
+  const categories = productManager.getAllCategories();
+  
+  // Keep the "Tất cả" option and add categories
+  const currentHtml = select.innerHTML;
+  const allOption = '<option value="all">Tất cả</option>';
+  
+  const categoryOptions = categories
+    .map((cat) => `<option value="${cat.id}">${cat.name}</option>`)
+    .join("");
+
+  select.innerHTML = allOption + categoryOptions;
+}
+
 function formatPrice(price) {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -500,6 +520,9 @@ function formatPrice(price) {
 
 function initInventoryAdmin() {
   console.log("📦 Initializing Inventory Admin...");
+
+  // Populate category filter
+  populateCategoryFilter();
 
   // Render UI components
   renderThresholdConfigPanel();
