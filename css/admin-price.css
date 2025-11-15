@@ -105,6 +105,57 @@
   gap: 8px;
 }
 
+/* Sử dụng Flexbox để căn chỉnh các trường ngang hàng */
+.section-toolbar.bulk-update-toolbar {
+    display: flex; /* Bật Flexbox */
+    align-items: flex-end; /* Căn chỉnh các mục theo đáy */
+    gap: 20px; /* Khoảng cách giữa các cột */
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ddd; /* Để dễ nhìn */
+    border-radius: 5px;
+}
+
+.section-toolbar.bulk-update-toolbar .field {
+    /* Mặc định: label nằm trên input/select */
+    display: flex;
+    flex-direction: column; 
+}
+
+/* Đảm bảo chiều cao các control là như nhau */
+.section-toolbar.bulk-update-toolbar input,
+.section-toolbar.bulk-update-toolbar select,
+.section-toolbar.bulk-update-toolbar .btn {
+    height: 36px;
+    padding: 6px 10px;
+    box-sizing: border-box; 
+    /* Dòng này quan trọng: giúp nút Áp dụng và ô nhập liệu cùng chiều cao */
+}
+
+/* Group input và % */
+.section-toolbar.bulk-update-toolbar .input-group-append {
+    display: flex;
+    align-items: center;
+}
+
+.section-toolbar.bulk-update-toolbar .input-group-append .input-unit {
+    padding: 0 10px;
+    height: 36px;
+    line-height: 36px;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Căn chỉnh nút hành động */
+.section-toolbar.bulk-update-toolbar .field.action-button {
+    /* Đảm bảo nút được căn chỉnh đúng */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Quan trọng để căn chỉnh nút vào vị trí input */
+    padding-bottom: 0; /* Loại bỏ padding thừa nếu có */
+}
 @media (max-width: 768px) {
   .price-table .margin-input-group {
     flex-direction: column;
