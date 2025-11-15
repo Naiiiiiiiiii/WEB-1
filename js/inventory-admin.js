@@ -397,7 +397,193 @@ function renderStockSummary(stats) {
     `;
 }
 
+/**
+ * Apply filters and search
+ */
+window.applyInventoryFilter = function () {
+  const categoryId = document.getElementById("invFilterCategory")?.value || "all";
+  const searchText = document.getElementById("invFilterName")?.value.toLowerCase().trim() || "";
+  const fromDate = document.getElementById("invFilterFromDate")?.value || "";
+  const toDate = document.getElementById("invFilterToDate")?.value || "";
 
+  filterAndRenderInventory(categoryId, searchText, fromDate, toDate);
+};
+
+/**
+ * Reset filters
+ */
+window.resetInventoryFilter = function () {
+  const categorySelect = document.getElementById("invFilterCategory");
+  const searchInput = document.getElementById("invFilterName");
+  const fromDateInput = document.getElementById("invFilterFromDate");
+  const toDateInput = document.getElementById("invFilterToDate");
+
+  if (categorySelect) categorySelect.value = "all";
+  if (searchInput) searchInput.value = "";
+  if (fromDateInput) fromDateInput.value = "";
+  if (toDateInput) toDateInput.value = "";
+
+  filterAndRenderInventory("all", "");
+};
+
+/**
+ * Filter products by category and search term
+ */
+function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
+  let products = productManager.getVisibleProducts();
+
+  // Filter by category
+  if (categoryId !== "all") {
+    products = products.filter((p) => p.categoryId === categoryId);
+  }
+
+   if (fromDate || toDate) {
+    products = products.filter((product) => {
+      const lastImportTime = getLatestImportTime(product.id);
+      
+      if (!lastImportTime) {
+        return false; 
+      }
+
+      const importDate = new Date(lastImportTime);
+      const from = fromDate ? new Date(fromDate) : null;
+      const to = toDate ? new Date(toDate) : null;
+
+      // Nếu có fromDate, importDate phải >= fromDate
+      if (from && importDate < from) {
+        return false;
+      }
+
+      // Nếu có toDate, importDate phải <= toDate (cộng 1 ngày để bao gồm cả ngày cuối)
+      if (to) {
+        const toDateEnd = new Date(to);
+        toDateEnd.setDate(toDateEnd.getDate() + 1);
+        if (importDate >= toDateEnd) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }
+
+  // Filter by search text
+  if (searchText) {
+    products = products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(searchText) ||
+        p.id.toString().includes(searchText)
+    );
+  }
+
+  // Render filtered results
+  const tbody = document.getElementById("inventoryTableBody");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  if (products.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="8" class="text-center" style="padding: 24px; color: #666;">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          Không tìm thấy sản phẩm nào.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  // Render filtered products
+  products.forEach((product) => {
+    const status = product.getStockStatus();
+    const categoryName =
+      productManager.getCategoryName(product.categoryId) || "Không rõ";
+    const lastImportTime = getLatestImportTime(product.id);
+
+    let rowClass = "";
+    let statusBadge = "";
+
+    switch (status.severity) {
+      case "out":
+        rowClass = "row-out-of-stock";
+        statusBadge = `<span class="badge badge-out"><i class="fa-solid fa-circle-xmark"></i> Hết hàng</span>`;
+        break;
+      case "critical":
+        rowClass = "row-critical";
+        statusBadge = `<span class="badge badge-critical"><i class="fa-solid fa-triangle-exclamation"></i> Nguy hiểm</span>`;
+        break;
+      case "warning":
+        rowClass = "row-warning";
+        statusBadge = `<span class="badge badge-warning"><i class="fa-solid fa-exclamation-circle"></i> Cảnh báo</span>`;
+        break;
+      default:
+        statusBadge = `<span class="badge badge-safe"><i class="fa-solid fa-circle-check"></i> Còn hàng</span>`;
+    }
+
+    const row = document.createElement("tr");
+    row.className = rowClass;
+    row.innerHTML = `
+      <td class="col-id">${product.id}</td>
+      <td>
+        <div class="product-cell">
+          <strong>${product.name}</strong>
+          ${
+            status.isLow
+              ? '<span class="low-stock-indicator" title="Sắp hết hàng">⚠️</span>'
+              : ""
+          }
+        </div>
+      </td>
+      <td class="col-category">${categoryName}</td>
+      <td class="col-stock text-center">
+        <div class="stock-info">
+          <span class="stock-value ${status.severity}">${
+      status.currentStock
+    }</span>
+          <span class="stock-threshold">/ ${status.threshold}</span>
+        </div>
+      </td>
+      <td class="col-price text-right">${formatPrice(product.costPrice)}</td>
+      <td class="col-status">${statusBadge}</td>
+      <td class="col-actions">
+        <div class="action-buttons">
+          <input 
+            type="number" 
+            class="threshold-input" 
+            value="${product.lowStockThreshold ?? ""}"
+            placeholder="${status.threshold}"
+            min="0" 
+            step="1"
+            title="Ngưỡng riêng cho sản phẩm này"
+            data-product-id="${product.id}"
+          />
+          <button 
+            class="btn btn-sm btn-primary" 
+            onclick="saveProductThreshold(${product.id})"
+            title="Lưu ngưỡng">
+            <i class="fa-solid fa-floppy-disk"></i>
+          </button>
+          ${
+            product.lowStockThreshold !== null
+              ? `
+            <button 
+              class="btn btn-sm btn-ghost" 
+              onclick="clearProductThreshold(${product.id})"
+              title="Xóa ngưỡng riêng">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          `
+              : ""
+          }
+        </div>
+      </td>
+      <td class="col-times">${formatImportTime(lastImportTime)}</td>
+    `;
+
+    tbody.appendChild(row);
+  });
+}
 
 
 // ==================== EVENT HANDLERS ====================
@@ -572,6 +758,36 @@ function initInventoryAdmin() {
   renderThresholdConfigPanel();
   renderInventoryTable();
 
+  const filterApplyBtn = document.getElementById("invFilterApply");
+  const filterResetBtn = document.getElementById("invFilterReset");
+  const searchInput = document.getElementById("invFilterName");
+  const fromDateInput = document.getElementById("invFilterFromDate");
+  const toDateInput = document.getElementById("invFilterToDate");
+
+  if (filterApplyBtn) {
+    filterApplyBtn.addEventListener("click", applyInventoryFilter);
+  }
+
+  if (filterResetBtn) {
+    filterResetBtn.addEventListener("click", resetInventoryFilter);
+  }
+
+  if (fromDateInput) {
+    fromDateInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        applyInventoryFilter();
+      }
+    });
+  }
+
+  if (toDateInput) {
+    toDateInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        applyInventoryFilter();
+      }
+    });
+  }
+
   // Listen to threshold changes
   window.addEventListener("thresholdChanged", () => {
     console.log("🔄 Threshold changed, re-rendering...");
@@ -591,3 +807,5 @@ if (document.readyState === "loading") {
 // Export for external access
 window.renderInventoryTable = renderInventoryTable;
 window.renderThresholdConfigPanel = renderThresholdConfigPanel;
+window.applyInventoryFilter = applyInventoryFilter;
+window.resetInventoryFilter = resetInventoryFilter;
