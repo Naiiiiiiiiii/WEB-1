@@ -1,7 +1,7 @@
 import { Product } from "./Product.js";
 import { productDataList } from "./productData.js";
 import { categoryManager } from "./category.js";
-import { syncToStorage } from "./admin.js";
+import { syncToStorage, getFromStorage } from "./storage-utils.js";
 
 export class ProductManager {
   constructor() {
@@ -30,9 +30,8 @@ export class ProductManager {
 
   loadProducts() {
     try {
-      const data = localStorage.getItem(this.STORAGE_KEY);
-      if (data) {
-        const productsData = JSON.parse(data);
+      const productsData = getFromStorage(this.STORAGE_KEY);
+      if (productsData) {
         return productsData.map((p) => Product.fromJSON(p));
       }
     } catch (error) {

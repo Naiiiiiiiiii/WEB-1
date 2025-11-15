@@ -1,4 +1,4 @@
-import { syncToStorage } from "./admin.js";
+import { syncToStorage, getFromStorage } from "./storage-utils.js";
 
 export class ImportSlip {
     constructor({
@@ -110,9 +110,8 @@ export class ImportManager {
     
     loadSlips() {
         try {
-            const data = localStorage.getItem(this.STORAGE_KEY);
-            if (data) {
-                const slipsData = JSON.parse(data);
+            const slipsData = getFromStorage(this.STORAGE_KEY);
+            if (slipsData) {
                 return slipsData.map(s => ImportSlip.fromJSON(s));
             }
         } catch (error) {

@@ -1,4 +1,4 @@
-import { syncToStorage } from "./admin.js";
+import { syncToStorage, getFromStorage } from "./storage-utils.js";
 
 class User {
   constructor(
@@ -40,9 +40,8 @@ class UserManager {
 
   taiDanhSachUser() {
     try {
-      const data = localStorage.getItem(this.STORAGE_KEY);
-      if (data) {
-        const usersData = JSON.parse(data);
+      const usersData = getFromStorage(this.STORAGE_KEY);
+      if (usersData) {
         return usersData.map(
           (u) =>
             new User(

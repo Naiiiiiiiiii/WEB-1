@@ -1,4 +1,4 @@
-import { syncToStorage } from "./admin.js";
+import { syncToStorage, getFromStorage } from "./storage-utils.js";
 
 const ORDER_STORAGE_KEY = "orders";
 
@@ -6,8 +6,7 @@ import { productManager } from "./ProductManager.js";
 
 export function getOrders() {
   try {
-    const ordersString = localStorage.getItem(ORDER_STORAGE_KEY);
-    return JSON.parse(ordersString) || [];
+    return getFromStorage(ORDER_STORAGE_KEY, []);
   } catch (e) {
     console.error("Lỗi khi tải đơn hàng:", e);
     return [];
