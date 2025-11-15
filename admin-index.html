@@ -710,7 +710,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="modalProductPrice">
                             Giá bán (VNĐ)
                             <span class="required">*</span>
@@ -718,7 +718,7 @@
                         <input type="number" id="modalProductPrice" placeholder="VD: 2500000" min="1000" step="1000"
                             required>
                         <small>Giá phải lớn hơn 0</small>
-                    </div>
+                    </div> -->
 
                     <div class="form-group">
                         <label for="modalProductUpload">
@@ -769,7 +769,50 @@
                 </div>
         </div>
     </div>
+    <!-- danh mục sửa -->
+<div id="editCategoryModal" class="category-modal-overlay">
+    <div class="category-modal-content">
+        <div class="category-modal-header">
+            <h3><i class="fa-solid fa-pen-to-square"></i> Sửa Danh mục</h3>
+            <button class="category-modal-close" type="button" title="Đóng">&times;</button>
+        </div>
+        <div class="category-modal-body">
+            <form id="editCategoryForm" novalidate>
+                <div class="category-current-info">
+                    <i class="fa-solid fa-tag"></i>
+                    <div>
+                        <small style="color: #555; font-size: 13px;">Tên danh mục hiện tại:</small>
+                        <div id="currentCategoryName" class="category-current-info-value"></div>
+                    </div>
+                </div>
 
+                <div class="category-form-group">
+                    <label for="editCategoryNameInput" style="font-weight: 600; display: block; margin-bottom: 10px;">
+                        Tên danh mục mới
+                    </label>
+                    
+                    <input type="text" id="editCategoryNameInput" class="category-form-input" placeholder="Nhập tên mới..."
+                        required minlength="2" maxlength="50">
+                    
+                    <div id="editCategoryHelper" class="helper-text">
+                        <span id="editCategoryHelperText">
+                            <i class="fa-solid fa-circle-info"></i> Tối thiểu 2, tối đa 50 ký tự.
+                        </span>
+                        <span id="editCategoryCharCounter" class="char-counter">0/50</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="category-modal-footer">
+            <button type="button" class="btn category-modal-cancel btn-cancel">
+                <i class="fa-solid fa-xmark"></i> Hủy
+            </button>
+            <button type="submit" id="editCategorySaveBtn" class="btn btn-save" form="editCategoryForm" disabled>
+                <i class="fa-solid fa-check"></i> Lưu Thay Đổi
+            </button>
+        </div>
+    </div>
+</div>
     <script type="module" src="./js/user.js"></script>
     <script type="module" src="./js/category.js"></script>
     <script type="module" src="./js/ThresholdManager.js"></script>

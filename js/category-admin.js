@@ -1,5 +1,3 @@
-
-
 import {
   categoryManager,
   DOM,
@@ -37,12 +35,12 @@ export function renderCategoryList() {
 
   if (categories.length === 0) {
     DOM.categoryTableBody.innerHTML = `
-            <tr>
-                <td colspan="4" class="center category-empty-state">
-                    <p>Chưa có danh mục nào. Hãy thêm danh mục đầu tiên!</p>
-                </td>
-            </tr>
-        `;
+            <tr>
+                <td colspan="4" class="center category-empty-state">
+                    <p>Chưa có danh mục nào. Hãy thêm danh mục đầu tiên!</p>
+                </td>
+            </tr>
+        `;
     return;
   }
 
@@ -68,8 +66,7 @@ export function renderCategoryList() {
         </button>
         <button class="btn btn-delete btn-delete-category" data-id="${escapeHtml(
           String(category.id)
-        )}" title="Xóa danh mục" 
-          ${productCount > 0 ? "disabled" : ""}>
+        )}" title="Xóa danh mục">
           <i class="fa-solid fa-trash-can"></i> Xóa
         </button>
       </div>
@@ -320,17 +317,9 @@ function handleDeleteCategory(e) {
     return;
   }
 
-  const productCount = countProductsInCategory(categoryId);
 
-  if (productCount > 0) {
-    showNotification(
-      `❌ Không thể xóa! Danh mục "${category.name}" đang có ${productCount} sản phẩm.\n\nVui lòng xóa hoặc chuyển sản phẩm sang danh mục khác trước.`,
-      "error"
-    );
-    return;
-  }
 
-  const confirmMessage = `⚠️ BẠN CÓ CHẮC MUỐN XÓA VĨNH VIỄN danh mục "${category.name}"?\n\nHành động này KHÔNG THỂ HOÀN TÁC!`;
+  const confirmMessage = `⚠️ BẠN CÓ CHẮC MUỐN XÓA VĨNH VIỄN danh mục "${category.name}"?\n\nHành động này KHÔNG THỂ HOÀN TÁC! (Sản phẩm thuộc danh mục này sẽ bị mất tham chiếu danh mục.)`;
 
   if (!confirm(confirmMessage)) return;
 
@@ -341,7 +330,11 @@ function handleDeleteCategory(e) {
       `✅ Xóa danh mục "${category.name}" thành công!`,
       "success"
     );
+    
+    // Cần gọi renderProductList để cập nhật bảng sản phẩm 
+    // 0--để xử lý các sản phẩm bị mất categoryId
     renderCategoryList();
+    renderProductList(); 
     updateGeneralStats();
 
     if (window.loadCategoriesToSelect) {
@@ -368,12 +361,12 @@ function showNotification(message, type = "info", duration = 5000) {
 
   const icon = type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️";
   notification.innerHTML = `
-        <span class="notification-icon">${icon}</span>
-        <span class="notification-message">${escapeHtml(message)}</span>
-        <button class="notification-close" title="Đóng">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-    `;
+        <span class="notification-icon">${icon}</span>
+        <span class="notification-message">${escapeHtml(message)}</span>
+        <button class="notification-close" title="Đóng">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    `;
 
   container.appendChild(notification);
 
