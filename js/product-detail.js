@@ -1,7 +1,4 @@
-
-
 import { ProductManager } from './ProductManager.js'; 
-
 import { initializeProductDetailPage } from './product-detail-logic.js'; 
 
 const productManager = new ProductManager();
@@ -35,14 +32,18 @@ function renderProductDetail(product) {
         }
         
         return `<button type="button" class="color-option" data-color="${escapeHtml(color)}" 
-                             style="background-color: ${escapeHtml(displayColor.toLowerCase())};" 
-                             title="${escapeHtml(color)}">
-                           </button>`;
+                        style="background-color: ${escapeHtml(displayColor.toLowerCase())};" 
+                        title="${escapeHtml(color)}">
+                </button>`;
     }).join('');
     
-
-    const oldPriceHtml = product.oldPrice && product.isOnSale() ? 
-        `<span id="product-old-price" class="old-price">${product.getFormattedOldPrice()}</span>` : '';
+    // === SỬA LỖI HIỂN THỊ (LẤY TỪ FILE search-overlay) ===
+    // Sửa lại hàm này để nó không gọi hàm của class
+    const formattedPrice = (product.price || 0).toLocaleString('vi-VN') + ' ₫';
+    const isOnSale = product.oldPrice && parseFloat(product.oldPrice) > parseFloat(product.price);
+    const oldPriceHtml = isOnSale ? 
+        `<span id="product-old-price" class="old-price">${(product.oldPrice || 0).toLocaleString('vi-VN')} ₫</span>` : '';
+    // === KẾT THÚC SỬA ===
 
     detailContainer.innerHTML = `
         <div class="product-detail-content">
@@ -56,7 +57,7 @@ function renderProductDetail(product) {
                 
                 <div class="price-section">
                     <span id="product-price" class="current-price" data-price="${product.price}">
-                        ${product.getFormattedPrice()}
+                        ${formattedPrice}
                     </span>
                     ${oldPriceHtml}
                 </div>
@@ -86,45 +87,46 @@ function renderProductDetail(product) {
                 </div>
                 
                 <button id="buyNowBtn" class="buy-now-btn btn-primary" type="button">
-                    <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng  </button>
+                    <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng  </button>
             </div>
         </div>
         
         <div class="product-description-full">
             <h2>Mô tả sản phẩm</h2>
-            <p>${escapeHtml(product.description || 'Sản phẩm đang được cập nhật mô tả chi tiết.')}</p>
+            <p>${(product.description || 'Sản phẩm đang được cập nhật mô tả chi tiết.').replace(/\n/g, '<br>')}</p>
         </div>
     `;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = Number(urlParams.get('id')); 
+    // === SỬA LỖI: BỌC TRONG SETTIMEOUT ===
+    // Thêm độ trễ 50ms để productManager kịp tải dữ liệu
+    setTimeout(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = Number(urlParams.get('id')); 
 
-    const detailContainer = document.getElementById('product-detail');
-    if (!detailContainer) return;
+        const detailContainer = document.getElementById('product-detail');
+        if (!detailContainer) return;
 
-    if (productId && !isNaN(productId)) {
+        if (productId && !isNaN(productId)) {
 
-        const product = productManager.getProductById(productId);
+            // Bây giờ hàm này sẽ tìm thấy sản phẩm
+            const product = productManager.getProductById(productId);
 
-        if (product) {
-
-            renderProductDetail(product); 
-            
-
-            const detailLogic = initializeProductDetailPage(productId, productManager);
-            window.updateProductStockUI = detailLogic.updateStock;
-            
+            if (product) {
+                renderProductDetail(product); 
+                
+                const detailLogic = initializeProductDetailPage(productId, productManager);
+                window.updateProductStockUI = detailLogic.updateStock;
+                
+            } else {
+                detailContainer.innerHTML = 
+                    '<h2 class="error-msg" style="text-align: center; padding: 50px;">❌ Rất tiếc! Không tìm thấy sản phẩm có ID: ' + productId + '.</h2>';
+            }
         } else {
-
             detailContainer.innerHTML = 
-                '<h2 class="error-msg" style="text-align: center; padding: 50px;">❌ Rất tiếc! Không tìm thấy sản phẩm có ID: ' + productId + '.</h2>';
+                '<h2 class="error-msg" style="text-align: center; padding: 50px;">Vui lòng truy cập trang chi tiết sản phẩm bằng đường dẫn hợp lệ (ví dụ: product-detail.html?id=1).</h2>';
         }
-    } else {
-
-        detailContainer.innerHTML = 
-            '<h2 class="error-msg" style="text-align: center; padding: 50px;">Vui lòng truy cập trang chi tiết sản phẩm bằng đường dẫn hợp lệ (ví dụ: product-detail.html?id=1).</h2>';
-    }
+    }, 50); // 50ms là đủ
 });

@@ -16,6 +16,7 @@ export function showAddProductModal() {
     
 
     loadCategoriesToModalSelect();
+    
 
     const preview = document.getElementById('imagePreview');
     const previewImg = document.getElementById('previewImg');
@@ -54,34 +55,35 @@ export function showEditProductModal(productId) {
     document.getElementById('modalProductCategory').value = product.categoryId;
     document.getElementById('modalProductPrice').value = product.price;
     document.getElementById('modalProductDescription').value = product.description;
-
+    
     updateImagePreview(product.img);
+    
 
     modal.style.display = 'flex';
     setTimeout(() => modal.classList.add('show'), 10);
 }
 
-    export function closeProductModal() {
-        const modal = document.getElementById('productModal');
-        if (!modal) return;
+export function closeProductModal() {
+    const modal = document.getElementById('productModal');
+    if (!modal) return;
+    
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        currentEditingProductId = null;
         
-        modal.classList.remove('show');
-        setTimeout(() => {
-            modal.style.display = 'none';
-            currentEditingProductId = null;
+        const preview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const fileInput = document.getElementById('modalProductUpload');
+        
+        if (preview) preview.style.display = 'none';
+        if (previewImg) previewImg.src = '';
+        if (fileInput) fileInput.value = ''; 
+        
+    }, 300);
+}
 
-            const preview = document.getElementById('imagePreview');
-            const previewImg = document.getElementById('previewImg');
-            const fileInput = document.getElementById('modalProductUpload');
-            
-            if (preview) preview.style.display = 'none';
-            if (previewImg) previewImg.src = '';
-            if (fileInput) fileInput.value = ''; 
-
-            }, 300);
-    }
-
-    function updateImagePreview(imageUrl) {
+function updateImagePreview(imageUrl) {
     const preview = document.getElementById('imagePreview');
     const previewImg = document.getElementById('previewImg');
     
@@ -104,16 +106,17 @@ export function handleProductFormSubmit(e) {
     e.preventDefault();
     
     const form = e.target;
-
+    
     const productData = {
         name: form.querySelector('#modalProductName').value.trim(),
         categoryId: form.querySelector('#modalProductCategory').value,
         price: parseFloat(form.querySelector('#modalProductPrice').value),
         description: form.querySelector('#modalProductDescription').value.trim(),
         img: form.querySelector('#previewImg').src, 
-        };
+    };
+    
 
-        if (!validateProductData(productData)) {
+    if (!validateProductData(productData)) {
         return;
     }
     
@@ -518,7 +521,6 @@ export function initProductAdmin() {
         });
     }
     
-
     const imageUpload = document.getElementById('modalProductUpload'); 
     if (imageUpload) {
         imageUpload.addEventListener('change', (e) => {
@@ -541,7 +543,7 @@ export function initProductAdmin() {
                 previewImg.src = '';
                 preview.style.display = 'none';
             }
-            });
+        });
     }
     
 
