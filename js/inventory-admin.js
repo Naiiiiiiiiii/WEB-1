@@ -292,18 +292,14 @@ function renderInventoryTable() {
                         title="Lưu ngưỡng">
                         <i class="fa-solid fa-floppy-disk"></i>
                     </button>
-                    ${
-                      product.lowStockThreshold !== null
-                        ? `
+
                         <button 
                             class="btn btn-sm btn-ghost" 
                             onclick="clearProductThreshold(${product.id})"
                             title="Xóa ngưỡng riêng">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
-                    `
-                        : ""
-                    }
+
                 </div>
             </td>
             <td class="col-times">${formatImportTime(lastImportTime)}</td>
@@ -400,12 +396,20 @@ function renderStockSummary(stats) {
 window.applyInventoryFilter = function () {
   const categoryId =
     document.getElementById("invFilterCategory")?.value || "all";
+  const statusFilter =
+    document.getElementById("invFilterStatus")?.value || "all";
   const searchText =
     document.getElementById("invFilterName")?.value.toLowerCase().trim() || "";
   const fromDate = document.getElementById("invFilterFromDate")?.value || "";
   const toDate = document.getElementById("invFilterToDate")?.value || "";
 
-  filterAndRenderInventory(categoryId, searchText, fromDate, toDate);
+  filterAndRenderInventory(
+    categoryId,
+    statusFilter,
+    searchText,
+    fromDate,
+    toDate
+  );
 };
 
 /**
@@ -413,29 +417,68 @@ window.applyInventoryFilter = function () {
  */
 window.resetInventoryFilter = function () {
   const categorySelect = document.getElementById("invFilterCategory");
+  const statusSelect = document.getElementById("invFilterStatus");
   const searchInput = document.getElementById("invFilterName");
   const fromDateInput = document.getElementById("invFilterFromDate");
   const toDateInput = document.getElementById("invFilterToDate");
 
   if (categorySelect) categorySelect.value = "all";
+  if (statusSelect) statusSelect.value = "all";
   if (searchInput) searchInput.value = "";
   if (fromDateInput) fromDateInput.value = "";
   if (toDateInput) toDateInput.value = "";
 
-  filterAndRenderInventory("all", "");
+  filterAndRenderInventory("all", "all", "", "", "");
 };
 
 /**
  * Filter products by category and search term
  */
-function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
+function filterAndRenderInventory(
+  categoryId,
+  statusFilter,
+  searchText,
+  fromDate,
+  toDate
+) {
   let products = productManager.getVisibleProducts();
 
-  // Filter by category
+  // 1. Filter by category
   if (categoryId !== "all") {
     products = products.filter((p) => p.categoryId === categoryId);
   }
 
+  // 2. ✨ Filter by status (TÍNH NĂNG MỚI)
+  if (statusFilter !== "all") {
+    products = products.filter((product) => {
+      const status = product.getStockStatus();
+      const stock = status.currentStock;
+      const threshold = status.threshold;
+
+      switch (statusFilter) {
+        case "safe":
+          // Chỉ hiển thị sản phẩm ĐỦ hàng
+          return stock >= threshold;
+
+        case "warning":
+          // ⚠️ Hiển thị TẤT CẢ sản phẩm DƯỚI ngưỡng (bao gồm critical và out)
+          return stock < threshold;
+
+        case "critical":
+          // Chỉ hiển thị sản phẩm NGUY HIỂM (dưới 50% ngưỡng nhưng > 0)
+          return stock > 0 && stock < threshold * 0.5;
+
+        case "out":
+          // Chỉ hiển thị sản phẩm HẾT HÀNG
+          return stock === 0;
+
+        default:
+          return true;
+      }
+    });
+  }
+
+  // 3. Filter by date range
   if (fromDate || toDate) {
     products = products.filter((product) => {
       const lastImportTime = getLatestImportTime(product.id);
@@ -448,12 +491,10 @@ function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
       const from = fromDate ? new Date(fromDate) : null;
       const to = toDate ? new Date(toDate) : null;
 
-      // Nếu có fromDate, importDate phải >= fromDate
       if (from && importDate < from) {
         return false;
       }
 
-      // Nếu có toDate, importDate phải <= toDate (cộng 1 ngày để bao gồm cả ngày cuối)
       if (to) {
         const toDateEnd = new Date(to);
         toDateEnd.setDate(toDateEnd.getDate() + 1);
@@ -466,7 +507,7 @@ function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
     });
   }
 
-  // Filter by search text
+  // 4. Filter by search text
   if (searchText) {
     products = products.filter(
       (p) =>
@@ -484,16 +525,16 @@ function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
   if (products.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="8" class="text-center" style="padding: 24px; color: #666;">
+        <td colspan="7" class="text-center" style="padding: 24px; color: #666;">
           <i class="fa-solid fa-magnifying-glass"></i>
-          Không tìm thấy sản phẩm nào.
+          Không tìm thấy sản phẩm nào phù hợp.
         </td>
       </tr>
     `;
     return;
   }
 
-  // Render filtered products
+  // Render products (giữ nguyên phần render hiện tại)
   products.forEach((product) => {
     const status = product.getStockStatus();
     const categoryName =
@@ -556,24 +597,20 @@ function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
             title="Ngưỡng riêng cho sản phẩm này"
             data-product-id="${product.id}"
           />
-          <button 
-            class="btn btn-sm btn-primary" 
-            onclick="saveProductThreshold(${product.id})"
-            title="Lưu ngưỡng">
-            <i class="fa-solid fa-floppy-disk"></i>
-          </button>
-          ${
-            product.lowStockThreshold !== null
-              ? `
-            <button 
-              class="btn btn-sm btn-ghost" 
-              onclick="clearProductThreshold(${product.id})"
-              title="Xóa ngưỡng riêng">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          `
-              : ""
-          }
+<button 
+    class="btn btn-sm btn-primary" 
+    onclick="saveProductThreshold(${product.id})"
+    title="Lưu ngưỡng">
+    <i class="fa-solid fa-floppy-disk"></i>
+</button>
+
+<button 
+    class="btn btn-sm btn-ghost" 
+    onclick="clearProductThreshold(${product.id})"
+    title="Xóa ngưỡng riêng">
+    <i class="fa-solid fa-xmark"></i>
+</button>
+
         </div>
       </td>
       <td class="col-times">${formatImportTime(lastImportTime)}</td>
@@ -582,7 +619,6 @@ function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
     tbody.appendChild(row);
   });
 }
-
 // ==================== EVENT HANDLERS ====================
 
 /**
@@ -767,6 +803,11 @@ function initInventoryAdmin() {
 
   if (filterResetBtn) {
     filterResetBtn.addEventListener("click", resetInventoryFilter);
+  }
+  // ✨ Auto-apply khi thay đổi status filter
+  const statusSelect = document.getElementById("invFilterStatus");
+  if (statusSelect) {
+    statusSelect.addEventListener("change", applyInventoryFilter);
   }
 
   if (fromDateInput) {
