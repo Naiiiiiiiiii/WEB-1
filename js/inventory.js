@@ -351,3 +351,13 @@ export function setupInventoryModule(productManager, categoryManager) {
         hienThiDanhSachTonKho 
     };
 }
+
+// Register listener for inventory updates (moved outside setupInventoryModule so it runs immediately on module load)
+export function registerInventoryUpdateListener(hienThiDanhSachTonKho) {
+    window.addEventListener('inventoryUpdated', (e) => {
+        console.log('🔄 [inventory] Inventory updated event received:', e.detail);
+        if (typeof hienThiDanhSachTonKho === 'function') {
+            hienThiDanhSachTonKho();
+        }
+    });
+}
