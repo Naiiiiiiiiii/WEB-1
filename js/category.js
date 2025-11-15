@@ -1,4 +1,4 @@
-
+import { syncToStorage, getFromStorage } from "./storage-utils.js";
 
 class Category {
     constructor(id, name) { 
@@ -24,23 +24,21 @@ class CategoryManager {
         }
     }
 
-    taiDanhSachCategory() {
-        try {
-            const data = localStorage.getItem(this.STORAGE_KEY);
-            if (data) {
-                const categoriesData = JSON.parse(data);
-                return categoriesData.map(c => new Category(c.id, c.name)); 
-            }
-        } catch (error) {
-            console.error('Lỗi khi tải danh sách Category:', error);
-        }
-        return [];
-    }
+    taiDanhSachCategory() {
+        try {
+            const categoriesData = getFromStorage(this.STORAGE_KEY);
+            if (categoriesData) {
+                return categoriesData.map(c => new Category(c.id, c.name)); 
+            }
+        } catch (error) {
+            console.error('Lỗi khi tải danh sách Category:', error);
+        }
+        return [];
+    }
 
     luuDanhSachCategory() {
         try {
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.categories));
-            return true;
+            return syncToStorage(this.STORAGE_KEY, this.categories);
         } catch (error) {
             console.error('Lỗi khi lưu danh sách Category:', error);
             return false;

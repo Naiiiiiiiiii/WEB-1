@@ -1,3 +1,5 @@
+import { syncToStorage, getFromStorage } from "./storage-utils.js";
+
 class User {
   constructor(
     hoTen,
@@ -38,9 +40,8 @@ class UserManager {
 
   taiDanhSachUser() {
     try {
-      const data = localStorage.getItem(this.STORAGE_KEY);
-      if (data) {
-        const usersData = JSON.parse(data);
+      const usersData = getFromStorage(this.STORAGE_KEY);
+      if (usersData) {
         return usersData.map(
           (u) =>
             new User(
@@ -87,8 +88,7 @@ class UserManager {
         soDienThoai: u.soDienThoai || "",
         diaChiMacDinh: u.diaChiMacDinh || "",
       }));
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usersData));
-      return true;
+      return syncToStorage(this.STORAGE_KEY, usersData);
     } catch (error) {
       console.error("Lỗi khi lưu danh sách user:", error);
       return false;

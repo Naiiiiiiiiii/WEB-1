@@ -2,6 +2,14 @@ import { UserManager } from "./user.js";
 import { categoryManager } from "./category.js";
 
 import { ProductManager } from "./ProductManager.js";
+import { 
+  syncToStorage, 
+  getFromStorage, 
+  removeFromStorage, 
+  batchSyncToStorage, 
+  debouncedSync, 
+  showStorageStats 
+} from "./storage-utils.js";
 import {
   setupInventoryModule,
   registerInventoryUpdateListener,
@@ -177,6 +185,19 @@ export function updateGeneralStats() {
     document.getElementById(
       "countImportSlips"
     ).textContent = `Phiếu nhập: ${slipsCount.completed} hoàn thành / ${slipsCount.draft} nháp`;
+  }
+
+  // ✨ Storage monitoring
+  if (document.getElementById('storageUsage')) {
+    const stats = showStorageStats();
+    if (stats) {
+      document.getElementById('storageUsage').textContent = 
+        `${stats.percentUsed}% đã sử dụng`;
+      
+      if (parseFloat(stats.percentUsed) > 80) {
+        document.getElementById('storageUsage').style.color = '#ff4444';
+      }
+    }
   }
 }
 
@@ -367,42 +388,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   displayAdminPanel();
 });
-// ... code hiện tại ...
 
-// ✨ THÊM: Helper tự động sync localStorage
-export function syncToStorage(key, data) {
-  try {
-    const payload = {
-      data,
-      timestamp: Date.now(),
-      updatedBy: userManager.layAdminHienTai()?.tenDangNhap || "admin",
-    };
-
-    localStorage.setItem(key, JSON.stringify(payload));
-
-    // Broadcast để các tab khác cập nhật
-    window.dispatchEvent(
-      new StorageEvent("storage", {
-        key,
-        newValue: JSON.stringify(payload),
-        url: window.location.href,
-      })
-    );
-
-    console.log(`✅ Synced "${key}" to localStorage`);
-    return true;
-  } catch (error) {
-    console.error(`❌ Sync failed for "${key}":`, error);
-    return false;
-  }
-}
-
-// Lắng nghe thay đổi từ tab khác
-window.addEventListener("storage", (e) => {
-  if (e.key && e.newValue) {
-    console.log(`🔄 Storage updated from another tab: "${e.key}"`);
-    // Có thể trigger re-render tại đây nếu cần
-  }
-});
-
-// ... rest of code ...
+// Re-export storage utilities for backward compatibility
+export { 
+  syncToStorage, 
+  getFromStorage, 
+  removeFromStorage, 
+  batchSyncToStorage, 
+  debouncedSync, 
+  showStorageStats 
+};

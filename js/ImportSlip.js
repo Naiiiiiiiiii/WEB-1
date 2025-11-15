@@ -1,4 +1,4 @@
-
+import { syncToStorage, getFromStorage } from "./storage-utils.js";
 
 export class ImportSlip {
     constructor({
@@ -110,9 +110,8 @@ export class ImportManager {
     
     loadSlips() {
         try {
-            const data = localStorage.getItem(this.STORAGE_KEY);
-            if (data) {
-                const slipsData = JSON.parse(data);
+            const slipsData = getFromStorage(this.STORAGE_KEY);
+            if (slipsData) {
                 return slipsData.map(s => ImportSlip.fromJSON(s));
             }
         } catch (error) {
@@ -125,8 +124,7 @@ export class ImportManager {
     saveSlips() {
         try {
             const slipsData = this.slips.map(s => s.toJSON());
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(slipsData));
-            return true;
+            return syncToStorage(this.STORAGE_KEY, slipsData);
         } catch (error) {
             console.error('Lỗi khi lưu danh sách phiếu nhập:', error);
             return false;
