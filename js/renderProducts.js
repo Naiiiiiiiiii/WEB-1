@@ -280,37 +280,91 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modalName) {
       modalName.textContent = product.name;
     }
+    
+    // ✅ FIX: Safe renderStars check
     if (modalRating) {
-      modalRating.innerHTML = `${product.renderStars()} <span class="rating-text">(${
+      let starsHtml = '';
+      
+      if (typeof product.renderStars === "function") {
+        starsHtml = product.renderStars();
+      } else {
+        // Fallback: Manual render
+        const rating = product.rating || 0;
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        
+        for (let i = 0; i < fullStars; i++) {
+          starsHtml += '<i class="fas fa-star"></i>';
+        }
+        if (hasHalfStar) {
+          starsHtml += '<i class="fas fa-star-half-alt"></i>';
+        }
+        for (let i = 0; i < emptyStars; i++) {
+          starsHtml += '<i class="far fa-star"></i>';
+        }
+      }
+      
+      modalRating.innerHTML = `${starsHtml} <span class="rating-text">(${
         product.ratingCount || 0
       })</span>`;
     }
 
+    // ✅ FIX: Safe isOnSale check
     if (modalPrice) {
       const currentPrice = (product.price || 0).toLocaleString("vi-VN");
       let priceHtml = `<strong>${currentPrice} VNĐ</strong>`;
 
-      if (product.oldPrice && product.isOnSale()) {
+      const isOnSale = typeof product.isOnSale === 'function' 
+        ? product.isOnSale() 
+        : (product.oldPrice && product.oldPrice > product.price);
+
+      if (isOnSale) {
         const oldPrice = (product.oldPrice || 0).toLocaleString("vi-VN");
         priceHtml += ` <span class="old-price">${oldPrice} VNĐ</span>`;
       }
       modalPrice.innerHTML = priceHtml;
     }
 
+    // ✅ FIX: Dynamic sizes từ variants
     if (modalOptionsContainer) {
-      const sizeOptions = [39, 40, 41, 42, 43]
-        .map((size) => `<option value="${size}">EU ${size}</option>`)
-        .join("");
+      const variants = product.variants || [];
+      const uniqueSizes = [...new Set(variants.map(v => v.size))].filter(Boolean);
+      
+      let optionsHtml = '';
+      
+      if (uniqueSizes.length > 0) {
+        const sizeOptions = uniqueSizes
+          .map(size => `<option value="${escapeHtml(size)}">Size ${escapeHtml(size)}</option>`)
+          .join("");
 
-      modalOptionsContainer.innerHTML = `
-                <div class="form-group size-selector">
-                    <label for="modal-shoe-size">Chọn Kích cỡ:</label>
-                    <select id="modal-shoe-size" required>
-                        <option value="">-- Chọn size --</option>
-                        ${sizeOptions}
-                    </select>
-                </div>
-            `;
+        optionsHtml = `
+          <div class="form-group size-selector">
+              <label for="modal-shoe-size">Chọn Kích cỡ:</label>
+              <select id="modal-shoe-size" required>
+                  <option value="">-- Chọn size --</option>
+                  ${sizeOptions}
+              </select>
+          </div>
+        `;
+      } else {
+        // Fallback nếu không có variants
+        optionsHtml = `
+          <div class="form-group size-selector">
+              <label for="modal-shoe-size">Chọn Kích cỡ:</label>
+              <select id="modal-shoe-size" required>
+                  <option value="">-- Chọn size --</option>
+                  <option value="39">Size 39</option>
+                  <option value="40">Size 40</option>
+                  <option value="41">Size 41</option>
+                  <option value="42">Size 42</option>
+                  <option value="43">Size 43</option>
+              </select>
+          </div>
+        `;
+      }
+      
+      modalOptionsContainer.innerHTML = optionsHtml;
     }
 
     if (modalAddBtn) modalAddBtn.dataset.id = id;
@@ -408,6 +462,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = Number(this.dataset.id);
       const product = productManager.getProductById(id);
 
+      if (!product) {
+        alert("Không tìm thấy sản phẩm!");
+        return;
+      }
+
       const sizeSelector = document.getElementById("modal-shoe-size");
       const selectedSize = sizeSelector ? sizeSelector.value : null;
 
@@ -416,7 +475,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      if (product && window.addToCart) {
+      // ✅ FIX: Validate stock nếu có variants
+      if (product.variants && product.variants.length > 0) {
+        const variant = product.variants.find(v => v.size?.toString() === selectedSize);
+        if (variant && variant.stock <= 0) {
+          alert("Rất tiếc! Size này đã hết hàng.");
+          return;
+        }
+      }
+
+      if (window.addToCart) {
         window.addToCart(
           product.id,
           product.name,
@@ -427,6 +495,11 @@ document.addEventListener("DOMContentLoaded", () => {
           1
         );
         closeQuickView();
+        
+        // Update cart count
+        if (window.updateCartCount) {
+          window.updateCartCount();
+        }
       }
     });
   }
