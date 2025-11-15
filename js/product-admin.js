@@ -53,7 +53,6 @@ export function showEditProductModal(productId) {
 
     document.getElementById('modalProductName').value = product.name;
     document.getElementById('modalProductCategory').value = product.categoryId;
-    document.getElementById('modalProductPrice').value = product.price;
     document.getElementById('modalProductDescription').value = product.description;
     
     updateImagePreview(product.img);
@@ -110,7 +109,6 @@ export function handleProductFormSubmit(e) {
     const productData = {
         name: form.querySelector('#modalProductName').value.trim(),
         categoryId: form.querySelector('#modalProductCategory').value,
-        price: parseFloat(form.querySelector('#modalProductPrice').value),
         description: form.querySelector('#modalProductDescription').value.trim(),
         img: form.querySelector('#previewImg').src, 
     };
@@ -122,8 +120,17 @@ export function handleProductFormSubmit(e) {
     
 
     if (currentEditingProductId) {
+      
+        const existingProduct = productManager.getProductById(currentEditingProductId);
+        if (existingProduct) {
+             productData.price = existingProduct.price; 
+        } else {
+             productData.price = 0; 
+        }
+
         handleUpdateProduct(currentEditingProductId, productData);
     } else {
+        productData.price = 0; 
         handleAddProduct(productData);
     }
 }
@@ -147,11 +154,7 @@ function validateProductData(data) {
         return false;
     }
     
-    if (isNaN(data.price) || data.price <= 0) {
-        showNotification('⚠️ Giá sản phẩm phải lớn hơn 0!', 'error');
-        document.getElementById('modalProductPrice')?.focus();
-        return false;
-    }
+    
     
     if (!data.description) {
         showNotification('⚠️ Vui lòng nhập mô tả sản phẩm!', 'error');
