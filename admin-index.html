@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="./css/admin-product.css">
     <link rel="stylesheet" href="./css/admin-inventory.css">
     <link rel="stylesheet" href="./css/category-admin.css">
-    <!-- ĐÃ GỠ: <link rel="stylesheet" href="./css/admin-import.css"> -->
     <link rel="stylesheet" href="./css/admin-price.css">
     <link rel="stylesheet" href="./css/admin-order.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -249,8 +248,6 @@
             <section class="inventory" id="inventory">
                 <h2>Quản lý Tồn kho</h2>
 
-                <!-- ĐÃ GỠ: Khối "Thêm Phiếu Nhập Hàng" -->
-                <!-- Giữ lại toolbar lọc tồn kho -->
                 <h3 class="mt-40">Bảng Tổng hợp Tồn kho</h3>
 
                 <div class="section-toolbar">
@@ -374,8 +371,41 @@
                     <br>
                     Công thức: <code>Giá Bán = Giá Vốn / (1 - (Tỉ lệ Lợi nhuận % / 100))</code>
                 </p>
+                <h3 class="mt-40"><i class="fa-solid fa-bolt"></i> Cập nhật Giá hàng loạt theo Danh mục</h3>
+                <div class="section-toolbar bulk-update-toolbar">
+                    <div class="field">
+                        <label for="bulkCategorySelect">
+                            <i class="fa-solid fa-tags"></i> Chọn Danh mục
+                        </label>
+                        <select id="bulkCategorySelect" class="w-160">
+                            <option value="">-- Chọn Danh mục --</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="bulkMarginInput">
+                            <i class="fa-solid fa-percent"></i> Nhập % Lợi nhuận mới
+                        </label>
+                        <div class="input-group-append">
+                            <input 
+                                type="number" 
+                                id="bulkMarginInput" 
+                                placeholder="VD: 25" 
+                                min="1" 
+                                max="99"
+                                step="0.5"
+                                class="w-100"
+                            >
+                            <span class="input-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="field **action-button**"> 
+                        <button id="applyBulkUpdate" class="btn btn-primary">
+                            <i class="fa-solid fa-calculator"></i> Cập nhật hàng loạt
+                        </button>
+                    </div>
+                </div>
 
-                <h3 class="mt-40">Bộ lọc & Tra cứu</h3>
+               <h3 class="mt-40">Bộ lọc & Tra cứu</h3>
                 <div class="section-toolbar filter-toolbar">
                     <div class="field">
                         <label for="priceFilterCategory">
@@ -391,18 +421,19 @@
                         </label>
                         <input type="text" id="priceFilterName" placeholder="Nhập tên sản phẩm...">
                     </div>
-                    <div class="field">
+                    <div class="field **action-button**">
                         <button class="btn primary" id="priceFilterApply">
                             <i class="fa-solid fa-magnifying-glass"></i> Lọc
                         </button>
                     </div>
-                    <div class="field">
+                    <div class="field **action-button**">
                         <button class="btn" id="priceFilterReset">
                             <i class="fa-solid fa-rotate-right"></i> Đặt lại
                         </button>
                     </div>
                 </div>
 
+                
                 <h3 class="mt-40">Bảng Tra cứu & Cập nhật Giá</h3>
                 <div class="table-responsive">
                     <table class="userTable price-table">
@@ -611,15 +642,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="modalProductUpload">
-                            Tải lên Hình ảnh
+                        <label for="modalProductImage">
+                            URL Hình ảnh
                             <span class="required">*</span>
                         </label>
-                        
-                        <input type="file" id="modalProductUpload" accept="image/*" required>
-                        <small>Tải ảnh lên từ máy tính của bạn</small>
+                        <input type="text" id="modalProductImage" placeholder="Ví dụ: img/ten_giay.jpg" required>
+                        <small>Link hình ảnh từ internet hoặc thư mục dự án</small>
 
-                        <div id="imagePreview" class="image-preview-container" style="display: none;">
+                        <div id="imagePreview" class="image-preview-container">
                             <img id="previewImg" src="" alt="Preview">
                         </div>
                     </div>
@@ -649,9 +679,6 @@
         </div>
     </div>
 
-    <!-- ĐÃ GỠ: Modal chỉnh sửa Phiếu Nhập (editImportSlipModal) -->
-
-    <!-- Modal chi tiết biến thể tồn kho -->
     <div id="variantStockModal" class="modal" style="display:none">
         <div class="modal-content" style="max-width:700px">
             <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;">
@@ -659,26 +686,21 @@
                 <button id="variantModalClose" class="btn" style="min-width:60px">Đóng</button>
             </div>
             <div class="modal-body" id="variantModalBody">
-                <!-- Nội dung động -->
-            </div>
+                </div>
         </div>
     </div>
 
     <script type="module" src="./js/user.js"></script>
     <script type="module" src="./js/category.js"></script>
-    <!-- THÊM MỚI: Quản lý tồn kho + ngưỡng cảnh báo - Load ThresholdManager trước -->
     <script type="module" src="./js/ThresholdManager.js"></script>
     <script type="module" src="./js/Product.js"></script>
     <script type="module" src="./js/ProductManager.js"></script>
     <script type="module" src="./js/order-manager.js"></script>
-    <!-- ĐÃ GỠ: <script type="module" src="./js/ImportSlip.js"></script> -->
     <script type="module" src="./js/admin.js"></script>
     <script type="module" src="./js/category-admin.js"></script>
     <script type="module" src="./js/product-admin.js"></script>
     <script type="module" src="./js/order-admin.js"></script>
-    <!-- ĐÃ GỠ: <script type="module" src="./js/import-admin.js"></script> -->
     <script type="module" src="./js/price-admin.js"></script>
-    <!-- inventory-admin.js phải load cuối cùng -->
     <script type="module" src="./js/inventory-admin.js"></script>
 
 </body>

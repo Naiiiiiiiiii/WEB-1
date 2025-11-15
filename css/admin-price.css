@@ -1,121 +1,272 @@
-
+/* ======================================= */
+/* 1. BẢNG GIÁ CHUNG */
+/* ======================================= */
 
 .price-table th,
 .price-table td {
-  vertical-align: middle;
-}
-
-.price-table .margin-input-group {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.price-table .margin-input {
-  width: 70px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  text-align: right;
-  margin-right: 5px;
-  
-  font-size: 14px;
-}
-
-.price-table .margin-input-group span {
-  font-size: 14px;
-  font-weight: 600;
-  color: #555;
-}
-
-.price-table .btn-update-price {
-  padding: 6px 10px;
-  font-size: 12px;
-  background-color: #007bff; 
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.price-table .btn-update-price:hover {
-  background-color: #0056b3;
-}
-
-.price-table .btn-update-price:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.price-table .cost-price,
-.price-table .sale-price {
-  font-weight: 600;
-  font-family: "Courier New", Courier, monospace;
-  letter-spacing: -0.5px;
-}
-
-.price-table .cost-price {
-  color: #d9534f; 
-}
-
-.price-table .sale-price {
-  color: #2a9d8f; 
-}
-
-.price-table .profit-margin {
-  font-weight: bold;
-}
-
-.price-table .profit-margin.positive {
-  color: #2a9d8f; 
-}
-
-.price-table .profit-margin.zero {
-  color: #777; 
-}
-
-.price-table .profit-margin.negative {
-  color: #d9534f; 
+    vertical-align: middle;
 }
 
 .price p.description {
-  font-size: 14px;
-  line-height: 1.6;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  padding: 15px;
-  border-radius: 5px;
-  max-width: 90%;
+    font-size: 14px;
+    line-height: 1.6;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 15px;
+    border-radius: 5px;
+    max-width: 90%;
 }
 
 .price p.description code {
-  background-color: #e9ecef;
-  padding: 2px 5px;
-  border-radius: 3px;
-  font-family: "Courier New", Courier, monospace;
-  font-weight: 600;
-  color: #c7254e;
+    background-color: #e9ecef;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: "Courier New", Courier, monospace;
+    font-weight: 600;
+    color: #c7254e;
 }
 
+/* Style cho các control trong bảng giá */
 .price-table .margin-input-group {
-  flex-wrap: wrap;
-  gap: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
 }
+
+.price-table .margin-input {
+    height: 32px; 
+    width: 70px;
+    padding: 6px 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: right;
+    font-size: 14px;
+}
+
+.price-table .margin-input-group span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+.price-table .btn-update-price {
+    height: 32px; 
+    padding: 6px 10px;
+    font-size: 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s;
+}
+
+.price-table .btn-update-price:hover {
+    background-color: #1e7e34;
+}
+
+.price-table .btn-update-price:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.price-table .cost-price {
+    font-weight: 600;
+    font-family: "Courier New", Courier, monospace;
+    letter-spacing: -0.5px;
+    color: #dc3545;
+}
+
+.price-table .sale-price {
+    font-weight: 600;
+    font-family: "Courier New", Courier, monospace;
+    letter-spacing: -0.5px;
+    color: #17a2b8;
+}
+
+.price-table .profit-margin.positive {
+    color: #28a745;
+}
+
+.price-table .profit-margin.zero {
+    color: #6c757d;
+}
+
+.price-table .profit-margin.negative {
+    color: #dc3545;
+}
+
+
+/* ======================================= */
+/* 2. CĂN CHỈNH TOOLBAR (ĐỒNG NHẤT HÓA KÍCH THƯỚC VÀ VỊ TRÍ) */
+/* ======================================= */
+
+.section-toolbar {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-end; 
+    margin-bottom: 20px;
+}
+
+.section-toolbar.bulk-update-toolbar {
+    padding: 15px 20px; 
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+}
+
+.section-toolbar .field {
+    display: flex;
+    flex-direction: column;
+}
+
+.section-toolbar label {
+    font-size: 13px;
+    color: #495057;
+    margin-bottom: 4px; 
+    font-weight: 500;
+}
+
+/* 💥 QUY TẮC 1: Đảm bảo Chiều Cao Đồng Bộ (38px) cho tất cả control */
+.section-toolbar input,
+.section-toolbar select,
+.section-toolbar .btn {
+    height: 38px !important; 
+    padding: 6px 12px !important;
+    box-sizing: border-box !important;
+    border-radius: 4px !important;
+    font-size: 14px !important;
+    border: 1px solid #ced4da; 
+    margin: 0 !important;
+    min-width: 120px;
+}
+
+/* --- QUY TẮC 2: FIX LỖI CĂN CHỈNH BUTTON --- */
+.section-toolbar .field.action-button:before {
+    content: "";
+    display: block;
+    /* Chiều cao bằng label + margin-bottom để nút căn đáy */
+    height: 21px; 
+    visibility: hidden;
+}
+
+.section-toolbar .field.action-button {
+    padding-bottom: 0 !important;
+}
+/* --- HẾT FIX CĂN CHỈNH NÚT --- */
+
+
+.section-toolbar .btn {
+    border: none !important;
+    font-weight: 500;
+}
+
+/* Style cho các nút chức năng */
+#applyBulkUpdate {
+    background-color: #007bff; 
+    color: white;
+}
+#priceFilterApply {
+    background-color: #6f42c1;
+    color: white;
+}
+#priceFilterReset {
+    background-color: #f8f9fa; 
+    border: 1px solid #ced4da !important;
+    color: #343a40;
+}
+
+
+/* Xử lý nhóm Input-Unit (%) cho cập nhật hàng loạt */
+.section-toolbar .input-group-append {
+    display: flex;
+    align-items: center;
+    height: 38px;
+}
+
+.section-toolbar .input-group-append input.w-100 {
+    height: 38px !important; 
+    padding: 6px 12px !important;
+    box-sizing: border-box !important;
+    border-radius: 4px 0 0 4px !important;
+    border: 1px solid #ced4da !important; 
+    border-right: none !important;
+    width: 80px; 
+    text-align: right;
+    min-width: unset !important;
+}
+
+.section-toolbar .input-group-append .input-unit {
+    padding: 0 10px;
+    height: 38px; 
+    line-height: 38px; 
+    background: #e9ecef;
+    color: #495057;
+    font-weight: 500;
+    border: 1px solid #ced4da;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+}
+
+
+/* ======================================= */
+/* 3. RESPONSIVE */
+/* ======================================= */
 
 @media (max-width: 768px) {
-  .price-table .margin-input-group {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .price-table .margin-input {
-    width: 100%;
-    text-align: right;
-  }
-  .price-table .btn-update-price {
-    width: 100%;
-    justify-content: center;
-  }
+    .section-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .section-toolbar .field {
+        width: 100%;
+    }
+    
+    .section-toolbar input,
+    .section-toolbar select,
+    .section-toolbar .btn {
+        width: 100%;
+        min-width: unset;
+    }
+    
+    .section-toolbar .input-group-append input.w-100 {
+        width: 100%;
+        border-radius: 4px !important;
+        border-right: 1px solid #ced4da !important;
+    }
+
+    .section-toolbar .input-group-append .input-unit {
+        display: none;
+    }
+    
+    .section-toolbar .field.action-button:before {
+        height: 0;
+        visibility: hidden;
+    }
+    
+    .price-table .margin-input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .price-table .margin-input {
+        width: 100%;
+        text-align: right;
+    }
+
+    .price-table .btn-update-price {
+        width: 100%;
+        justify-content: center;
+    }
 }
