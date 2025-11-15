@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./css/admin-product.css">
     <link rel="stylesheet" href="./css/admin-inventory.css">
     <link rel="stylesheet" href="./css/category-admin.css">
-    <link rel="stylesheet" href="./css/admin-import.css">
+    <!-- ĐÃ GỠ: <link rel="stylesheet" href="./css/admin-import.css"> -->
     <link rel="stylesheet" href="./css/admin-price.css">
     <link rel="stylesheet" href="./css/admin-order.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -438,59 +438,38 @@
                 <h2><i class="fa-solid fa-file-import"></i> Quản lý Phiếu Nhập Hàng</h2>
 
                 <div class="section-toolbar">
-                    <form id="addImportSlipForm" class="import-form-card">
-                        <div class="import-left">
-                            <h3><i class="fa-solid fa-plus-circle"></i> Tạo Phiếu Nhập Mới (Nháp)</h3>
+                    <form id="addImportSlipForm" class="actions form-grid form-grid-3">
+                        <h3><i class="fa-solid fa-plus-circle"></i> Tạo Phiếu Nhập Mới (Nháp)</h3>
 
-                            <label class="field full-width">
-                                <span class="label"><i class="fa-solid fa-box"></i> Danh sách Sản phẩm</span>
-                                <div id="importSlipItemsContainer" class="items-list"></div>
-                                <div class="actions-row" style="margin-top:8px;">
-                                    <button type="button" id="addImportSlipItemBtn" class="btn btn-primary add-item-btn">
-                                        <i class="fa-solid fa-plus"></i>
-                                        Thêm sản phẩm
-                                    </button>
-                                    <small class="muted" style="margin-left:12px;">Thêm nhiều hàng vào cùng 1 phiếu nhập</small>
-                                </div>
+                        <div class="field full-width">
+                            <label>
+                                <i class="fa-solid fa-box"></i> Danh sách Sản phẩm (có thể thêm nhiều)
                             </label>
-
-                            <div class="form-row">
-                                <div class="field">
-                                    <label for="importSlipSupplier"><i class="fa-solid fa-truck"></i> Nhà cung cấp</label>
-                                    <input type="text" id="importSlipSupplier" placeholder="VD: Công ty ABC" maxlength="100">
-                                </div>
-
-                                <div class="field">
-                                    <label for="importSlipNote"><i class="fa-solid fa-note-sticky"></i> Ghi chú</label>
-                                    <textarea id="importSlipNote" rows="2" placeholder="Ghi chú thêm về lô hàng..."></textarea>
-                                </div>
-                            </div>
-
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary create-slip-btn">
-                                    <i class="fa-solid fa-file-circle-plus"></i>
-                                    Tạo Phiếu Nhập (Nháp)
-                                </button>
+                            <div id="importSlipItemsContainer"></div>
+                            <div style="margin-top:8px;">
+                                <button type="button" id="addImportSlipItemBtn" class="btn">+ Thêm sản phẩm</button>
+                                <small style="margin-left:10px; color:#666;">Thêm nhiều hàng vào cùng 1 phiếu nhập</small>
                             </div>
                         </div>
 
-                        <aside class="import-right">
-                            <div class="draft-preview" id="draftPreview">
-                                <h4><i class="fa-solid fa-receipt"></i> Bản Nháp Phiếu</h4>
-                                <div class="preview-list" id="draftPreviewList">
-                                    <div class="muted">Chưa có sản phẩm</div>
-                                </div>
-                                <div class="preview-summary">
-                                    <div><strong>Tổng SL:</strong> <span id="draftTotalQty">0</span></div>
-                                    <div><strong>Tổng Giá trị:</strong> <span id="draftTotalValue">0₫</span></div>
-                                </div>
-                                <div class="preview-actions">
-                                    <button type="button" id="previewClearBtn" class="btn btn-delete">
-                                        <i class="fa-solid fa-trash-can"></i> Xóa tất cả
-                                    </button>
-                                </div>
-                            </div>
-                        </aside>
+                        <div class="field">
+                            <label for="importSlipSupplier">
+                                <i class="fa-solid fa-truck"></i> Nhà cung cấp
+                            </label>
+                            <input type="text" id="importSlipSupplier" placeholder="VD: Công ty ABC" maxlength="100">
+                        </div>
+
+                        <div class="field full-width">
+                            <label for="importSlipNote">
+                                <i class="fa-solid fa-note-sticky"></i> Ghi chú
+                            </label>
+                            <textarea id="importSlipNote" rows="2" placeholder="Ghi chú thêm về lô hàng..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn primary full-width">
+                            <i class="fa-solid fa-plus"></i>
+                            Tạo Phiếu Nhập (Nháp)
+                        </button>
                     </form>
                 </div>
 
@@ -588,66 +567,6 @@
                 </div>
             </section>
 
-        </div>
-    </div>
-
-    
-    <!-- Modal sửa Phiếu Nhập -->
-    <div id="editImportSlipModal" class="modal" style="display:none">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-pen-to-square"></i> Sửa Phiếu Nhập</h3>
-                <button class="close-modal-btn" type="button">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="editImportSlipForm" class="modal-form">
-                    <div class="form-group">
-                        <label>Số Phiếu</label>
-                        <div id="editSlipNumber" style="padding:10px; background:#f0f0f0; border-radius:6px; font-weight:600;"></div>
-                    </div>
-
-                    <!-- Container for editing multiple items; if single item, this can be left empty and fields below used -->
-                    <div id="editItemsContainer" class="mb-3"></div>
-
-                    <div id="editSingleItemGroup">
-                        <div class="form-group">
-                            <label>Tên Sản phẩm</label>
-                            <div id="editProductName" style="padding:10px; background:#f0f0f0; border-radius:6px;"></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="editImportSlipQuantity">Số Lượng <span class="required">*</span></label>
-                            <input type="number" id="editImportSlipQuantity" min="1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editImportSlipPrice">Giá Nhập (₫) <span class="required">*</span></label>
-                            <input type="number" id="editImportSlipPrice" min="0" step="1000" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editImportSlipSize">Size</label>
-                            <input type="number" id="editImportSlipSize" placeholder="Không bắt buộc nếu sản phẩm không có variant">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="editImportSlipSupplier">Nhà Cung Cấp</label>
-                        <input type="text" id="editImportSlipSupplier" placeholder="VD: Công ty ABC" maxlength="100">
-                    </div>
-                    <div class="form-group">
-                        <label for="editImportSlipNote">Ghi Chú</label>
-                        <textarea id="editImportSlipNote" rows="2" placeholder="Ghi chú thêm..."></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary cancel-modal-btn">
-                    <i class="fa-solid fa-xmark"></i> Hủy
-                </button>
-                <button type="submit" form="editImportSlipForm" class="btn-primary">
-                    <i class="fa-solid fa-check"></i> Lưu Thay Đổi
-                </button>
-            </div>
         </div>
     </div>
 
@@ -752,12 +671,12 @@
     <script type="module" src="./js/Product.js"></script>
     <script type="module" src="./js/ProductManager.js"></script>
     <script type="module" src="./js/order-manager.js"></script>
-    <script type="module" src="./js/ImportSlip.js"></script>
+    <!-- ĐÃ GỠ: <script type="module" src="./js/ImportSlip.js"></script> -->
     <script type="module" src="./js/admin.js"></script>
     <script type="module" src="./js/category-admin.js"></script>
     <script type="module" src="./js/product-admin.js"></script>
     <script type="module" src="./js/order-admin.js"></script>
-    <script type="module" src="./js/import-admin.js"></script>
+    <!-- ĐÃ GỠ: <script type="module" src="./js/import-admin.js"></script> -->
     <script type="module" src="./js/price-admin.js"></script>
     <!-- inventory-admin.js phải load cuối cùng -->
     <script type="module" src="./js/inventory-admin.js"></script>
