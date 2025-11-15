@@ -2,7 +2,10 @@ import { UserManager } from "./user.js";
 import { categoryManager } from "./category.js";
 
 import { ProductManager } from "./ProductManager.js";
-import { setupInventoryModule,registerInventoryUpdateListener } from "./inventory.js";
+import {
+  setupInventoryModule,
+  registerInventoryUpdateListener,
+} from "./inventory.js";
 import { initProductAdmin, renderProductList } from "./product-admin.js";
 import { initCategoryAdmin, renderCategoryList } from "./category-admin.js";
 import { initImportAdmin, renderImportSlipsList } from "./import-admin.js";
@@ -20,7 +23,7 @@ export { userManager, productManager, categoryManager, importManager };
 
 if (inventoryModule && inventoryModule.hienThiDanhSachTonKho) {
   window.renderInventoryTable = inventoryModule.hienThiDanhSachTonKho;
-// Register inventory update listener immediately
+  // Register inventory update listener immediately
   registerInventoryUpdateListener(inventoryModule.hienThiDanhSachTonKho);
 }
 
@@ -151,7 +154,7 @@ function setupNavigation() {
 
 // THÊM: Export hàm để các module khác có thể đánh dấu cần reload
 export function markNeedsReloadForImportSlips() {
-    window.needsReloadForImportSlips = true;
+  window.needsReloadForImportSlips = true;
 }
 
 export function updateGeneralStats() {
@@ -364,3 +367,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
   displayAdminPanel();
 });
+// ... code hiện tại ...
+
+// ✨ THÊM: Helper tự động sync localStorage
+export function syncToStorage(key, data) {
+  try {
+    const payload = {
+      data,
+      timestamp: Date.now(),
+      updatedBy: userManager.layAdminHienTai()?.tenDangNhap || "admin",
+    };
+
+    localStorage.setItem(key, JSON.stringify(payload));
+
+    // Broadcast để các tab khác cập nhật
+    window.dispatchEvent(
+      new StorageEvent("storage", {
+        key,
+        newValue: JSON.stringify(payload),
+        url: window.location.href,
+      })
+    );
+
+    console.log(`✅ Synced "${key}" to localStorage`);
+    return true;
+  } catch (error) {
+    console.error(`❌ Sync failed for "${key}":`, error);
+    return false;
+  }
+}
+
+// Lắng nghe thay đổi từ tab khác
+window.addEventListener("storage", (e) => {
+  if (e.key && e.newValue) {
+    console.log(`🔄 Storage updated from another tab: "${e.key}"`);
+    // Có thể trigger re-render tại đây nếu cần
+  }
+});
+
+// ... rest of code ...

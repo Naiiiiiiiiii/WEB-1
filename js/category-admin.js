@@ -84,7 +84,6 @@ function countProductsInCategory(categoryId) {
 }
 
 function setupCategoryEventListeners() {
-
   document.querySelectorAll(".btn-edit-category").forEach((btn) => {
     btn.removeEventListener("click", handleEditCategory);
     btn.addEventListener("click", handleEditCategory);
@@ -317,8 +316,6 @@ function handleDeleteCategory(e) {
     return;
   }
 
-
-
   const confirmMessage = `⚠️ BẠN CÓ CHẮC MUỐN XÓA VĨNH VIỄN danh mục "${category.name}"?\n\nHành động này KHÔNG THỂ HOÀN TÁC! (Sản phẩm thuộc danh mục này sẽ bị mất tham chiếu danh mục.)`;
 
   if (!confirm(confirmMessage)) return;
@@ -330,11 +327,11 @@ function handleDeleteCategory(e) {
       `✅ Xóa danh mục "${category.name}" thành công!`,
       "success"
     );
-    
-    // Cần gọi renderProductList để cập nhật bảng sản phẩm 
+
+    // Cần gọi renderProductList để cập nhật bảng sản phẩm
     // 0--để xử lý các sản phẩm bị mất categoryId
     renderCategoryList();
-    renderProductList(); 
+    renderProductList();
     updateGeneralStats();
 
     if (window.loadCategoriesToSelect) {
@@ -347,7 +344,6 @@ function handleDeleteCategory(e) {
 }
 
 function showNotification(message, type = "info", duration = 5000) {
-
   let container = document.getElementById("notificationContainer");
   if (!container) {
     container = document.createElement("div");
@@ -387,7 +383,6 @@ function showNotification(message, type = "info", duration = 5000) {
 }
 
 export function initCategoryAdmin() {
-
   const addCategoryForm = document.getElementById("addCategoryForm");
   if (addCategoryForm) {
     addCategoryForm.removeEventListener("submit", handleAddCategory);

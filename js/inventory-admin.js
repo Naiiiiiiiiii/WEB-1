@@ -150,23 +150,23 @@ function renderThresholdConfigPanel() {
     `;
 }
 
-  function getLatestImportTime(productId) {
+function getLatestImportTime(productId) {
   const slips = importManager.getAllSlips();
-  
+
   // Lọc các phiếu hoàn thành của sản phẩm này
-  const completedSlips = slips.filter(slip => 
-    slip.productId === productId && slip.status === 'COMPLETED'
+  const completedSlips = slips.filter(
+    (slip) => slip.productId === productId && slip.status === "COMPLETED"
   );
-  
+
   if (completedSlips.length === 0) {
     return null;
   }
-  
+
   // Sắp xếp theo ngày mới nhất
-  completedSlips.sort((a, b) => 
-    new Date(b.completedDate) - new Date(a.completedDate)
+  completedSlips.sort(
+    (a, b) => new Date(b.completedDate) - new Date(a.completedDate)
   );
-  
+
   return completedSlips[0].completedDate;
 }
 
@@ -175,17 +175,16 @@ function renderThresholdConfigPanel() {
  */
 function formatImportTime(dateString) {
   if (!dateString) return '<span class="text-muted">Không rõ</span>';
-  
+
   const date = new Date(dateString);
-  return date.toLocaleDateString('vi-VN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
+  return date.toLocaleDateString("vi-VN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
-
 
 /**
  * Render bảng tồn kho với cảnh báo
@@ -278,7 +277,7 @@ function renderInventoryTable() {
             )}</td>
             <td class="col-status">${statusBadge}</td>
             <td class="col-actions">
-                <div class="action-buttons">
+                <div class="action-buttons-inventory">
                     <input 
                         type="number" 
                         class="threshold-input" 
@@ -289,24 +288,19 @@ function renderInventoryTable() {
                         title="Ngưỡng riêng cho sản phẩm này"
                         data-product-id="${product.id}"
                     />
-                    <button 
-                        class="btn btn-sm btn-primary" 
-                        onclick="saveProductThreshold(${product.id})"
-                        title="Lưu ngưỡng">
-                        <i class="fa-solid fa-floppy-disk"></i>
-                    </button>
-                    ${
-                      product.lowStockThreshold !== null
-                        ? `
-                        <button 
-                            class="btn btn-sm btn-ghost" 
-                            onclick="clearProductThreshold(${product.id})"
-                            title="Xóa ngưỡng riêng">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    `
-                        : ""
-                    }
+<button 
+    class="btn btn-sm btn-primary" 
+    onclick="saveProductThreshold(${product.id})"
+    title="Lưu ngưỡng">
+    <i class="fa-solid fa-floppy-disk"></i>
+</button>
+
+<button 
+    class="btn btn-sm btn-ghost" 
+    onclick="clearProductThreshold(${product.id})"
+    title="Xóa ngưỡng riêng">
+    <i class="fa-solid fa-xmark"></i>
+</button>
                 </div>
             </td>
             <td class="col-times">${formatImportTime(lastImportTime)}</td>
@@ -401,8 +395,10 @@ function renderStockSummary(stats) {
  * Apply filters and search
  */
 window.applyInventoryFilter = function () {
-  const categoryId = document.getElementById("invFilterCategory")?.value || "all";
-  const searchText = document.getElementById("invFilterName")?.value.toLowerCase().trim() || "";
+  const categoryId =
+    document.getElementById("invFilterCategory")?.value || "all";
+  const searchText =
+    document.getElementById("invFilterName")?.value.toLowerCase().trim() || "";
   const fromDate = document.getElementById("invFilterFromDate")?.value || "";
   const toDate = document.getElementById("invFilterToDate")?.value || "";
 
@@ -437,12 +433,12 @@ function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
     products = products.filter((p) => p.categoryId === categoryId);
   }
 
-   if (fromDate || toDate) {
+  if (fromDate || toDate) {
     products = products.filter((product) => {
       const lastImportTime = getLatestImportTime(product.id);
-      
+
       if (!lastImportTime) {
-        return false; 
+        return false;
       }
 
       const importDate = new Date(lastImportTime);
@@ -547,7 +543,7 @@ function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
       <td class="col-price text-right">${formatPrice(product.costPrice)}</td>
       <td class="col-status">${statusBadge}</td>
       <td class="col-actions">
-        <div class="action-buttons">
+        <div class="action-buttons-inventory">
           <input 
             type="number" 
             class="threshold-input" 
@@ -558,24 +554,19 @@ function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
             title="Ngưỡng riêng cho sản phẩm này"
             data-product-id="${product.id}"
           />
-          <button 
-            class="btn btn-sm btn-primary" 
-            onclick="saveProductThreshold(${product.id})"
-            title="Lưu ngưỡng">
-            <i class="fa-solid fa-floppy-disk"></i>
-          </button>
-          ${
-            product.lowStockThreshold !== null
-              ? `
-            <button 
-              class="btn btn-sm btn-ghost" 
-              onclick="clearProductThreshold(${product.id})"
-              title="Xóa ngưỡng riêng">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          `
-              : ""
-          }
+<button 
+    class="btn btn-sm btn-primary" 
+    onclick="saveProductThreshold(${product.id})"
+    title="Lưu ngưỡng">
+    <i class="fa-solid fa-floppy-disk"></i>
+</button>
+
+<button 
+    class="btn btn-sm btn-ghost" 
+    onclick="clearProductThreshold(${product.id})"
+    title="Xóa ngưỡng riêng">
+    <i class="fa-solid fa-xmark"></i>
+</button>
         </div>
       </td>
       <td class="col-times">${formatImportTime(lastImportTime)}</td>
@@ -584,7 +575,6 @@ function filterAndRenderInventory(categoryId, searchText, fromDate, toDate) {
     tbody.appendChild(row);
   });
 }
-
 
 // ==================== EVENT HANDLERS ====================
 
@@ -727,11 +717,11 @@ function populateCategoryFilter() {
   if (!select) return;
 
   const categories = productManager.getAllCategories();
-  
+
   // Keep the "Tất cả" option and add categories
   const currentHtml = select.innerHTML;
   const allOption = '<option value="all">Tất cả</option>';
-  
+
   const categoryOptions = categories
     .map((cat) => `<option value="${cat.id}">${cat.name}</option>`)
     .join("");
