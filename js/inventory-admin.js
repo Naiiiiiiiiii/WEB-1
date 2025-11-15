@@ -11,14 +11,12 @@ function renderThresholdConfigPanel() {
   const section = document.querySelector("section.inventory");
   if (!section) return;
 
-  // Kiểm tra xem panel đã tồn tại chưa
   let panel = document.getElementById("thresholdConfigPanel");
   if (!panel) {
     panel = document.createElement("div");
     panel.id = "thresholdConfigPanel";
     panel.className = "threshold-config-panel";
 
-    // Insert ngay sau heading
     const heading = section.querySelector("h3");
     if (heading) {
       heading.after(panel);
@@ -32,124 +30,123 @@ function renderThresholdConfigPanel() {
   const categoryThresholds = thresholdManager.getAllCategoryThresholds();
 
   panel.innerHTML = `
-        <div class="config-card">
-            <div class="config-header">
-                <h4>
-                    <i class="fa-solid fa-sliders"></i>
-                    Cấu hình ngưỡng cảnh báo
-                </h4>
-                <button class="btn btn-secondary btn-sm" onclick="resetAllThresholds()">
-                    <i class="fa-solid fa-rotate-left"></i>
-                    Đặt lại
-                </button>
-            </div>
+    <div class="config-card">
+      <div class="config-header">
+        <h4>
+          <i class="fa-solid fa-sliders"></i>
+          Cấu hình ngưỡng cảnh báo
+        </h4>
+        <button class="btn btn-secondary btn-sm" onclick="resetAllThresholds()">
+          <i class="fa-solid fa-rotate-left"></i>
+          Đặt lại
+        </button>
+      </div>
 
-            <!-- Ngưỡng mặc định toàn hệ thống -->
-            <div class="config-section">
-                <label class="config-label">
-                    <i class="fa-solid fa-globe"></i>
-                    Ngưỡng mặc định (áp dụng cho tất cả)
-                </label>
-                <div class="config-input-group">
-                    <input 
-                        type="number" 
-                        id="defaultThresholdInput" 
-                        value="${defaultThreshold}"
-                        min="0" 
-                        step="1"
-                        class="config-input"
-                        placeholder="Ví dụ: 10"
-                    />
-                    <button class="btn btn-primary" onclick="saveDefaultThreshold()">
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        Lưu
-                    </button>
-                </div>
-                <p class="config-hint">
-                    Sản phẩm có tồn kho ≤ ngưỡng này sẽ được cảnh báo
-                </p>
-            </div>
-
-            <!-- Ngưỡng theo danh mục -->
-            <div class="config-section">
-                <label class="config-label">
-                    <i class="fa-solid fa-layer-group"></i>
-                    Ngưỡng theo danh mục
-                </label>
-                <div class="category-threshold-list">
-                    ${categories
-                      .map((category) => {
-                        const threshold = categoryThresholds[category.id];
-                        const hasCustom =
-                          threshold !== null && threshold !== undefined;
-                        const displayValue = hasCustom
-                          ? threshold
-                          : defaultThreshold;
-
-                        return `
-                            <div class="category-threshold-item ${
-                              hasCustom ? "has-custom" : ""
-                            }">
-                                <div class="category-info">
-                                    <span class="category-name">${
-                                      category.name
-                                    }</span>
-                                    <span class="category-badge ${
-                                      hasCustom
-                                        ? "badge-custom"
-                                        : "badge-default"
-                                    }">
-                                        ${hasCustom ? "Tùy chỉnh" : "Mặc định"}
-                                    </span>
-                                </div>
-                                <div class="category-actions">
-                                    <input 
-                                        type="number" 
-                                        value="${displayValue}"
-                                        min="0" 
-                                        step="1"
-                                        class="config-input config-input-sm"
-                                        data-category-id="${category.id}"
-                                        onchange="updateCategoryThreshold(${
-                                          category.id
-                                        }, this.value)"
-                                    />
-                                    ${
-                                      hasCustom
-                                        ? `
-                                        <button 
-                                            class="btn btn-ghost btn-sm" 
-                                            onclick="removeCategoryThreshold(${category.id})"
-                                            title="Xóa và dùng mặc định">
-                                            <i class="fa-solid fa-xmark"></i>
-                                        </button>
-                                    `
-                                        : ""
-                                    }
-                                </div>
-                            </div>
-                        `;
-                      })
-                      .join("")}
-                </div>
-            </div>
-
-            <!-- Hướng dẫn -->
-            <div class="config-info">
-                <i class="fa-solid fa-circle-info"></i>
-                <div>
-                    <strong>Ưu tiên áp dụng:</strong>
-                    <ol>
-                        <li>Ngưỡng riêng của sản phẩm (nếu có)</li>
-                        <li>Ngưỡng của danh mục (nếu có)</li>
-                        <li>Ngưỡng mặc định</li>
-                    </ol>
-                </div>
-            </div>
+      <div class="config-section">
+        <label class="config-label">
+          <i class="fa-solid fa-globe"></i>
+          Ngưỡng mặc định (áp dụng cho tất cả)
+        </label>
+        <div class="config-input-group">
+          <input 
+            type="number" 
+            id="defaultThresholdInput" 
+            value="${defaultThreshold}"
+            min="0" 
+            step="1"
+            class="config-input"
+            placeholder="Ví dụ: 10"
+          />
+          <button class="btn btn-primary" onclick="saveDefaultThreshold()">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Lưu
+          </button>
         </div>
-    `;
-}
+        <p class="config-hint">
+          Sản phẩm có tồn kho ≤ ngưỡng này sẽ được cảnh báo
+        </p>
+      </div>
 
+      <div class="config-section">
+        <label class="config-label">
+          <i class="fa-solid fa-layer-group"></i>
+          Ngưỡng theo danh mục
+        </label>
+        <div class="category-threshold-list">
+          ${categories
+            .map((category) => {
+              const threshold = categoryThresholds[category.id];
+              const hasCustom = threshold !== null && threshold !== undefined;
+              const displayValue = hasCustom ? threshold : defaultThreshold;
+
+              return `
+                <div class="category-threshold-item ${
+                  hasCustom ? "has-custom" : ""
+                }">
+                  <div class="category-info">
+                    <span class="category-name">${category.name}</span>
+                    <span class="category-badge ${
+                      hasCustom ? "badge-custom" : "badge-default"
+                    }">
+                      ${hasCustom ? "Tùy chỉnh" : "Mặc định"}
+                    </span>
+                  </div>
+                  
+                  <div class="category-actions">
+                    <input 
+                      type="number" 
+                      value="${displayValue}"
+                      min="0" 
+                      step="1"
+                      class="config-input config-input-sm"
+                      id="categoryThresholdInput-${category.id}"
+                      data-category-id="${category.id}"
+                      placeholder="Nhập ngưỡng"
+                    />
+                    
+                    <!-- ✅ FIX: Thêm dấu ngoặc kép cho categoryId -->
+                    <button 
+                      class="btn btn-primary btn-sm" 
+                      onclick="saveCategoryThreshold('${category.id}')"
+                      title="Lưu ngưỡng cho ${category.name}">
+                      <i class="fa-solid fa-floppy-disk"></i>
+                      Lưu
+                    </button>
+                    
+                    <button 
+                      class="btn btn-ghost btn-sm" 
+                      onclick="removeCategoryThreshold('${category.id}')"
+                      ${!hasCustom ? "disabled" : ""}
+                      title="${
+                        hasCustom
+                          ? "Xóa ngưỡng tùy chỉnh và dùng mặc định"
+                          : "Chưa có ngưỡng tùy chỉnh"
+                      }">
+                      <i class="fa-solid fa-xmark"></i>
+                      Xóa
+                    </button>
+                  </div>
+                </div>
+              `;
+            })
+            .join("")}
+        </div>
+      </div>
+
+      <div class="config-info">
+        <i class="fa-solid fa-circle-info"></i>
+        <div>
+          <strong>Ưu tiên áp dụng:</strong>
+          <ol>
+            <li>Ngưỡng riêng của sản phẩm (nếu có)</li>
+            <li>Ngưỡng của danh mục (nếu có)</li>
+            <li>Ngưỡng mặc định</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  `;
+}
 function getLatestImportTime(productId) {
   const slips = importManager.getAllSlips();
 
@@ -251,59 +248,64 @@ function renderInventoryTable() {
 
     const row = document.createElement("tr");
     row.className = rowClass;
+    // ✅ CODE MỚI
     row.innerHTML = `
-            <td class="col-id">${product.id}</td>
-            <td>
-                <div class="product-cell">
-                    <strong>${product.name}</strong>
-                    ${
-                      status.isLow
-                        ? '<span class="low-stock-indicator" title="Sắp hết hàng">⚠️</span>'
-                        : ""
-                    }
-                </div>
-            </td>
-            <td class="col-category">${categoryName}</td>
-            <td class="col-stock text-center">
-                <div class="stock-info">
-                    <span class="stock-value ${status.severity}">${
-      status.currentStock
-    }</span>
-                    <span class="stock-threshold">/ ${status.threshold}</span>
-                </div>
-            </td>
-
-            <td class="col-status">${statusBadge}</td>
-            <td class="col-actions">
-                <div class="action-buttons-inventory">
-                    <input 
-                        type="number" 
-                        class="threshold-input" 
-                        value="${product.lowStockThreshold ?? ""}"
-                        placeholder="${status.threshold}"
-                        min="0" 
-                        step="1"
-                        title="Ngưỡng riêng cho sản phẩm này"
-                        data-product-id="${product.id}"
-                    />
-                    <button 
-                        class="btn btn-sm btn-primary" 
-                        onclick="saveProductThreshold(${product.id})"
-                        title="Lưu ngưỡng">
-                        <i class="fa-solid fa-floppy-disk"></i>
-                    </button>
-
-                        <button 
-                            class="btn btn-sm btn-ghost" 
-                            onclick="clearProductThreshold(${product.id})"
-                            title="Xóa ngưỡng riêng">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-
-                </div>
-            </td>
-            <td class="col-times">${formatImportTime(lastImportTime)}</td>
-        `;
+  <td class="col-id">${product.id}</td>
+  <td>
+    <div class="product-cell">
+      <strong>${product.name}</strong>
+      ${
+        status.isLow
+          ? '<span class="low-stock-indicator" title="Sắp hết hàng">⚠️</span>'
+          : ""
+      }
+    </div>
+  </td>
+  <td class="col-category">${categoryName}</td>
+  <td class="col-stock text-center">
+    <div class="stock-info">
+      <span class="stock-value ${status.severity}">${status.currentStock}</span>
+      <span class="stock-threshold">/ ${status.threshold}</span>
+    </div>
+  </td>
+  <td class="col-status">${statusBadge}</td>
+  <td class="col-actions">
+    <div class="action-buttons-inventory">
+      <input 
+        type="number" 
+        class="threshold-input" 
+        value="${product.lowStockThreshold ?? ""}"
+        placeholder="${status.threshold}"
+        min="0" 
+        step="1"
+        title="Ngưỡng riêng cho sản phẩm này"
+        data-product-id="${product.id}"
+      />
+      
+      <!-- Nút LƯU -->
+      <button 
+        class="btn btn-sm btn-primary" 
+        onclick="saveProductThreshold(${product.id})"
+        title="Lưu ngưỡng">
+        <i class="fa-solid fa-floppy-disk"></i>
+      </button>
+      
+      <!-- ✨ Nút XÓA - Luôn hiển thị, disabled khi chưa có ngưỡng riêng -->
+      <button 
+        class="btn btn-sm btn-ghost" 
+        onclick="clearProductThreshold(${product.id})"
+        ${product.lowStockThreshold === null ? "disabled" : ""}
+        title="${
+          product.lowStockThreshold !== null
+            ? "Xóa ngưỡng riêng và dùng ngưỡng danh mục/mặc định"
+            : "Chưa có ngưỡng riêng"
+        }">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </td>
+  <td class="col-times">${formatImportTime(lastImportTime)}</td>
+`;
 
     tbody.appendChild(row);
   });
@@ -647,21 +649,6 @@ window.saveDefaultThreshold = function () {
 /**
  * Cập nhật ngưỡng của danh mục
  */
-window.updateCategoryThreshold = function (categoryId, value) {
-  try {
-    const num = Number(value);
-    if (isNaN(num) || num < 0) {
-      alert("❌ Ngưỡng phải là số không âm");
-      return;
-    }
-
-    thresholdManager.setCategoryThreshold(categoryId, num);
-    renderThresholdConfigPanel();
-    renderInventoryTable();
-  } catch (error) {
-    alert("❌ " + error.message);
-  }
-};
 
 /**
  * Xóa ngưỡng riêng của danh mục
@@ -778,6 +765,89 @@ function formatPrice(price) {
     currency: "VND",
   }).format(price || 0);
 }
+
+// ==================== EVENT HANDLERS ====================
+
+/**
+ * ✨ HÀM MỚI: Lưu ngưỡng cho danh mục cụ thể
+ * @param {number|string} categoryId - ID của danh mục
+ */
+window.saveCategoryThreshold = function (categoryId) {
+  const input = document.getElementById(`categoryThresholdInput-${categoryId}`);
+  if (!input) {
+    alert("❌ Không tìm thấy input");
+    return;
+  }
+
+  try {
+    const value = input.value.trim();
+
+    // Validate empty
+    if (value === "") {
+      alert("❌ Vui lòng nhập giá trị ngưỡng");
+      input.focus();
+      return;
+    }
+
+    // Validate number
+    const num = Number(value);
+    if (isNaN(num)) {
+      alert("❌ Ngưỡng phải là số");
+      input.focus();
+      return;
+    }
+
+    // Validate non-negative
+    if (num < 0) {
+      alert("❌ Ngưỡng phải là số không âm");
+      input.focus();
+      return;
+    }
+
+    // Save to manager
+    thresholdManager.setCategoryThreshold(categoryId, num);
+
+    // Show success feedback
+    alert(`✅ Đã lưu ngưỡng ${num} cho danh mục này`);
+
+    // Re-render UI
+    renderThresholdConfigPanel();
+    renderInventoryTable();
+  } catch (error) {
+    console.error("Error saving category threshold:", error);
+    alert("❌ Có lỗi xảy ra: " + error.message);
+  }
+};
+
+/**
+ * Xóa ngưỡng riêng của danh mục - CẢI TIẾN với validation
+ */
+window.removeCategoryThreshold = function (categoryId) {
+  // Check if has custom threshold
+  const categoryThresholds = thresholdManager.getAllCategoryThresholds();
+  const hasCustom =
+    categoryThresholds[categoryId] !== null &&
+    categoryThresholds[categoryId] !== undefined;
+
+  if (!hasCustom) {
+    alert("ℹ️ Danh mục này đang dùng ngưỡng mặc định");
+    return;
+  }
+
+  if (confirm("Xóa ngưỡng riêng và dùng ngưỡng mặc định?")) {
+    try {
+      thresholdManager.removeCategoryThreshold(categoryId);
+      alert("✅ Đã xóa ngưỡng tùy chỉnh");
+      renderThresholdConfigPanel();
+      renderInventoryTable();
+    } catch (error) {
+      console.error("Error removing category threshold:", error);
+      alert("❌ Có lỗi xảy ra: " + error.message);
+    }
+  }
+};
+
+// ... (các hàm event handlers khác giữ nguyên)
 
 // ==================== INITIALIZATION ====================
 
