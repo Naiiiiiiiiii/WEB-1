@@ -433,40 +433,15 @@
                     <form id="addImportSlipForm" class="actions form-grid form-grid-3">
                         <h3><i class="fa-solid fa-plus-circle"></i> Tạo Phiếu Nhập Mới (Nháp)</h3>
 
-                        <div class="field">
-                            <label for="importSlipProductSelect">
-                                <i class="fa-solid fa-box"></i> Chọn Sản phẩm
-                                <span class="required">*</span>
+                        <div class="field full-width">
+                            <label>
+                                <i class="fa-solid fa-box"></i> Danh sách Sản phẩm (có thể thêm nhiều)
                             </label>
-                            <select id="importSlipProductSelect" required>
-                                <option value="">-- Chọn Sản phẩm --</option>
-                            </select>
-                        </div>
-
-                        <div class="field">
-                            <label for="importSlipQuantity">
-                                <i class="fa-solid fa-hashtag"></i> Số lượng nhập
-                                <span class="required">*</span>
-                            </label>
-                            <input type="number" id="importSlipQuantity" min="1" placeholder="VD: 50" required>
-                        </div>
-
-                        <div class="field">
-                            <label for="importSlipPrice">
-                                <i class="fa-solid fa-dollar-sign"></i> Giá nhập (Giá vốn)
-                                <span class="required">*</span>
-                            </label>
-                            <input type="number" id="importSlipPrice" min="1000" step="1000" placeholder="VD: 1500000"
-                                required>
-                        </div>
-
-                        <div class="field" id="importSlipSizeGroup" style="display: none;">
-                            <label for="importSlipSize">
-                                <i class="fa-solid fa-ruler"></i> Kích cỡ (Size)
-                                <span class="required">*</span>
-                            </label>
-                            <input type="number" id="importSlipSize" placeholder="VD: 41" min="36" max="45">
-                            <small class="text-muted">Chỉ cần nhập nếu sản phẩm có biến thể</small>
+                            <div id="importSlipItemsContainer"></div>
+                            <div style="margin-top:8px;">
+                                <button type="button" id="addImportSlipItemBtn" class="btn">+ Thêm sản phẩm</button>
+                                <small style="margin-left:10px; color:#666;">Thêm nhiều hàng vào cùng 1 phiếu nhập</small>
+                            </div>
                         </div>
 
                         <div class="field">

@@ -4,6 +4,7 @@ export class ImportSlip {
     constructor({
         id = null,
         slipNumber = '',
+        items = null,
         productId = null,
         productName = '',
         variantSize = null,
@@ -19,12 +20,37 @@ export class ImportSlip {
     }) {
         this.id = id;
         this.slipNumber = slipNumber;
-        this.productId = productId;
-        this.productName = productName;
-        this.variantSize = variantSize;
-        this.quantity = quantity;
-        this.importPrice = importPrice;
-        this.totalValue = totalValue || (quantity * importPrice);
+        // items: array of { productId, productName, variantSize, quantity, importPrice, totalValue }
+        if (Array.isArray(items) && items.length > 0) {
+            this.items = items.map(it => ({
+                productId: it.productId,
+                productName: it.productName,
+                variantSize: it.variantSize ?? null,
+                quantity: Number(it.quantity) || 0,
+                importPrice: Number(it.importPrice) || 0,
+                totalValue: it.totalValue || (Number(it.quantity) * Number(it.importPrice))
+            }));
+        } else if (productId) {
+            // backward compatibility: create single-item list
+            this.items = [{
+                productId,
+                productName,
+                variantSize: variantSize ?? null,
+                quantity: Number(quantity) || 0,
+                importPrice: Number(importPrice) || 0,
+                totalValue: totalValue || (Number(quantity) * Number(importPrice))
+            }];
+        } else {
+            this.items = [];
+        }
+
+        // convenience top-level fields kept for legacy code access (may be undefined)
+        this.productId = this.items[0]?.productId ?? null;
+        this.productName = this.items[0]?.productName ?? '';
+        this.variantSize = this.items[0]?.variantSize ?? null;
+        this.quantity = this.items[0]?.quantity ?? 0;
+        this.importPrice = this.items[0]?.importPrice ?? 0;
+        this.totalValue = totalValue || this.items.reduce((s, it) => s + (it.totalValue || (it.quantity * it.importPrice)), 0);
         this.supplier = supplier;
         this.note = note;
         this.createdDate = createdDate;
@@ -43,6 +69,7 @@ export class ImportSlip {
         return {
             id: this.id,
             slipNumber: this.slipNumber,
+            items: this.items,
             productId: this.productId,
             productName: this.productName,
             variantSize: this.variantSize,
@@ -126,8 +153,26 @@ export class ImportManager {
             ? Math.max(...this.slips.map(s => s.id)) + 1 
             : 1;
 
+        // Normalize: if incoming slipData has single product fields, keep compatibility
+        const prepared = {};
+        if (Array.isArray(slipData.items) && slipData.items.length > 0) {
+            prepared.items = slipData.items;
+        } else if (slipData.productId) {
+            prepared.items = [{
+                productId: slipData.productId,
+                productName: slipData.productName || '',
+                variantSize: slipData.variantSize ?? null,
+                quantity: slipData.quantity || 0,
+                importPrice: slipData.importPrice || 0,
+                totalValue: slipData.totalValue || ((slipData.quantity || 0) * (slipData.importPrice || 0))
+            }];
+        } else {
+            prepared.items = [];
+        }
+
         const newSlip = new ImportSlip({
             ...slipData,
+            ...prepared,
             id: newId,
             slipNumber: this.generateSlipNumber(),
             status: 'DRAFT',
@@ -151,14 +196,37 @@ export class ImportManager {
             return false;
         }
 
-        const allowedFields = ['productId', 'productName', 'variantSize', 'quantity', 'importPrice', 'supplier', 'note'];
-        allowedFields.forEach(field => {
-            if (updatedData[field] !== undefined) {
-                slip[field] = updatedData[field];
-            }
-        });
+        // If updatedData contains items (complete replacement of items list)
+        if (Array.isArray(updatedData.items)) {
+            slip.items = updatedData.items.map(it => ({
+                productId: it.productId,
+                productName: it.productName,
+                variantSize: it.variantSize ?? null,
+                quantity: Number(it.quantity) || 0,
+                importPrice: Number(it.importPrice) || 0,
+                totalValue: it.totalValue || (Number(it.quantity) * Number(it.importPrice))
+            }));
+        } else {
+            // fallback: update first item (legacy behavior)
+            if (!Array.isArray(slip.items) || slip.items.length === 0) slip.items = [{}];
+            const item = slip.items[0];
+            const allowedItemFields = ['productId', 'productName', 'variantSize', 'quantity', 'importPrice'];
+            allowedItemFields.forEach(f => {
+                if (updatedData[f] !== undefined) item[f] = updatedData[f];
+            });
+            item.totalValue = item.quantity * item.importPrice;
+        }
 
-        slip.totalValue = slip.quantity * slip.importPrice;
+        slip.totalValue = slip.items.reduce((s, it) => s + (it.totalValue || (it.quantity * it.importPrice)), 0);
+        slip.supplier = updatedData.supplier !== undefined ? updatedData.supplier : slip.supplier;
+        slip.note = updatedData.note !== undefined ? updatedData.note : slip.note;
+
+        // update convenience top-level fields
+        slip.productId = slip.items[0]?.productId ?? null;
+        slip.productName = slip.items[0]?.productName ?? '';
+        slip.variantSize = slip.items[0]?.variantSize ?? null;
+        slip.quantity = slip.items[0]?.quantity ?? 0;
+        slip.importPrice = slip.items[0]?.importPrice ?? 0;
 
         this.saveSlips();
         return true;

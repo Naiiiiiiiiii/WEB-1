@@ -9,11 +9,8 @@ function initDOM() {
     DOM = {
 
         addImportSlipForm: document.getElementById('addImportSlipForm'),
-        importProductSelect: document.getElementById('importSlipProductSelect'),
-        importQuantity: document.getElementById('importSlipQuantity'),
-        importPrice: document.getElementById('importSlipPrice'),
-        importSize: document.getElementById('importSlipSize'),
-        importSizeGroup: document.getElementById('importSlipSizeGroup'),
+        importSlipItemsContainer: document.getElementById('importSlipItemsContainer'),
+        addImportSlipItemBtn: document.getElementById('addImportSlipItemBtn'),
         importSupplier: document.getElementById('importSlipSupplier'),
         importNote: document.getElementById('importSlipNote'),
 
@@ -41,20 +38,24 @@ function initDOM() {
 }
 
 export function initImportAdmin() {
+    if (window.importAdminInitialized) return; // prevent double init
+
     initDOM();
     setupEventListeners();
-    loadProductsToSelect();
+    // create initial item row
+    addImportItemRow();
     renderImportSlipsList();
-}
 
+    window.importAdminInitialized = true;
+}
 function setupEventListeners() {
 
     if (DOM.addImportSlipForm) {
         DOM.addImportSlipForm.addEventListener('submit', handleAddImportSlip);
     }
 
-    if (DOM.importProductSelect) {
-        DOM.importProductSelect.addEventListener('change', handleProductChange);
+    if (DOM.addImportSlipItemBtn) {
+        DOM.addImportSlipItemBtn.addEventListener('click', () => addImportItemRow());
     }
 
     if (DOM.filterApplyBtn) {
@@ -87,77 +88,140 @@ function setupEventListeners() {
 }
 
 function loadProductsToSelect() {
-    if (!DOM.importProductSelect) return;
-
-    const products = productManager.getVisibleProducts();
-    
-    DOM.importProductSelect.innerHTML = '<option value="">-- Chọn Sản phẩm --</option>';
-    
-    products.forEach(product => {
-        const option = document.createElement('option');
-        option.value = product.id;
-        option.textContent = `${product.name} - ${product.price.toLocaleString('vi-VN')}₫`;
-        option.dataset.hasVariants = product.variants && product.variants.length > 0 ? 'true' : 'false';
-        DOM.importProductSelect.appendChild(option);
-    });
+    return productManager.getVisibleProducts();
 }
 
-function handleProductChange() {
-    const selectedOption = DOM.importProductSelect.options[DOM.importProductSelect.selectedIndex];
-    const hasVariants = selectedOption?.dataset.hasVariants === 'true';
+function createImportItemRow(products) {
+    const row = document.createElement('div');
+    row.className = 'import-item-row';
+    row.style.display = 'flex';
+    row.style.gap = '8px';
+    row.style.marginBottom = '8px';
+    row.style.alignItems = 'center';
 
-    if (DOM.importSizeGroup) {
-        DOM.importSizeGroup.style.display = hasVariants ? 'flex' : 'none';
-        
-        if (DOM.importSize) {
-            DOM.importSize.required = hasVariants;
-            if (!hasVariants) {
-                DOM.importSize.value = '';
-            }
-        }
-    }
+    const select = document.createElement('select');
+    select.className = 'import-item-select';
+    select.required = true;
+    const defaultOpt = document.createElement('option');
+    defaultOpt.value = '';
+    defaultOpt.textContent = '-- Chọn sản phẩm --';
+    select.appendChild(defaultOpt);
+
+    products.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = `${p.name} - ${p.price.toLocaleString('vi-VN')}₫`;
+        opt.dataset.hasVariants = p.variants && p.variants.length > 0 ? 'true' : 'false';
+        select.appendChild(opt);
+    });
+
+    const qty = document.createElement('input');
+    qty.type = 'number';
+    qty.className = 'import-item-qty';
+    qty.min = 1;
+    qty.placeholder = 'SL';
+    qty.required = true;
+    qty.style.width = '80px';
+
+    const price = document.createElement('input');
+    price.type = 'number';
+    price.className = 'import-item-price';
+    price.min = 0;
+    price.step = 1000;
+    price.placeholder = 'Giá';
+    price.required = true;
+    price.style.width = '120px';
+
+    const size = document.createElement('input');
+    size.type = 'number';
+    size.className = 'import-item-size';
+    size.placeholder = 'Size';
+    size.style.width = '80px';
+    size.style.display = 'none';
+
+    select.addEventListener('change', () => {
+        const hasVariants = select.options[select.selectedIndex]?.dataset.hasVariants === 'true';
+        size.style.display = hasVariants ? 'inline-block' : 'none';
+        if (!hasVariants) size.value = '';
+    });
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'btn btn-danger';
+    removeBtn.textContent = 'Xóa';
+    removeBtn.addEventListener('click', () => row.remove());
+
+    row.appendChild(select);
+    row.appendChild(qty);
+    row.appendChild(price);
+    row.appendChild(size);
+    row.appendChild(removeBtn);
+
+    return row;
+}
+
+function addImportItemRow() {
+    const products = loadProductsToSelect();
+    const row = createImportItemRow(products);
+    DOM.importSlipItemsContainer.appendChild(row);
 }
 
 function handleAddImportSlip(e) {
     e.preventDefault();
 
-    const productId = Number(DOM.importProductSelect.value);
-    const quantity = Number(DOM.importQuantity.value);
-    const importPrice = Number(DOM.importPrice.value);
-    const size = DOM.importSize.value ? Number(DOM.importSize.value) : null;
+    const rows = Array.from(DOM.importSlipItemsContainer.querySelectorAll('.import-item-row'));
     const supplier = DOM.importSupplier.value.trim();
     const note = DOM.importNote.value.trim();
 
-    if (!productId || quantity <= 0 || importPrice <= 0) {
-        alert('Vui lòng nhập đầy đủ thông tin hợp lệ!');
+    if (rows.length === 0) {
+        alert('Vui lòng thêm ít nhất 1 sản phẩm cho phiếu nhập!');
         return;
     }
 
-    const product = productManager.getProductById(productId);
-    if (!product) {
-        alert('Không tìm thấy sản phẩm!');
-        return;
+    const items = [];
+    for (const r of rows) {
+        const select = r.querySelector('.import-item-select');
+        const qtyEl = r.querySelector('.import-item-qty');
+        const priceEl = r.querySelector('.import-item-price');
+        const sizeEl = r.querySelector('.import-item-size');
+
+        const productId = Number(select.value);
+        const quantity = Number(qtyEl.value);
+        const importPrice = Number(priceEl.value);
+        const size = sizeEl && sizeEl.value ? Number(sizeEl.value) : null;
+
+        if (!productId || quantity <= 0 || importPrice <= 0) {
+            alert('Vui lòng điền đầy đủ thông tin sản phẩm (sản phẩm, số lượng, giá nhập) hợp lệ!');
+            return;
+        }
+
+        const product = productManager.getProductById(productId);
+        if (!product) {
+            alert('Không tìm thấy sản phẩm (một trong các dòng)!');
+            return;
+        }
+
+        if (product.variants && product.variants.length > 0 && !size) {
+            alert(`Sản phẩm "${product.name}" yêu cầu nhập Size!`);
+            return;
+        }
+
+        items.push({
+            productId,
+            productName: product.name,
+            variantSize: size,
+            quantity,
+            importPrice,
+            totalValue: quantity * importPrice
+        });
     }
 
-    if (product.variants && product.variants.length > 0 && !size) {
-        alert('Vui lòng chọn Size cho sản phẩm này!');
-        return;
-    }
-
-    const newSlip = importManager.addSlip({
-        productId,
-        productName: product.name,
-        variantSize: size,
-        quantity,
-        importPrice,
-        supplier,
-        note
-    });
-
+    const newSlip = importManager.addSlip({ items, supplier, note });
     if (newSlip) {
         alert(`✅ Đã tạo phiếu nhập ${newSlip.slipNumber} thành công!\nTrạng thái: Nháp - Chưa hoàn thành`);
         DOM.addImportSlipForm.reset();
-        DOM.importSizeGroup.style.display = 'none';
+        DOM.importSlipItemsContainer.innerHTML = '';
+        addImportItemRow();
         renderImportSlipsList();
     } else {
         alert('❌ Lỗi khi tạo phiếu nhập!');
@@ -183,44 +247,34 @@ export function renderImportSlipsList(slips = null) {
     }
 
     slipsList.forEach(slip => {
-        const row = document.createElement('tr');
-        
-        const statusBadge = slip.status === 'COMPLETED' 
+        const items = Array.isArray(slip.items) && slip.items.length > 0
+            ? slip.items
+            : [{
+                productId: slip.productId,
+                productName: slip.productName || '-',
+                variantSize: slip.variantSize || null,
+                quantity: slip.quantity || 0,
+                importPrice: slip.importPrice || 0,
+                totalValue: slip.totalValue || (slip.quantity * slip.importPrice || 0)
+            }];
+
+        const statusBadge = slip.status === 'COMPLETED'
             ? '<span class="status-badge status-completed">Đã hoàn thành</span>'
             : '<span class="status-badge status-draft">Nháp</span>';
 
-        const sizeDisplay = slip.variantSize 
-            ? `Size ${slip.variantSize}` 
-            : '<span class="text-muted">Không có</span>';
-
         const dateDisplay = new Date(slip.createdDate).toLocaleDateString('vi-VN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
+            year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
         });
 
-        const completedDateDisplay = slip.completedDate 
-            ? new Date(slip.completedDate).toLocaleDateString('vi-VN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-              })
-            : '<span class="text-muted">-</span>';
+        items.forEach((it, idx) => {
+            const row = document.createElement('tr');
 
-        row.innerHTML = `
-            <td class="nowrap">${slip.slipNumber}</td>
-            <td>${slip.productName}</td>
-            <td class="center nowrap">${sizeDisplay}</td>
-            <td class="right">${slip.quantity}</td>
-            <td class="right">${slip.importPrice.toLocaleString('vi-VN')}₫</td>
-            <td class="right"><strong>${slip.totalValue.toLocaleString('vi-VN')}₫</strong></td>
-            <td class="nowrap">${dateDisplay}</td>
-            <td class="center">${statusBadge}</td>
-            <td class="action-buttons">
+            const slipCell = idx === 0 ? `<td class="nowrap">${slip.slipNumber}</td>` : '<td></td>';
+            const dateCell = idx === 0 ? `<td class="nowrap">${dateDisplay}</td>` : '<td></td>';
+            const statusCell = idx === 0 ? `<td class="center">${statusBadge}</td>` : '<td></td>';
+
+            const actionsCell = idx === 0 ? `
+                <td class="action-buttons">
                 ${slip.status === 'DRAFT' ? `
                     <button class="btn btn-primary btn-edit-slip" data-id="${slip.id}" title="Sửa phiếu">
                         <i class="fa-solid fa-pen-to-square"></i> Sửa
@@ -237,9 +291,26 @@ export function renderImportSlipsList(slips = null) {
                     </button>
                 `}
             </td>
-        `;
+            ` : '<td></td>';
 
-        DOM.importSlipsTableBody.appendChild(row);
+            const sizeDisplay = it.variantSize ? `Size ${it.variantSize}` : '<span class="text-muted">Không có</span>';
+            const priceDisplay = (it.importPrice || it.importPrice === 0) ? `${Number(it.importPrice).toLocaleString('vi-VN')}₫` : '<span class="text-muted">-</span>';
+            const totalDisplay = (it.totalValue || it.totalValue === 0) ? `${Number(it.totalValue).toLocaleString('vi-VN')}₫` : '<span class="text-muted">-</span>';
+
+            row.innerHTML = `
+                ${slipCell}
+                <td>${it.productName}</td>
+                <td class="center nowrap">${sizeDisplay}</td>
+                <td class="right">${it.quantity}</td>
+                <td class="right">${priceDisplay}</td>
+                <td class="right"><strong>${totalDisplay}</strong></td>
+                ${dateCell}
+                ${statusCell}
+                ${actionsCell}
+            `;
+
+            DOM.importSlipsTableBody.appendChild(row);
+        });
     });
 
     attachSlipActionListeners();
@@ -271,11 +342,19 @@ function handleEditSlip(slipId) {
         return;
     }
 
+    // If slip contains multiple items, editing inline is complex. Ask user to recreate.
+    if (Array.isArray(slip.items) && slip.items.length > 1) {
+        alert('Phiếu này chứa nhiều sản phẩm. Vui lòng xóa và tạo lại nếu muốn chỉnh sửa các mục.');
+        return;
+    }
+
+    const it = (Array.isArray(slip.items) && slip.items.length === 1) ? slip.items[0] : null;
+
     DOM.editSlipNumber.textContent = slip.slipNumber;
-    DOM.editProductName.textContent = slip.productName;
-    DOM.editQuantity.value = slip.quantity;
-    DOM.editPrice.value = slip.importPrice;
-    DOM.editSize.value = slip.variantSize || '';
+    DOM.editProductName.textContent = it ? it.productName : (slip.productName || '-');
+    DOM.editQuantity.value = it ? it.quantity : (slip.quantity || 0);
+    DOM.editPrice.value = it ? it.importPrice : (slip.importPrice || 0);
+    DOM.editSize.value = it ? (it.variantSize || '') : (slip.variantSize || '');
     DOM.editSupplier.value = slip.supplier || '';
     DOM.editNote.value = slip.note || '';
 
@@ -318,13 +397,19 @@ function handleCompleteSlip(slipId) {
         return;
     }
 
-    const confirmMsg = `Xác nhận hoàn thành phiếu nhập:\n\n` +
-        `Số phiếu: ${slip.slipNumber}\n` +
-        `Sản phẩm: ${slip.productName}${slip.variantSize ? ` (Size ${slip.variantSize})` : ''}\n` +
-        `Số lượng: ${slip.quantity}\n` +
-        `Giá nhập: ${slip.importPrice.toLocaleString('vi-VN')}₫\n` +
-        `Tổng giá trị: ${slip.totalValue.toLocaleString('vi-VN')}₫\n\n` +
-        `⚠️ Sau khi hoàn thành, phiếu không thể sửa đổi!`;
+    let confirmMsg = `Xác nhận hoàn thành phiếu nhập:\n\nSố phiếu: ${slip.slipNumber}\n`;
+
+    if (Array.isArray(slip.items)) {
+        confirmMsg += 'Sản phẩm:\n';
+        slip.items.forEach(it => {
+            confirmMsg += `- ${it.productName}${it.variantSize ? ` (Size ${it.variantSize})` : ''} x ${it.quantity} @ ${it.importPrice.toLocaleString('vi-VN')}₫\n`;
+        });
+        confirmMsg += `\nTổng giá trị: ${(slip.totalValue||0).toLocaleString('vi-VN')}₫\n\n`;
+    } else {
+        confirmMsg += `Sản phẩm: ${slip.productName || '-'}\nSố lượng: ${slip.quantity || 0}\nTổng giá trị: ${(slip.totalValue||0).toLocaleString('vi-VN')}₫\n\n`;
+    }
+
+    confirmMsg += '⚠️ Sau khi hoàn thành, phiếu không thể sửa đổi!';
 
     if (!confirm(confirmMsg)) return;
 
@@ -334,24 +419,40 @@ function handleCompleteSlip(slipId) {
         return;
     }
 
-    const updateSuccess = productManager.processProductImport(
-        slip.productId,
-        slip.quantity,
-        slip.importPrice,
-        slip.variantSize,
-        `Phiếu nhập ${slip.slipNumber}${slip.supplier ? ` - NCC: ${slip.supplier}` : ''}`
-    );
+    // process inventory updates for each item
+    let allSuccess = true;
+    if (Array.isArray(slip.items)) {
+        for (const it of slip.items) {
+            const note = `Phiếu nhập ${slip.slipNumber}${slip.supplier ? ` - NCC: ${slip.supplier}` : ''}`;
+            const ok = productManager.processProductImport(
+                it.productId,
+                it.quantity,
+                it.importPrice,
+                it.variantSize,
+                note
+            );
+            if (!ok) allSuccess = false;
+        }
+    } else {
+        const ok = productManager.processProductImport(
+            slip.productId,
+            slip.quantity,
+            slip.importPrice,
+            slip.variantSize,
+            `Phiếu nhập ${slip.slipNumber}${slip.supplier ? ` - NCC: ${slip.supplier}` : ''}`
+        );
+        if (!ok) allSuccess = false;
+    }
 
-    if (updateSuccess) {
+    if (allSuccess) {
         alert(`✅ Hoàn thành phiếu nhập ${slip.slipNumber} thành công!\n✅ Đã cập nhật tồn kho.`);
         renderImportSlipsList();
-        
 
         if (typeof window.renderInventoryTable === 'function') {
             window.renderInventoryTable();
         }
     } else {
-        alert('⚠️ Phiếu đã hoàn thành nhưng có lỗi khi cập nhật tồn kho!');
+        alert('⚠️ Phiếu đã hoàn thành nhưng có lỗi khi cập nhật tồn kho cho một số sản phẩm!');
     }
 }
 
@@ -381,38 +482,22 @@ function handleViewSlip(slipId) {
         return;
     }
 
-    const details = `
-═══════════════════════════════════════
-        CHI TIẾT PHIẾU NHẬP
-═══════════════════════════════════════
+    let details = `\n═══════════════════════════════════════\n        CHI TIẾT PHIẾU NHẬP\n═══════════════════════════════════════\n\nSố phiếu: ${slip.slipNumber}\nTrạng thái: ${slip.status === 'COMPLETED' ? '✅ Đã hoàn thành' : '📝 Nháp'}\n\n`;
 
-Số phiếu: ${slip.slipNumber}
-Trạng thái: ${slip.status === 'COMPLETED' ? '✅ Đã hoàn thành' : '📝 Nháp'}
+    details += '───────────────────────────────────────\nTHÔNG TIN SẢN PHẨM\n───────────────────────────────────────\n';
+    if (Array.isArray(slip.items)) {
+        slip.items.forEach(it => {
+            details += `- ${it.productName}${it.variantSize ? ` (Size ${it.variantSize})` : ''} x ${it.quantity} @ ${it.importPrice.toLocaleString('vi-VN')}₫\n`;
+        });
+    } else {
+        details += `Tên sản phẩm: ${slip.productName}\n${slip.variantSize ? `Kích cỡ: Size ${slip.variantSize}` : 'Kích cỡ: Không có'}\n`;
+    }
 
-───────────────────────────────────────
-THÔNG TIN SẢN PHẨM
-───────────────────────────────────────
-Tên sản phẩm: ${slip.productName}
-${slip.variantSize ? `Kích cỡ: Size ${slip.variantSize}` : 'Kích cỡ: Không có'}
+    details += `\n───────────────────────────────────────\nTHÔNG TIN NHẬP HÀNG\n───────────────────────────────────────\nTổng giá trị: ${(slip.totalValue||0).toLocaleString('vi-VN')}₫\n${slip.supplier ? `Nhà cung cấp: ${slip.supplier}` : ''}\n\n───────────────────────────────────────\nTHỜI GIAN\n───────────────────────────────────────\nNgày tạo: ${new Date(slip.createdDate).toLocaleString('vi-VN')}\n${slip.completedDate ? `Ngày hoàn thành: ${new Date(slip.completedDate).toLocaleString('vi-VN')}` : ''}\n`;
 
-───────────────────────────────────────
-THÔNG TIN NHẬP HÀNG
-───────────────────────────────────────
-Số lượng: ${slip.quantity}
-Giá nhập: ${slip.importPrice.toLocaleString('vi-VN')}₫
-Tổng giá trị: ${slip.totalValue.toLocaleString('vi-VN')}₫
-${slip.supplier ? `Nhà cung cấp: ${slip.supplier}` : ''}
+    if (slip.note) details += `\n───────────────────────────────────────\nGHI CHÚ\n───────────────────────────────────────\n${slip.note}\n`;
 
-───────────────────────────────────────
-THỜI GIAN
-───────────────────────────────────────
-Ngày tạo: ${new Date(slip.createdDate).toLocaleString('vi-VN')}
-${slip.completedDate ? `Ngày hoàn thành: ${new Date(slip.completedDate).toLocaleString('vi-VN')}` : ''}
-
-${slip.note ? `\n───────────────────────────────────────\nGHI CHÚ\n───────────────────────────────────────\n${slip.note}` : ''}
-
-═══════════════════════════════════════
-    `;
+    details += '═══════════════════════════════════════\n';
 
     alert(details);
 }

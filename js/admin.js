@@ -123,6 +123,11 @@ function setupNavigation() {
           }
           renderPriceList();
         } else if (targetId === "import-slips") {
+          // THÊM: Reload trang khi vào tab import-slips để cập nhật danh sách sản phẩm
+          if (window.needsReloadForImportSlips) {
+            window.location.reload();
+            return;
+          }
           if (!window.importAdminInitialized) {
             initImportAdmin();
             window.importAdminInitialized = true;
@@ -137,6 +142,11 @@ function setupNavigation() {
   if (firstLink) {
     firstLink.click();
   }
+}
+
+// THÊM: Export hàm để các module khác có thể đánh dấu cần reload
+export function markNeedsReloadForImportSlips() {
+    window.needsReloadForImportSlips = true;
 }
 
 export function updateGeneralStats() {

@@ -1,4 +1,4 @@
-import { productManager, categoryManager, DOM, updateGeneralStats } from './admin.js';
+import { productManager, categoryManager, DOM, updateGeneralStats,markNeedsReloadForImportSlips } from './admin.js';
 
 let currentEditingProductId = null;
 
@@ -125,6 +125,7 @@ export function handleProductFormSubmit(e) {
         handleUpdateProduct(currentEditingProductId, productData);
     } else {
         handleAddProduct(productData);
+        markNeedsReloadForImportSlips();
     }
 }
 
