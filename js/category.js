@@ -1,4 +1,4 @@
-
+import { syncToStorage } from "./admin.js";
 
 class Category {
     constructor(id, name) { 
@@ -39,8 +39,7 @@ class CategoryManager {
 
     luuDanhSachCategory() {
         try {
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.categories));
-            return true;
+            return syncToStorage(this.STORAGE_KEY, this.categories);
         } catch (error) {
             console.error('Lỗi khi lưu danh sách Category:', error);
             return false;

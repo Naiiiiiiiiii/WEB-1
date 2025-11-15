@@ -1,4 +1,4 @@
-
+import { syncToStorage } from "./admin.js";
 
 export class ImportSlip {
     constructor({
@@ -125,8 +125,7 @@ export class ImportManager {
     saveSlips() {
         try {
             const slipsData = this.slips.map(s => s.toJSON());
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(slipsData));
-            return true;
+            return syncToStorage(this.STORAGE_KEY, slipsData);
         } catch (error) {
             console.error('Lỗi khi lưu danh sách phiếu nhập:', error);
             return false;

@@ -1,4 +1,4 @@
-
+import { syncToStorage } from "./admin.js";
 
 const ORDER_STORAGE_KEY = "orders";
 
@@ -200,10 +200,7 @@ export function placeOrder(orderData) {
   };
 
   try {
-    localStorage.setItem(
-      ORDER_STORAGE_KEY,
-      JSON.stringify(orders.concat(newOrder))
-    );
+    syncToStorage(ORDER_STORAGE_KEY, orders.concat(newOrder));
 
     if (window.renderInventoryTable) window.renderInventoryTable();
     if (window.updateProductStockUI) window.updateProductStockUI();
@@ -247,7 +244,7 @@ export function updateOrderStatus(orderId, newStatus) {
   orderToUpdate.status = newStatus;
 
   try {
-    localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orders));
+    syncToStorage(ORDER_STORAGE_KEY, orders);
     console.log(`Đơn hàng ${orderId} đã cập nhật trạng thái: ${newStatus}`);
 
     if (window.renderOrderHistory) {
@@ -291,7 +288,7 @@ export function cancelOrder(orderId) {
     orderToCancel.status = "Đã hủy";
 
     try {
-      localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orders));
+      syncToStorage(ORDER_STORAGE_KEY, orders);
 
       if (window.renderInventoryTable) {
         window.renderInventoryTable();

@@ -1,6 +1,7 @@
 import { Product } from "./Product.js";
 import { productDataList } from "./productData.js";
 import { categoryManager } from "./category.js";
+import { syncToStorage } from "./admin.js";
 
 export class ProductManager {
   constructor() {
@@ -52,8 +53,7 @@ export class ProductManager {
   saveProducts() {
     try {
       const productsData = this.products.map((p) => p.toJSON());
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(productsData));
-      return true;
+      return syncToStorage(this.STORAGE_KEY, productsData);
     } catch (error) {
       console.error("Lỗi khi lưu danh sách sản phẩm:", error);
       return false;

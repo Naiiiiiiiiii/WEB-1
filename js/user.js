@@ -1,3 +1,5 @@
+import { syncToStorage } from "./admin.js";
+
 class User {
   constructor(
     hoTen,
@@ -87,8 +89,7 @@ class UserManager {
         soDienThoai: u.soDienThoai || "",
         diaChiMacDinh: u.diaChiMacDinh || "",
       }));
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usersData));
-      return true;
+      return syncToStorage(this.STORAGE_KEY, usersData);
     } catch (error) {
       console.error("Lỗi khi lưu danh sách user:", error);
       return false;
