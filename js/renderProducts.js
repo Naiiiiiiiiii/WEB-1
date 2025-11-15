@@ -280,37 +280,77 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modalName) {
       modalName.textContent = product.name;
     }
+    // ✅ Fix renderStars() undefined
     if (modalRating) {
-      modalRating.innerHTML = `${product.renderStars()} <span class="rating-text">(${
+      let starsHtml = "";
+
+      if (typeof product.renderStars === "function") {
+        starsHtml = product.renderStars();
+      } else {
+        // Fallback: render thủ công
+        const rating = product.rating || 0;
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+        starsHtml =
+          '<i class="fas fa-star"></i>'.repeat(fullStars) +
+          (hasHalfStar ? '<i class="fas fa-star-half-alt"></i>' : "") +
+          '<i class="far fa-star"></i>'.repeat(emptyStars);
+      }
+
+      modalRating.innerHTML = `${starsHtml} <span class="rating-text">(${
         product.ratingCount || 0
       })</span>`;
     }
 
+    // ✅ Fix isOnSale() undefined
     if (modalPrice) {
       const currentPrice = (product.price || 0).toLocaleString("vi-VN");
       let priceHtml = `<strong>${currentPrice} VNĐ</strong>`;
 
-      if (product.oldPrice && product.isOnSale()) {
+      const isOnSale =
+        typeof product.isOnSale === "function"
+          ? product.isOnSale()
+          : product.oldPrice && product.oldPrice > product.price;
+
+      if (isOnSale) {
         const oldPrice = (product.oldPrice || 0).toLocaleString("vi-VN");
         priceHtml += ` <span class="old-price">${oldPrice} VNĐ</span>`;
       }
       modalPrice.innerHTML = priceHtml;
     }
 
+    // ✅ Fix sizes - lấy dynamic từ variants
     if (modalOptionsContainer) {
-      const sizeOptions = [39, 40, 41, 42, 43]
-        .map((size) => `<option value="${size}">EU ${size}</option>`)
-        .join("");
+      const variants = product.variants || [];
+      const uniqueSizes = [...new Set(variants.map((v) => v.size))].filter(
+        Boolean
+      );
+
+      const sizeOptions =
+        uniqueSizes.length > 0
+          ? uniqueSizes
+              .map(
+                (size) =>
+                  `<option value="${escapeHtml(size)}">Size ${escapeHtml(
+                    size
+                  )}</option>`
+              )
+              .join("")
+          : [39, 40, 41, 42, 43]
+              .map((size) => `<option value="${size}">Size ${size}</option>`)
+              .join("");
 
       modalOptionsContainer.innerHTML = `
-                <div class="form-group size-selector">
-                    <label for="modal-shoe-size">Chọn Kích cỡ:</label>
-                    <select id="modal-shoe-size" required>
-                        <option value="">-- Chọn size --</option>
-                        ${sizeOptions}
-                    </select>
-                </div>
-            `;
+    <div class="form-group size-selector">
+        <label for="modal-shoe-size">Chọn Kích cỡ:</label>
+        <select id="modal-shoe-size" required>
+            <option value="">-- Chọn size --</option>
+            ${sizeOptions}
+        </select>
+    </div>
+  `;
     }
 
     if (modalAddBtn) modalAddBtn.dataset.id = id;

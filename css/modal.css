@@ -1,4 +1,3 @@
-
 .modal {
   display: none;
   position: fixed;
@@ -50,4 +49,28 @@
 
 .modal-content .add-to-cart:hover {
   background-color: darkorange;
+}
+
+#modal-options-container {
+  margin: 20px 0;
+}
+
+#modal-options-container label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+#modal-options-container select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #ecf0f1;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+#modal-options-container select:focus {
+  outline: none;
+  border-color: #3498db;
 }
