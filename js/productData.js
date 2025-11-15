@@ -3019,39 +3019,4 @@ export const productDataList = [
     sales: [],
     isHidden: false,
   },
-  {
-    id: 4,
-    name: "Giày Boots nam MATURE Chelsea Boots – Đen – Version 2025",
-    categoryId: "C002",
-    price: 1399000,
-    oldPrice: null,
-    img: "./img/bootsnam.webp",
-    rating: 4,
-    ratingCount: 76,
-    badge: null,
-    description:
-      "Chelsea Boots MATURE phiên bản 2025 với thiết kế tối giản, chất liệu da bền đẹp, dễ phối đồ, phù hợp cho phong cách lịch lãm và cá tính.",
-    images: ["./img/bootsnam.webp", "./img/bootsnam.webp"],
-
-    variants: [
-      { size: 39, stock: 0 },
-      { size: 40, stock: 0 },
-      { size: 41, stock: 0 },
-      { size: 42, stock: 0 },
-      { size: 43, stock: 0 },
-    ],
-
-    costPrice: 980000,
-    initialStock: calculateInitialStock([
-      { size: 39, stock: 6 },
-      { size: 40, stock: 6 },
-      { size: 41, stock: 6 },
-      { size: 42, stock: 6 },
-      { size: 43, stock: 6 },
-    ]),
-    lowStockThreshold: 4,
-    imports: [],
-    sales: [],
-    isHidden: false,
-  },
 ];

@@ -1,5 +1,6 @@
 import { productManager } from "./ProductManager.js";
 import { thresholdManager } from "./ThresholdManager.js";
+import { importManager } from "./ImportSlip.js";
 
 // ==================== UI COMPONENTS ====================
 
@@ -149,6 +150,43 @@ function renderThresholdConfigPanel() {
     `;
 }
 
+  function getLatestImportTime(productId) {
+  const slips = importManager.getAllSlips();
+  
+  // Lọc các phiếu hoàn thành của sản phẩm này
+  const completedSlips = slips.filter(slip => 
+    slip.productId === productId && slip.status === 'COMPLETED'
+  );
+  
+  if (completedSlips.length === 0) {
+    return null;
+  }
+  
+  // Sắp xếp theo ngày mới nhất
+  completedSlips.sort((a, b) => 
+    new Date(b.completedDate) - new Date(a.completedDate)
+  );
+  
+  return completedSlips[0].completedDate;
+}
+
+/**
+ * Format thời gian hiển thị
+ */
+function formatImportTime(dateString) {
+  if (!dateString) return '<span class="text-muted">Không rõ</span>';
+  
+  const date = new Date(dateString);
+  return date.toLocaleDateString('vi-VN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+
 /**
  * Render bảng tồn kho với cảnh báo
  */
@@ -189,6 +227,8 @@ function renderInventoryTable() {
     if (status.currentStock === 0) stats.outOfStock++;
     if (status.severity === "critical") stats.critical++;
 
+    const lastImportTime = getLatestImportTime(product.id);
+
     // Determine row class and status badge
     let rowClass = "";
     let statusBadge = "";
@@ -207,7 +247,7 @@ function renderInventoryTable() {
         statusBadge = `<span class="badge badge-warning"><i class="fa-solid fa-exclamation-circle"></i> Cảnh báo</span>`;
         break;
       default:
-        statusBadge = `<span class="badge badge-safe"><i class="fa-solid fa-circle-check"></i> Ổn</span>`;
+        statusBadge = `<span class="badge badge-safe"><i class="fa-solid fa-circle-check"></i>Còn hàng</span>`;
     }
 
     const row = document.createElement("tr");
@@ -269,6 +309,7 @@ function renderInventoryTable() {
                     }
                 </div>
             </td>
+            <td class="col-times">${formatImportTime(lastImportTime)}</td>
         `;
 
     tbody.appendChild(row);
@@ -355,6 +396,9 @@ function renderStockSummary(stats) {
         }
     `;
 }
+
+
+
 
 // ==================== EVENT HANDLERS ====================
 
