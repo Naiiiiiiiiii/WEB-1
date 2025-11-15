@@ -291,17 +291,17 @@ function renderInventoryTable() {
       </button>
       
       <!-- ✨ Nút XÓA - Luôn hiển thị, disabled khi chưa có ngưỡng riêng -->
-      <button 
-        class="btn btn-sm btn-ghost" 
-        onclick="clearProductThreshold(${product.id})"
-        ${product.lowStockThreshold === null ? "disabled" : ""}
-        title="${
-          product.lowStockThreshold !== null
-            ? "Xóa ngưỡng riêng và dùng ngưỡng danh mục/mặc định"
-            : "Chưa có ngưỡng riêng"
-        }">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+ <button 
+            class="btn btn-sm btn-ghost" 
+            onclick="clearProductThreshold(${product.id})"
+            ${product.lowStockThreshold === null ? "disabled" : ""}
+            title="${
+              product.lowStockThreshold !== null
+                ? "Xóa ngưỡng riêng và dùng ngưỡng danh mục/mặc định"
+                : "Chưa có ngưỡng riêng"
+            }">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
     </div>
   </td>
   <td class="col-times">${formatImportTime(lastImportTime)}</td>
@@ -436,6 +436,10 @@ window.resetInventoryFilter = function () {
 /**
  * Filter products by category and search term
  */
+/**
+ * Filter products by category and search term
+ * ✅ ĐÃ SỬA: Thêm logic kiểm tra disabled cho nút xóa
+ */
 function filterAndRenderInventory(
   categoryId,
   statusFilter,
@@ -450,7 +454,7 @@ function filterAndRenderInventory(
     products = products.filter((p) => p.categoryId === categoryId);
   }
 
-  // 2. ✨ Filter by status (TÍNH NĂNG MỚI)
+  // 2. Filter by status
   if (statusFilter !== "all") {
     products = products.filter((product) => {
       const status = product.getStockStatus();
@@ -459,21 +463,13 @@ function filterAndRenderInventory(
 
       switch (statusFilter) {
         case "safe":
-          // Chỉ hiển thị sản phẩm ĐỦ hàng
           return stock >= threshold;
-
         case "warning":
-          // ⚠️ Hiển thị TẤT CẢ sản phẩm DƯỚI ngưỡng (bao gồm critical và out)
           return stock < threshold;
-
         case "critical":
-          // Chỉ hiển thị sản phẩm NGUY HIỂM (dưới 50% ngưỡng nhưng > 0)
           return stock > 0 && stock < threshold * 0.5;
-
         case "out":
-          // Chỉ hiển thị sản phẩm HẾT HÀNG
           return stock === 0;
-
         default:
           return true;
       }
@@ -484,25 +480,18 @@ function filterAndRenderInventory(
   if (fromDate || toDate) {
     products = products.filter((product) => {
       const lastImportTime = getLatestImportTime(product.id);
-
-      if (!lastImportTime) {
-        return false;
-      }
+      if (!lastImportTime) return false;
 
       const importDate = new Date(lastImportTime);
       const from = fromDate ? new Date(fromDate) : null;
       const to = toDate ? new Date(toDate) : null;
 
-      if (from && importDate < from) {
-        return false;
-      }
+      if (from && importDate < from) return false;
 
       if (to) {
         const toDateEnd = new Date(to);
         toDateEnd.setDate(toDateEnd.getDate() + 1);
-        if (importDate >= toDateEnd) {
-          return false;
-        }
+        if (importDate >= toDateEnd) return false;
       }
 
       return true;
@@ -536,12 +525,17 @@ function filterAndRenderInventory(
     return;
   }
 
-  // Render products (giữ nguyên phần render hiện tại)
+  // ✅ PHẦN ĐÃ SỬA: Thêm logic disabled cho nút xóa
   products.forEach((product) => {
     const status = product.getStockStatus();
     const categoryName =
       productManager.getCategoryName(product.categoryId) || "Không rõ";
     const lastImportTime = getLatestImportTime(product.id);
+
+    // ✅ THÊM: Kiểm tra có ngưỡng riêng hay không
+    const hasCustomThreshold =
+      product.lowStockThreshold !== null &&
+      product.lowStockThreshold !== undefined;
 
     let rowClass = "";
     let statusBadge = "";
@@ -599,20 +593,26 @@ function filterAndRenderInventory(
             title="Ngưỡng riêng cho sản phẩm này"
             data-product-id="${product.id}"
           />
-<button 
-    class="btn btn-sm btn-primary" 
-    onclick="saveProductThreshold(${product.id})"
-    title="Lưu ngưỡng">
-    <i class="fa-solid fa-floppy-disk"></i>
-</button>
-
-<button 
-    class="btn btn-sm btn-ghost" 
-    onclick="clearProductThreshold(${product.id})"
-    title="Xóa ngưỡng riêng">
-    <i class="fa-solid fa-xmark"></i>
-</button>
-
+          
+          <button 
+            class="btn btn-sm btn-primary" 
+            onclick="saveProductThreshold(${product.id})"
+            title="Lưu ngưỡng">
+            <i class="fa-solid fa-floppy-disk"></i>
+          </button>
+          
+          <!-- ✅ ĐÃ SỬA: Thêm điều kiện disabled -->
+          <button 
+            class="btn btn-sm btn-ghost" 
+            onclick="clearProductThreshold(${product.id})"
+            ${!hasCustomThreshold ? "disabled" : ""}
+            title="${
+              hasCustomThreshold
+                ? "Xóa ngưỡng riêng và dùng ngưỡng danh mục/mặc định"
+                : "Chưa có ngưỡng riêng"
+            }">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
         </div>
       </td>
       <td class="col-times">${formatImportTime(lastImportTime)}</td>
@@ -620,8 +620,7 @@ function filterAndRenderInventory(
 
     tbody.appendChild(row);
   });
-}
-// ==================== EVENT HANDLERS ====================
+} // ==================== EVENT HANDLERS ====================
 
 /**
  * Lưu ngưỡng mặc định
