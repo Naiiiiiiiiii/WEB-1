@@ -16,6 +16,12 @@ function initDOM() {
 
         importSlipsTableBody: document.getElementById('importSlipsTableBody'),
 
+        // draft preview elements
+        draftPreviewList: document.getElementById('draftPreviewList'),
+        draftTotalQty: document.getElementById('draftTotalQty'),
+        draftTotalValue: document.getElementById('draftTotalValue'),
+        previewClearBtn: document.getElementById('previewClearBtn'),
+
         filterStatus: document.getElementById('importFilterStatus'),
         filterProductName: document.getElementById('importFilterName'),
         filterFromDate: document.getElementById('importFilterFrom'),
@@ -25,6 +31,7 @@ function initDOM() {
 
         editModal: document.getElementById('editImportSlipModal'),
         editForm: document.getElementById('editImportSlipForm'),
+        editItemsContainer: document.getElementById('editItemsContainer'),
         editSlipNumber: document.getElementById('editSlipNumber'),
         editProductName: document.getElementById('editProductName'),
         editQuantity: document.getElementById('editImportSlipQuantity'),
@@ -33,8 +40,14 @@ function initDOM() {
         editSupplier: document.getElementById('editImportSlipSupplier'),
         editNote: document.getElementById('editImportSlipNote'),
         closeEditModalBtn: document.querySelector('#editImportSlipModal .close-modal-btn'),
-        cancelEditBtn: document.querySelector('#editImportSlipModal .cancel-modal-btn')
+        cancelEditBtn: document.querySelector('#editImportSlipModal .cancel-modal-btn'),
+        // Fallback if querySelectorAll finds them differently
+        editModalCloseButtons: document.querySelectorAll('#editImportSlipModal .close-modal-btn, #editImportSlipModal .cancel-modal-btn')
     };
+
+    console.log('initDOM: editModal=', DOM.editModal);
+    console.log('initDOM: editForm=', DOM.editForm);
+    console.log('initDOM: importSlipsTableBody=', DOM.importSlipsTableBody);
 }
 
 export function initImportAdmin() {
@@ -58,6 +71,14 @@ function setupEventListeners() {
         DOM.addImportSlipItemBtn.addEventListener('click', () => addImportItemRow());
     }
 
+    if (DOM.previewClearBtn) {
+        DOM.previewClearBtn.addEventListener('click', () => {
+            DOM.importSlipItemsContainer.innerHTML = '';
+            addImportItemRow();
+            updateDraftPreview();
+        });
+    }
+
     if (DOM.filterApplyBtn) {
         DOM.filterApplyBtn.addEventListener('click', handleFilter);
     }
@@ -66,12 +87,11 @@ function setupEventListeners() {
         DOM.filterResetBtn.addEventListener('click', handleResetFilter);
     }
 
-    if (DOM.closeEditModalBtn) {
-        DOM.closeEditModalBtn.addEventListener('click', closeEditModal);
-    }
-
-    if (DOM.cancelEditBtn) {
-        DOM.cancelEditBtn.addEventListener('click', closeEditModal);
+    // Gắn sự kiện cho close buttons trong modal edit
+    if (DOM.editModalCloseButtons) {
+        DOM.editModalCloseButtons.forEach(btn => {
+            btn.addEventListener('click', closeEditModal);
+        });
     }
 
     if (DOM.editForm) {
@@ -87,6 +107,46 @@ function setupEventListeners() {
     }
 }
 
+function updateDraftPreview() {
+    if (!DOM.draftPreviewList) return;
+
+    const rows = Array.from(DOM.importSlipItemsContainer.querySelectorAll('.import-item-row'));
+    if (rows.length === 0) {
+        DOM.draftPreviewList.innerHTML = '<div class="muted">Chưa có sản phẩm</div>';
+        DOM.draftTotalQty.textContent = '0';
+        DOM.draftTotalValue.textContent = '0₫';
+        return;
+    }
+
+    let totalQty = 0;
+    let totalVal = 0;
+    DOM.draftPreviewList.innerHTML = '';
+
+    rows.forEach(r => {
+        const sel = r.querySelector('.import-item-select');
+        const qty = Number(r.querySelector('.import-item-qty').value) || 0;
+        const price = Number(r.querySelector('.import-item-price').value) || 0;
+        const size = r.querySelector('.import-item-size').value || '';
+
+        const label = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].textContent : '-- Chưa chọn --';
+        const displayName = label.split(' - ')[0];
+
+        totalQty += qty;
+        totalVal += qty * price;
+
+        const itemEl = document.createElement('div');
+        itemEl.className = 'preview-item';
+        itemEl.innerHTML = `
+            <div class="ellipsis">${displayName} ${size ? `(${size})` : ''}</div>
+            <div>${qty} x ${price ? price.toLocaleString('vi-VN') + '₫' : '-'} </div>
+        `;
+        DOM.draftPreviewList.appendChild(itemEl);
+    });
+
+    DOM.draftTotalQty.textContent = totalQty;
+    DOM.draftTotalValue.textContent = `${totalVal.toLocaleString('vi-VN')}₫`;
+}
+
 function loadProductsToSelect() {
     return productManager.getVisibleProducts();
 }
@@ -94,10 +154,6 @@ function loadProductsToSelect() {
 function createImportItemRow(products) {
     const row = document.createElement('div');
     row.className = 'import-item-row';
-    row.style.display = 'flex';
-    row.style.gap = '8px';
-    row.style.marginBottom = '8px';
-    row.style.alignItems = 'center';
 
     const select = document.createElement('select');
     select.className = 'import-item-select';
@@ -143,19 +199,26 @@ function createImportItemRow(products) {
         const hasVariants = select.options[select.selectedIndex]?.dataset.hasVariants === 'true';
         size.style.display = hasVariants ? 'inline-block' : 'none';
         if (!hasVariants) size.value = '';
+        updateDraftPreview();
     });
 
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
-    removeBtn.className = 'btn btn-danger';
-    removeBtn.textContent = 'Xóa';
-    removeBtn.addEventListener('click', () => row.remove());
+    removeBtn.className = 'btn btn-delete';
+    removeBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i> Xóa';
+    removeBtn.addEventListener('click', () => {
+        row.remove();
+        updateDraftPreview();
+    });
 
     row.appendChild(select);
     row.appendChild(qty);
     row.appendChild(price);
     row.appendChild(size);
     row.appendChild(removeBtn);
+
+    // update preview when values change
+    [qty, price, size].forEach(inp => inp.addEventListener('input', updateDraftPreview));
 
     return row;
 }
@@ -164,6 +227,7 @@ function addImportItemRow() {
     const products = loadProductsToSelect();
     const row = createImportItemRow(products);
     DOM.importSlipItemsContainer.appendChild(row);
+    updateDraftPreview();
 }
 
 function handleAddImportSlip(e) {
@@ -317,9 +381,15 @@ export function renderImportSlipsList(slips = null) {
 }
 
 function attachSlipActionListeners() {
+    console.log('attachSlipActionListeners called');
 
-    document.querySelectorAll('.btn-edit-slip').forEach(btn => {
-        btn.addEventListener('click', () => handleEditSlip(btn.dataset.id));
+    const editButtons = document.querySelectorAll('.btn-edit-slip');
+    console.log('Found edit buttons:', editButtons.length);
+    editButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            console.log('Edit button clicked, id:', btn.dataset.id);
+            handleEditSlip(btn.dataset.id);
+        });
     });
 
     document.querySelectorAll('.btn-complete-slip').forEach(btn => {
@@ -336,44 +406,101 @@ function attachSlipActionListeners() {
 }
 
 function handleEditSlip(slipId) {
+    console.log('handleEditSlip called with id:', slipId);
     const slip = importManager.getSlipById(slipId);
     if (!slip || !slip.canEdit()) {
         alert('Không thể sửa phiếu này!');
         return;
     }
+    // Populate modal for single or multiple items
+    if (DOM.editSlipNumber) DOM.editSlipNumber.textContent = slip.slipNumber;
+    if (DOM.editSupplier) DOM.editSupplier.value = slip.supplier || '';
+    if (DOM.editNote) DOM.editNote.value = slip.note || '';
 
-    // If slip contains multiple items, editing inline is complex. Ask user to recreate.
-    if (Array.isArray(slip.items) && slip.items.length > 1) {
-        alert('Phiếu này chứa nhiều sản phẩm. Vui lòng xóa và tạo lại nếu muốn chỉnh sửa các mục.');
-        return;
+    // prepare items container
+    const items = Array.isArray(slip.items) && slip.items.length > 0 ? slip.items : [];
+
+    if (DOM.editItemsContainer) DOM.editItemsContainer.innerHTML = '';
+
+    if (items.length > 1) {
+        // hide single-item group
+        const singleGroup = document.getElementById('editSingleItemGroup');
+        if (singleGroup) singleGroup.style.display = 'none';
+
+        // build rows for each item
+        items.forEach((it, idx) => {
+            const row = document.createElement('div');
+            row.className = 'edit-item-row';
+            row.dataset.productId = it.productId;
+            row.dataset.index = idx;
+
+            row.innerHTML = `
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <div style="min-width:180px; font-weight:600;">${it.productName}${it.variantSize ? ` (Size ${it.variantSize})` : ''}</div>
+                    <input type="number" class="edit-item-qty" value="${it.quantity}" min="1" style="width:80px;padding:6px;border-radius:6px;border:1px solid #ddd;">
+                    <input type="number" class="edit-item-price" value="${it.importPrice}" min="0" step="1000" style="width:120px;padding:6px;border-radius:6px;border:1px solid #ddd;">
+                    <input type="number" class="edit-item-size" value="${it.variantSize ?? ''}" placeholder="Size" style="width:80px;padding:6px;border-radius:6px;border:1px solid #ddd;">
+                </div>
+            `;
+
+            if (DOM.editItemsContainer) DOM.editItemsContainer.appendChild(row);
+        });
+    } else {
+        // single item: show single-item group and populate
+        const singleGroup = document.getElementById('editSingleItemGroup');
+        if (singleGroup) singleGroup.style.display = '';
+
+        const it = items[0] || null;
+        if (DOM.editProductName) DOM.editProductName.textContent = it ? it.productName : (slip.productName || '-');
+        if (DOM.editQuantity) DOM.editQuantity.value = it ? it.quantity : (slip.quantity || 0);
+        if (DOM.editPrice) DOM.editPrice.value = it ? it.importPrice : (slip.importPrice || 0);
+        if (DOM.editSize) DOM.editSize.value = it ? (it.variantSize || '') : (slip.variantSize || '');
     }
 
-    const it = (Array.isArray(slip.items) && slip.items.length === 1) ? slip.items[0] : null;
+    if (DOM.editForm) {
+        DOM.editForm.dataset.editingId = slipId;
+    }
 
-    DOM.editSlipNumber.textContent = slip.slipNumber;
-    DOM.editProductName.textContent = it ? it.productName : (slip.productName || '-');
-    DOM.editQuantity.value = it ? it.quantity : (slip.quantity || 0);
-    DOM.editPrice.value = it ? it.importPrice : (slip.importPrice || 0);
-    DOM.editSize.value = it ? (it.variantSize || '') : (slip.variantSize || '');
-    DOM.editSupplier.value = slip.supplier || '';
-    DOM.editNote.value = slip.note || '';
-
-    DOM.editForm.dataset.editingId = slipId;
-
-    DOM.editModal.style.display = 'flex';
+    if (DOM.editModal) {
+        DOM.editModal.style.display = 'flex';
+    } else {
+        console.error('editModal not found in DOM');
+    }
 }
 
 function handleUpdateImportSlip(e) {
     e.preventDefault();
 
     const slipId = Number(DOM.editForm.dataset.editingId);
-    const updatedData = {
-        quantity: Number(DOM.editQuantity.value),
-        importPrice: Number(DOM.editPrice.value),
-        variantSize: DOM.editSize.value ? Number(DOM.editSize.value) : null,
-        supplier: DOM.editSupplier.value.trim(),
-        note: DOM.editNote.value.trim()
-    };
+    // if multiple edit rows present, gather them
+    const editRows = DOM.editItemsContainer ? Array.from(DOM.editItemsContainer.querySelectorAll('.edit-item-row')) : [];
+
+    let updatedData = {};
+    if (editRows.length > 0) {
+        const items = editRows.map(r => {
+            const productId = Number(r.dataset.productId) || null;
+            const productName = r.querySelector('div') ? r.querySelector('div').textContent.trim() : '';
+            const qty = Number(r.querySelector('.edit-item-qty').value) || 0;
+            const price = Number(r.querySelector('.edit-item-price').value) || 0;
+            const sizeVal = r.querySelector('.edit-item-size').value;
+            const variantSize = sizeVal ? Number(sizeVal) : null;
+            return { productId, productName, variantSize, quantity: qty, importPrice: price };
+        });
+
+        updatedData = {
+            items,
+            supplier: DOM.editSupplier.value.trim(),
+            note: DOM.editNote.value.trim()
+        };
+    } else {
+        updatedData = {
+            quantity: Number(DOM.editQuantity.value),
+            importPrice: Number(DOM.editPrice.value),
+            variantSize: DOM.editSize.value ? Number(DOM.editSize.value) : null,
+            supplier: DOM.editSupplier.value.trim(),
+            note: DOM.editNote.value.trim()
+        };
+    }
 
     if (importManager.updateSlip(slipId, updatedData)) {
         alert('✅ Cập nhật phiếu nhập thành công!');
@@ -385,9 +512,25 @@ function handleUpdateImportSlip(e) {
 }
 
 function closeEditModal() {
-    DOM.editModal.style.display = 'none';
-    DOM.editForm.reset();
-    delete DOM.editForm.dataset.editingId;
+    if (DOM.editModal) DOM.editModal.style.display = 'none';
+
+    if (DOM.editForm) {
+        DOM.editForm.reset();
+        delete DOM.editForm.dataset.editingId;
+    }
+
+    // Clear any multi-item edit rows and restore single-item group
+    if (DOM.editItemsContainer) DOM.editItemsContainer.innerHTML = '';
+    const singleGroup = document.getElementById('editSingleItemGroup');
+    if (singleGroup) singleGroup.style.display = '';
+
+    // Reset single-item fields if present
+    if (DOM.editProductName) DOM.editProductName.textContent = '';
+    if (DOM.editQuantity) DOM.editQuantity.value = '';
+    if (DOM.editPrice) DOM.editPrice.value = '';
+    if (DOM.editSize) DOM.editSize.value = '';
+    if (DOM.editSupplier) DOM.editSupplier.value = '';
+    if (DOM.editNote) DOM.editNote.value = '';
 }
 
 function handleCompleteSlip(slipId) {
@@ -448,8 +591,29 @@ function handleCompleteSlip(slipId) {
         alert(`✅ Hoàn thành phiếu nhập ${slip.slipNumber} thành công!\n✅ Đã cập nhật tồn kho.`);
         renderImportSlipsList();
 
+        // Dispatch custom event để báo inventory cần update
+        console.log('📢 [import-admin] Dispatching inventoryUpdated event...');
+        const event = new CustomEvent('inventoryUpdated', {
+            detail: { slipId, slipNumber: slip.slipNumber, items: slip.items },
+            bubbles: true
+        });
+        window.dispatchEvent(event);
+        document.dispatchEvent(event);
+        console.log('📢 [import-admin] Event dispatched successfully');
+
+        // Force direct update to modules
+        console.log('📢 [import-admin] Forcing manual updates to modules...');
         if (typeof window.renderInventoryTable === 'function') {
-            window.renderInventoryTable();
+            setTimeout(() => {
+                console.log('📢 [import-admin] Calling renderInventoryTable');
+                window.renderInventoryTable();
+            }, 100);
+        }
+        if (typeof window.renderProductList === 'function') {
+            setTimeout(() => {
+                console.log('📢 [import-admin] Calling renderProductList');
+                window.renderProductList();
+            }, 100);
         }
     } else {
         alert('⚠️ Phiếu đã hoàn thành nhưng có lỗi khi cập nhật tồn kho cho một số sản phẩm!');

@@ -2,7 +2,7 @@ import { UserManager } from "./user.js";
 import { categoryManager } from "./category.js";
 
 import { ProductManager } from "./ProductManager.js";
-import { setupInventoryModule } from "./inventory.js";
+import { setupInventoryModule, registerInventoryUpdateListener } from "./inventory.js";
 import { initProductAdmin, renderProductList } from "./product-admin.js";
 import { initCategoryAdmin, renderCategoryList } from "./category-admin.js";
 import { initImportAdmin, renderImportSlipsList } from "./import-admin.js";
@@ -20,7 +20,12 @@ export { userManager, productManager, categoryManager, importManager };
 
 if (inventoryModule && inventoryModule.hienThiDanhSachTonKho) {
   window.renderInventoryTable = inventoryModule.hienThiDanhSachTonKho;
+  // Register inventory update listener immediately
+  registerInventoryUpdateListener(inventoryModule.hienThiDanhSachTonKho);
 }
+
+// Export renderProductList to window for cross-module access
+window.renderProductList = renderProductList;
 
 export const DOM = {
   loginPage: document.getElementById("loginPage"),

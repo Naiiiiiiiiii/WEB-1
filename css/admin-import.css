@@ -4,6 +4,98 @@
   animation: fadeIn 0.3s ease-in;
 }
 
+/* New styles for improved create-slip form */
+.import-form-card {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 16px;
+  align-items: start;
+  padding: 16px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border: 1px solid #e6eefc;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.import-left h3 { margin: 0 0 12px 0; }
+
+.import-right { position: relative; }
+
+.draft-preview {
+  border-radius: 10px;
+  padding: 12px;
+  background: linear-gradient(180deg, #fbfbff 0%, #ffffff 100%);
+  border: 1px solid #e8eefc;
+  box-shadow: 0 6px 18px rgba(102,126,234,0.06);
+  max-height: 550px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Make left and right columns visually aligned (remove tiny inset) */
+.import-form-card .import-left { padding: 0; }
+.import-form-card .import-right { padding: 0; display: flex; align-items: flex-start; min-width: 0; width: 280px; }
+.draft-preview { margin: 0; }
+
+/* Make the section-toolbar for import-slips use the full width (remove nested inset) */
+.import-slips > .section-toolbar {
+  background: transparent;
+  border: none;
+  padding: 8px 0 0 0;
+}
+
+/* Bring the card edge closer to section content by removing extra inner padding on small screens */
+@media (min-width: 901px) {
+  .import-form-card { padding: 18px; }
+}
+@media (max-width: 900px) {
+  .import-form-card { padding: 12px; gap: 12px; }
+}
+
+/* Emphasize clear button */
+.preview-actions .btn-delete,
+.preview-actions .btn-danger {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 10px rgba(231,76,60,0.2);
+}
+.preview-actions .btn-delete i { margin-right:6px }
+
+.draft-preview h4 { display:flex; gap:8px; align-items:center; margin:0 0 8px 0; }
+.preview-list { max-height: 340px; overflow-y: auto; overflow-x: hidden; margin-bottom: 10px; }
+.preview-list .preview-item { display:flex; justify-content:space-between; gap:8px; padding:8px 4px; border-bottom:1px dashed #eef4ff; align-items:flex-start; overflow: hidden; }
+.preview-list .preview-item > * { min-width:0; }
+
+.edit-item-row { display:flex; gap:10px; align-items:center; padding:8px 6px; border-bottom:1px solid #f1f6ff; }
+.edit-item-row .edit-item-qty, .edit-item-row .edit-item-price, .edit-item-row .edit-item-size { padding:6px; border-radius:6px; border:1px solid #e6eefc; }
+.preview-summary { display:flex; justify-content:space-between; gap:10px; padding-top:8px; border-top:1px solid #f1f6ff; margin-top:8px; font-weight:700; }
+.preview-actions { margin-top:12px; display:flex; justify-content:flex-end; }
+
+.items-list { display:flex; flex-direction:column; gap:8px; }
+
+.import-item-row { display:flex; gap:8px; align-items:center; }
+.import-item-select { flex:1; padding:8px 10px; border-radius:8px; border:1px solid #dfe9ff; }
+.import-item-qty, .import-item-price, .import-item-size { padding:8px 10px; border-radius:8px; border:1px solid #dfe9ff; }
+.import-item-qty { width:78px; }
+.import-item-price { width:120px; }
+.import-item-size { width:80px; }
+
+.add-item-btn { padding:8px 12px; border-radius:8px; }
+.create-slip-btn { padding:10px 14px; border-radius:10px; width:100%; font-size:15px; }
+
+.import-form-card .form-row { display:flex; gap:12px; margin-top:12px; }
+
+@media (max-width: 900px) {
+  .import-form-card { grid-template-columns: 1fr; gap: 12px; padding: 12px; }
+  .import-form-card .import-right { width: 100%; }
+  .import-right { order: 99; }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -224,16 +316,22 @@
   }
 }
 
+.col-actions-lg {
+  min-width: 350px;
+  white-space: normal;
+}
+
 .action-buttons {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-start;
-  align-items: center;
+  align-items: stretch;
+  white-space: nowrap;
 }
 
 .action-buttons button {
-  padding: 8px 12px;
+  padding: 8px 14px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -243,7 +341,10 @@
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  flex: 1;
+  min-width: 90px;
 }
 
 .action-buttons button i {
@@ -716,3 +817,4 @@
     justify-content: center;
   }
 }
+
