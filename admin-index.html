@@ -633,65 +633,64 @@
     </div>
 
     <div id="editImportSlipModal" class="modal" style="display:none">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-pen-to-square"></i> Sửa Phiếu Nhập</h3>
-                <button class="close-modal-btn" type="button">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="editImportSlipForm" class="modal-form">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-pen-to-square"></i> Sửa Phiếu Nhập</h3>
+            <button class="close-modal-btn" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="editImportSlipForm" class="modal-form">
+                <div class="form-group">
+                    <label>Số Phiếu</label>
+                    <div id="editSlipNumber"
+                        style="padding:10px; background:#f0f0f0; border-radius:6px; font-weight:600;"></div>
+                </div>
+
+                <!-- Container for editing multiple items -->
+                <div id="editItemsContainer" class="mb-3"></div>
+
+                <div id="editSingleItemGroup">
                     <div class="form-group">
-                        <label>Số Phiếu</label>
-                        <div id="editSlipNumber"
-                            style="padding:10px; background:#f0f0f0; border-radius:6px; font-weight:600;"></div>
-                    </div>
-
-                    <!-- Container for editing multiple items; if single item, this can be left empty and fields below used -->
-                    <div id="editItemsContainer" class="mb-3"></div>
-
-                    <div id="editSingleItemGroup">
-                        <div class="form-group">
-                            <label>Tên Sản phẩm</label>
-                            <div id="editProductName" style="padding:10px; background:#f0f0f0; border-radius:6px;">
-                            </div>
+                        <label>Tên Sản phẩm</label>
+                        <div id="editProductName" style="padding:10px; background:#f0f0f0; border-radius:6px;">
                         </div>
-                        <div class="form-group">
-                            <label for="editImportSlipQuantity">Số Lượng <span class="required">*</span></label>
-                            <input type="number" id="editImportSlipQuantity" min="1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editImportSlipPrice">Giá Nhập (₫) <span class="required">*</span></label>
-                            <input type="number" id="editImportSlipPrice" min="0" step="1000" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editImportSlipSize">Size</label>
-                            <input type="number" id="editImportSlipSize"
-                                placeholder="Không bắt buộc nếu sản phẩm không có variant">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="editImportSlipSupplier">Nhà Cung Cấp</label>
-                        <input type="text" id="editImportSlipSupplier" placeholder="VD: Công ty ABC" maxlength="100">
                     </div>
                     <div class="form-group">
-                        <label for="editImportSlipNote">Ghi Chú</label>
-                        <textarea id="editImportSlipNote" rows="2" placeholder="Ghi chú thêm..."></textarea>
+                        <label for="editImportSlipQuantity">Số Lượng <span class="required">*</span></label>
+                        <input type="number" id="editImportSlipQuantity" min="1">
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary cancel-modal-btn">
-                    <i class="fa-solid fa-xmark"></i> Hủy
-                </button>
-                <button type="submit" form="editImportSlipForm" class="btn-primary">
-                    <i class="fa-solid fa-check"></i> Lưu Thay Đổi
-                </button>
-            </div>
+                    <div class="form-group">
+                        <label for="editImportSlipPrice">Giá Nhập (₫) <span class="required">*</span></label>
+                        <input type="number" id="editImportSlipPrice" min="0" step="1000">
+                    </div>
+                    <div class="form-group">
+                        <label for="editImportSlipSize">Size <span class="required">*</span></label>
+                        <input type="number" id="editImportSlipSize" placeholder="Nhập size sản phẩm">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editImportSlipSupplier">Nhà Cung Cấp</label>
+                    <input type="text" id="editImportSlipSupplier" placeholder="VD: Công ty ABC" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="editImportSlipNote">Ghi Chú</label>
+                    <textarea id="editImportSlipNote" rows="2" placeholder="Ghi chú thêm..."></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary cancel-modal-btn">
+                <i class="fa-solid fa-xmark"></i> Hủy
+            </button>
+            <button type="submit" form="editImportSlipForm" class="btn-primary">
+                <i class="fa-solid fa-check"></i> Lưu Thay Đổi
+            </button>
         </div>
     </div>
+</div>
 
     <div id="productModal" class="product-modal">
         <div class="modal-content">

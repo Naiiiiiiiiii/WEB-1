@@ -15,6 +15,143 @@ import { initPriceAdmin, renderPriceList } from "./price-admin.js";
 import { getOrders } from "./order-manager.js";
 import { initOrderAdmin, loadAndRenderOrders } from "./order-admin.js";
 
+export function syncToStorage(key, data, silent = false) {
+  try {
+    const currentUser = userManager?.layAdminHienTai?.();
+
+    const payload = {
+      data: data,
+      timestamp: Date.now(),
+      updatedBy: currentUser?.tenDangNhap || "admin",
+      version: "1.0",
+    };
+
+    localStorage.setItem(key, JSON.stringify(payload));
+
+    window.dispatchEvent(
+      new CustomEvent("storage-sync", {
+        detail: { key, data, timestamp: payload.timestamp },
+      })
+    );
+
+    if (!silent) {
+      console.log(
+        `✅ [Storage Sync] Đã lưu "${key}" lúc ${new Date().toLocaleTimeString()}`
+      );
+    }
+
+    return true;
+  } catch (error) {
+    console.error(`❌ [Storage Sync] Lỗi khi lưu "${key}":`, error);
+
+    if (error.name === "QuotaExceededError") {
+      alert("⚠️ Dung lượng LocalStorage đã đầy! Hãy dọn dẹp dữ liệu cũ.");
+      return false;
+    }
+
+    return false;
+  }
+}
+
+export function getFromStorage(key, defaultValue = null) {
+  try {
+    const item = localStorage.getItem(key);
+
+    if (!item) {
+      return defaultValue;
+    }
+
+    const parsed = JSON.parse(item);
+
+    if (parsed && typeof parsed === "object" && "data" in parsed) {
+      return parsed.data;
+    }
+
+    return parsed;
+  } catch (error) {
+    console.error(`❌ [Storage Sync] Lỗi khi đọc "${key}":`, error);
+    return defaultValue;
+  }
+}
+
+export function removeFromStorage(key) {
+  try {
+    localStorage.removeItem(key);
+    console.log(`🗑️ [Storage Sync] Đã xóa "${key}"`);
+
+    window.dispatchEvent(
+      new CustomEvent("storage-sync", {
+        detail: { key, data: null, timestamp: Date.now(), action: "remove" },
+      })
+    );
+
+    return true;
+  } catch (error) {
+    console.error(`❌ [Storage Sync] Lỗi khi xóa "${key}":`, error);
+    return false;
+  }
+}
+
+export function batchSyncToStorage(updates) {
+  const results = [];
+
+  Object.entries(updates).forEach(([key, value]) => {
+    results.push(syncToStorage(key, value, true));
+  });
+
+  console.log(
+    `✅ [Storage Sync] Batch update: ${results.filter((r) => r).length}/${
+      results.length
+    } thành công`
+  );
+
+  return results.every((r) => r === true);
+}
+
+export function showStorageStats() {
+  try {
+    let totalSize = 0;
+    const items = {};
+
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        const size = localStorage.getItem(key).length;
+        totalSize += size;
+        items[key] = (size / 1024).toFixed(2) + " KB";
+      }
+    }
+
+    const totalKB = (totalSize / 1024).toFixed(2);
+    const totalMB = (totalSize / (1024 * 1024)).toFixed(2);
+    const percentUsed = ((totalSize / (5 * 1024 * 1024)) * 100).toFixed(2);
+
+    console.group("📊 LocalStorage Usage");
+    console.table(items);
+    console.log(`Tổng: ${totalKB} KB (${totalMB} MB)`);
+    console.log(`Đã sử dụng: ${percentUsed}% / 5MB`);
+    console.groupEnd();
+
+    if (parseFloat(percentUsed) > 80) {
+      console.warn("⚠️ LocalStorage sắp đầy!");
+    }
+
+    return { totalSize, items, percentUsed };
+  } catch (error) {
+    console.error("❌ Không thể lấy storage stats:", error);
+    return null;
+  }
+}
+
+window.addEventListener("storage", (e) => {
+  if (e.key && e.newValue) {
+    console.log(` [Cross-Tab Sync] "${e.key}" đã được cập nhật từ tab khác`);
+  }
+});
+
+window.addEventListener("storage-sync", (e) => {
+  console.log(` [Storage Event] "${e.detail.key}" đã thay đổi`, e.detail);
+});
+
 const userManager = new UserManager();
 const productManager = new ProductManager();
 const inventoryModule = setupInventoryModule(productManager, categoryManager);
@@ -23,11 +160,9 @@ export { userManager, productManager, categoryManager, importManager };
 
 if (inventoryModule && inventoryModule.hienThiDanhSachTonKho) {
   window.renderInventoryTable = inventoryModule.hienThiDanhSachTonKho;
-  // Register inventory update listener immediately
   registerInventoryUpdateListener(inventoryModule.hienThiDanhSachTonKho);
 }
 
-// Export renderProductList to window for cross-module access
 window.renderProductList = renderProductList;
 
 export const DOM = {
@@ -131,7 +266,6 @@ function setupNavigation() {
           }
           renderPriceList();
         } else if (targetId === "import-slips") {
-          // THÊM: Reload trang khi vào tab import-slips để cập nhật danh sách sản phẩm
           if (window.needsReloadForImportSlips) {
             window.location.reload();
             return;
@@ -152,7 +286,6 @@ function setupNavigation() {
   }
 }
 
-// THÊM: Export hàm để các module khác có thể đánh dấu cần reload
 export function markNeedsReloadForImportSlips() {
   window.needsReloadForImportSlips = true;
 }
@@ -204,7 +337,6 @@ function hienThiDanhSachUser() {
                 <span class="status-badge status-active">Hoạt động</span>
             </td>
             <td class="action-buttons">
-                
                 <button class="btn btn-warning btn-reset" data-index="${index}">
                     <i class="fa-solid fa-key"></i> Reset MK
                 </button>
@@ -217,9 +349,6 @@ function hienThiDanhSachUser() {
   });
 
   ganSuKienNut();
-  // <button class="btn btn-info btn-view-orders" data-username="${user.tenDangNhap}">
-  //                 <i class="fa-solid fa-eye"></i> Xem đơn hàng
-  //             </button>
 }
 
 function ganSuKienNut() {
@@ -267,7 +396,7 @@ function hienThiDonHangCuaUser(username) {
     orderSummary += `${index + 1}. Đơn #${order.id} - ${
       order.status
     } - ${new Date(order.date).toLocaleDateString("vi-VN")}\n`;
-    orderSummary += `   Tổng: ${order.total.toLocaleString("vi-VN")} ₫\n\n`;
+    orderSummary += `   Tổng: ${order.total.toLocaleString("vi-VN")} ₫\n\n`;
   });
 
   alert(orderSummary + "\nXem chi tiết trong Console (F12)");

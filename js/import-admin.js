@@ -15,7 +15,6 @@ function initDOM() {
 
     importSlipsTableBody: document.getElementById("importSlipsTableBody"),
 
-    // draft preview elements
     draftPreviewList: document.getElementById("draftPreviewList"),
     draftTotalQty: document.getElementById("draftTotalQty"),
     draftTotalValue: document.getElementById("draftTotalValue"),
@@ -44,28 +43,23 @@ function initDOM() {
     cancelEditBtn: document.querySelector(
       "#editImportSlipModal .cancel-modal-btn"
     ),
-    // Fallback if querySelectorAll finds them differently
     editModalCloseButtons: document.querySelectorAll(
       "#editImportSlipModal .close-modal-btn, #editImportSlipModal .cancel-modal-btn"
     ),
   };
-
-  console.log("initDOM: editModal=", DOM.editModal);
-  console.log("initDOM: editForm=", DOM.editForm);
-  console.log("initDOM: importSlipsTableBody=", DOM.importSlipsTableBody);
 }
 
 export function initImportAdmin() {
-  if (window.importAdminInitialized) return; // prevent double init
+  if (window.importAdminInitialized) return;
 
   initDOM();
   setupEventListeners();
-  // create initial item row
   addImportItemRow();
   renderImportSlipsList();
 
   window.importAdminInitialized = true;
 }
+
 function setupEventListeners() {
   if (DOM.addImportSlipForm) {
     DOM.addImportSlipForm.addEventListener("submit", handleAddImportSlip);
@@ -93,7 +87,6 @@ function setupEventListeners() {
     DOM.filterResetBtn.addEventListener("click", handleResetFilter);
   }
 
-  // Gắn sự kiện cho close buttons trong modal edit
   if (DOM.editModalCloseButtons) {
     DOM.editModalCloseButtons.forEach((btn) => {
       btn.addEventListener("click", closeEditModal);
@@ -149,7 +142,7 @@ function updateDraftPreview() {
     itemEl.className = "preview-item";
     itemEl.innerHTML = `
             <div class="ellipsis">${displayName} ${
-      size ? `(${size})` : ""
+      size ? `(Size ${size})` : ""
     }</div>
             <div>${qty} x ${
       price ? price.toLocaleString("vi-VN") + "₫" : "-"
@@ -181,7 +174,7 @@ function createImportItemRow(products) {
   products.forEach((p) => {
     const opt = document.createElement("option");
     opt.value = p.id;
-    opt.textContent = `${p.name} - ${p.price.toLocaleString("vi-VN")}₫`;
+    opt.textContent = `${p.name} - Mã: ${p.id}`;
     opt.dataset.hasVariants =
       p.variants && p.variants.length > 0 ? "true" : "false";
     select.appendChild(opt);
@@ -208,13 +201,11 @@ function createImportItemRow(products) {
   size.type = "number";
   size.className = "import-item-size";
   size.placeholder = "Size";
+  size.required = true;
   size.style.width = "80px";
-  size.style.display = "none";
+  size.style.display = "inline-block";
 
   select.addEventListener("change", () => {
-    const hasVariants = "true";
-    size.style.display = hasVariants ? "inline-block" : "none";
-    if (!hasVariants) size.value = "";
     updateDraftPreview();
   });
 
@@ -233,7 +224,6 @@ function createImportItemRow(products) {
   row.appendChild(size);
   row.appendChild(removeBtn);
 
-  // update preview when values change
   [qty, price, size].forEach((inp) =>
     inp.addEventListener("input", updateDraftPreview)
   );
@@ -287,15 +277,19 @@ function handleAddImportSlip(e) {
       return;
     }
 
-    if (product.variants && product.variants.length > 0 && !size) {
-      alert(`Sản phẩm "${product.name}" yêu cầu nhập Size!`);
+    if (!size || size <= 0) {
+      alert(
+        `Sản phẩm "${product.name}" yêu cầu nhập Size hợp lệ (lớn hơn 0)!`
+      );
       return;
     }
+
+    const variantSize = size;
 
     items.push({
       productId,
       productName: product.name,
-      variantSize: size,
+      variantSize,
       quantity,
       importPrice,
       totalValue: quantity * importPrice,
@@ -396,7 +390,7 @@ export function renderImportSlipsList(slips = null) {
                     </button>
                 `
                 }
-            </td>
+                </td>
             `
           : "<td></td>";
 
@@ -432,13 +426,9 @@ export function renderImportSlipsList(slips = null) {
 }
 
 function attachSlipActionListeners() {
-  console.log("attachSlipActionListeners called");
-
   const editButtons = document.querySelectorAll(".btn-edit-slip");
-  console.log("Found edit buttons:", editButtons.length);
   editButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      console.log("Edit button clicked, id:", btn.dataset.id);
       handleEditSlip(btn.dataset.id);
     });
   });
@@ -457,57 +447,119 @@ function attachSlipActionListeners() {
 }
 
 function handleEditSlip(slipId) {
-  console.log("handleEditSlip called with id:", slipId);
   const slip = importManager.getSlipById(slipId);
   if (!slip || !slip.canEdit()) {
     alert("Không thể sửa phiếu này!");
     return;
   }
-  // Populate modal for single or multiple items
+
+  closeEditModal(false);
+
   if (DOM.editSlipNumber) DOM.editSlipNumber.textContent = slip.slipNumber;
   if (DOM.editSupplier) DOM.editSupplier.value = slip.supplier || "";
   if (DOM.editNote) DOM.editNote.value = slip.note || "";
 
-  // prepare items container
   const items =
-    Array.isArray(slip.items) && slip.items.length > 0 ? slip.items : [];
+    Array.isArray(slip.items) && slip.items.length > 0
+      ? slip.items
+      : [
+          {
+            productId: slip.productId,
+            productName: slip.productName || "-",
+            variantSize: slip.variantSize || null,
+            quantity: slip.quantity || 0,
+            importPrice: slip.importPrice || 0,
+          },
+        ];
 
-  if (DOM.editItemsContainer) DOM.editItemsContainer.innerHTML = "";
+  const singleGroup = document.getElementById("editSingleItemGroup");
 
-  if (items.length > 1) {
-    // hide single-item group
-    const singleGroup = document.getElementById("editSingleItemGroup");
-    if (singleGroup) singleGroup.style.display = "none";
+  if (items.length > 1 || (items.length === 1 && Array.isArray(slip.items))) {
+    if (singleGroup) {
+      singleGroup.style.display = "none";
+      const inputs = singleGroup.querySelectorAll("input, textarea");
+      inputs.forEach(input => input.disabled = true);
+    }
+    if (DOM.editItemsContainer) DOM.editItemsContainer.innerHTML = "";
 
-    // build rows for each item
-    items.forEach((it, idx) => {
-      const row = document.createElement("div");
-      row.className = "edit-item-row";
-      row.dataset.productId = it.productId;
-      row.dataset.index = idx;
+    const tableHTML = `
+      <div class="form-group">
+        <label>Danh sách Sản phẩm</label>
+        <div style="overflow-x: auto;">
+          <table class="userTable" style="width: 100%; font-size: 13px; border-collapse: collapse;">
+            <thead>
+              <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <th style="padding: 12px; text-align: left;">Sản phẩm</th>
+                <th style="padding: 12px; text-align: center; width: 100px;">SL</th>
+                <th style="padding: 12px; text-align: center; width: 140px;">Giá Nhập (₫)</th>
+                <th style="padding: 12px; text-align: center; width: 100px;">Size</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items
+                .map(
+                  (it, idx) => `
+                <tr style="border-bottom: 1px solid #e9ecef;" data-product-id="${it.productId}" data-index="${idx}">
+                  <td style="padding: 12px;">
+                    <strong>${it.productName}</strong>
+                  </td>
+                  <td style="padding: 12px; text-align: center;">
+                    <input 
+                      type="number" 
+                      class="edit-item-qty" 
+                      name="quantity-multi-${idx}" 
+                      value="${it.quantity}" 
+                      min="1" 
+                      placeholder="SL" 
+                      title="Số lượng nhập"
+                      style="width: 80px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center;"
+                      required
+                    />
+                  </td>
+                  <td style="padding: 12px; text-align: center;">
+                    <input 
+                      type="number" 
+                      class="edit-item-price" 
+                      name="price-multi-${idx}" 
+                      value="${it.importPrice}" 
+                      min="0" 
+                      step="1000" 
+                      placeholder="Giá Nhập" 
+                      title="Giá nhập (₫)"
+                      style="width: 130px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: right;"
+                      required
+                    />
+                  </td>
+                  <td style="padding: 12px; text-align: center;">
+                    <input 
+                      type="number" 
+                      class="edit-item-size" 
+                      name="size-multi-${idx}" 
+                      value="${it.variantSize ?? ""}" 
+                      placeholder="Size" 
+                      title="Size sản phẩm"
+                      style="width: 80px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center;"
+                      required
+                    />
+                  </td>
+                </tr>
+              `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
 
-      row.innerHTML = `
-                <div style="display:flex;gap:10px;align-items:center;">
-                    <div style="min-width:180px; font-weight:600;">${
-                      it.productName
-                    }${it.variantSize ? ` (Size ${it.variantSize})` : ""}</div>
-                    <input type="number" class="edit-item-qty" value="${
-                      it.quantity
-                    }" min="1" style="width:80px;padding:6px;border-radius:6px;border:1px solid #ddd;">
-                    <input type="number" class="edit-item-price" value="${
-                      it.importPrice
-                    }" min="0" step="1000" style="width:120px;padding:6px;border-radius:6px;border:1px solid #ddd;">
-                    <input type="number" class="edit-item-size" value="${
-                      it.variantSize ?? ""
-                    }" placeholder="Size" style="width:80px;padding:6px;border-radius:6px;border:1px solid #ddd;">
-                </div>
-            `;
+    if (DOM.editItemsContainer) {
+      DOM.editItemsContainer.innerHTML = tableHTML;
+    }
 
-      if (DOM.editItemsContainer) DOM.editItemsContainer.appendChild(row);
-    });
+    if (DOM.editForm) {
+      DOM.editForm.dataset.isSingleItem = "false";
+    }
   } else {
-    // single item: show single-item group and populate
-    const singleGroup = document.getElementById("editSingleItemGroup");
     if (singleGroup) singleGroup.style.display = "";
 
     const it = items[0] || null;
@@ -521,6 +573,13 @@ function handleEditSlip(slipId) {
       DOM.editPrice.value = it ? it.importPrice : slip.importPrice || 0;
     if (DOM.editSize)
       DOM.editSize.value = it ? it.variantSize || "" : slip.variantSize || "";
+
+    if (DOM.editForm) {
+      DOM.editForm.dataset.editingProductId = it
+        ? it.productId
+        : slip.productId;
+      DOM.editForm.dataset.isSingleItem = "true";
+    }
   }
 
   if (DOM.editForm) {
@@ -538,69 +597,136 @@ function handleUpdateImportSlip(e) {
   e.preventDefault();
 
   const slipId = Number(DOM.editForm.dataset.editingId);
-  // if multiple edit rows present, gather them
-  const editRows = DOM.editItemsContainer
-    ? Array.from(DOM.editItemsContainer.querySelectorAll(".edit-item-row"))
-    : [];
-
-  let updatedData = {};
-  if (editRows.length > 0) {
-    const items = editRows.map((r) => {
-      const productId = Number(r.dataset.productId) || null;
-      const productName = r.querySelector("div")
-        ? r.querySelector("div").textContent.trim()
-        : "";
-      const qty = Number(r.querySelector(".edit-item-qty").value) || 0;
-      const price = Number(r.querySelector(".edit-item-price").value) || 0;
-      const sizeVal = r.querySelector(".edit-item-size").value;
-      const variantSize = sizeVal ? Number(sizeVal) : null;
-      return {
-        productId,
-        productName,
-        variantSize,
-        quantity: qty,
-        importPrice: price,
-      };
-    });
-
-    updatedData = {
-      items,
-      supplier: DOM.editSupplier.value.trim(),
-      note: DOM.editNote.value.trim(),
-    };
-  } else {
-    updatedData = {
-      quantity: Number(DOM.editQuantity.value),
-      importPrice: Number(DOM.editPrice.value),
-      variantSize: DOM.editSize.value ? Number(DOM.editSize.value) : null,
-      supplier: DOM.editSupplier.value.trim(),
-      note: DOM.editNote.value.trim(),
-    };
+  if (!slipId) {
+    alert("❌ Lỗi: Không tìm thấy ID phiếu nhập đang chỉnh sửa.");
+    return;
   }
 
-  if (importManager.updateSlip(slipId, updatedData)) {
-    alert("✅ Cập nhật phiếu nhập thành công!");
-    closeEditModal();
-    renderImportSlipsList();
-  } else {
-    alert("❌ Lỗi khi cập nhật phiếu nhập!");
+  const isSingleItem = DOM.editForm.dataset.isSingleItem === "true";
+
+  let updatedData = {};
+
+  try {
+    if (!isSingleItem) {
+      const tableRows = DOM.editItemsContainer 
+        ? DOM.editItemsContainer.querySelectorAll("tbody tr[data-product-id]")
+        : [];
+
+      if (tableRows.length === 0) {
+        alert("❌ Không tìm thấy dữ liệu sản phẩm để cập nhật!");
+        return;
+      }
+
+      const items = [];
+      
+      tableRows.forEach((row) => {
+        const productId = Number(row.dataset.productId) || null;
+        
+        const productNameEl = row.querySelector("td:first-child strong");
+        const productName = productNameEl ? productNameEl.textContent.trim() : "";
+
+        const qtyInput = row.querySelector(".edit-item-qty");
+        const priceInput = row.querySelector(".edit-item-price");
+        const sizeInput = row.querySelector(".edit-item-size");
+
+        const qty = Number(qtyInput?.value) || 0;
+        const price = Number(priceInput?.value) || 0;
+        const sizeVal = sizeInput?.value || "";
+        const variantSize = sizeVal ? Number(sizeVal) : null;
+
+        if (qty <= 0) {
+          throw new Error(
+            `Số lượng nhập cho sản phẩm "${productName}" phải lớn hơn 0!`
+          );
+        }
+        if (price < 0) {
+          throw new Error(
+            `Giá nhập cho sản phẩm "${productName}" không được âm!`
+          );
+        }
+        if (!variantSize || variantSize <= 0) {
+          throw new Error(
+            `Size nhập cho sản phẩm "${productName}" phải là một số hợp lệ (lớn hơn 0)!`
+          );
+        }
+
+        items.push({
+          productId,
+          productName,
+          variantSize,
+          quantity: qty,
+          importPrice: price,
+          totalValue: qty * price,
+        });
+      });
+
+      updatedData = {
+        items,
+        supplier: DOM.editSupplier.value.trim(),
+        note: DOM.editNote.value.trim(),
+      };
+    } else {
+      const qty = Number(DOM.editQuantity.value);
+      const price = Number(DOM.editPrice.value);
+      const newSize = DOM.editSize.value ? Number(DOM.editSize.value) : null;
+
+      if (qty <= 0) {
+        throw new Error(`Số lượng nhập phải lớn hơn 0!`);
+      }
+      if (price < 0) {
+        throw new Error(`Giá nhập không được âm!`);
+      }
+      if (!newSize || newSize <= 0) {
+        throw new Error(`Size nhập phải là một số hợp lệ (lớn hơn 0)!`);
+      }
+
+      const productId = Number(DOM.editForm.dataset.editingProductId);
+      const productName = DOM.editProductName.textContent.trim();
+
+      if (!productId) {
+        throw new Error(
+          "Không tìm thấy ID sản phẩm gốc cho phiếu nhập này. Cập nhật thất bại."
+        );
+      }
+
+      updatedData = {
+        productId,
+        productName,
+        quantity: qty,
+        importPrice: price,
+        variantSize: newSize,
+        supplier: DOM.editSupplier.value.trim(),
+        note: DOM.editNote.value.trim(),
+        totalValue: qty * price,
+      };
+    }
+
+    if (importManager.updateSlip(slipId, updatedData)) {
+      alert("✅ Cập nhật phiếu nhập thành công!");
+      closeEditModal();
+      renderImportSlipsList();
+    } else {
+      alert("❌ Lỗi khi cập nhật phiếu nhập!");
+    }
+  } catch (error) {
+    alert(`❌ Lỗi nhập liệu:\n${error.message}`);
   }
 }
 
-function closeEditModal() {
+function closeEditModal(resetFormAttributes = true) {
   if (DOM.editModal) DOM.editModal.style.display = "none";
 
-  if (DOM.editForm) {
+  if (DOM.editForm && resetFormAttributes) {
     DOM.editForm.reset();
     delete DOM.editForm.dataset.editingId;
+    delete DOM.editForm.dataset.editingProductId;
+    delete DOM.editForm.dataset.isSingleItem;
   }
 
-  // Clear any multi-item edit rows and restore single-item group
   if (DOM.editItemsContainer) DOM.editItemsContainer.innerHTML = "";
   const singleGroup = document.getElementById("editSingleItemGroup");
   if (singleGroup) singleGroup.style.display = "";
 
-  // Reset single-item fields if present
   if (DOM.editProductName) DOM.editProductName.textContent = "";
   if (DOM.editQuantity) DOM.editQuantity.value = "";
   if (DOM.editPrice) DOM.editPrice.value = "";
@@ -618,22 +744,19 @@ function handleCompleteSlip(slipId) {
 
   let confirmMsg = `Xác nhận hoàn thành phiếu nhập:\n\nSố phiếu: ${slip.slipNumber}\n`;
 
-  if (Array.isArray(slip.items)) {
-    confirmMsg += "Sản phẩm:\n";
-    slip.items.forEach((it) => {
-      confirmMsg += `- ${it.productName}${
-        it.variantSize ? ` (Size ${it.variantSize})` : ""
-      } x ${it.quantity} @ ${it.importPrice.toLocaleString("vi-VN")}₫\n`;
-    });
-    confirmMsg += `\nTổng giá trị: ${(slip.totalValue || 0).toLocaleString(
-      "vi-VN"
-    )}₫\n\n`;
-  } else {
-    confirmMsg += `Sản phẩm: ${slip.productName || "-"}\nSố lượng: ${
-      slip.quantity || 0
-    }\nTổng giá trị: ${(slip.totalValue || 0).toLocaleString("vi-VN")}₫\n\n`;
-  }
+  const slipItems =
+    Array.isArray(slip.items) && slip.items.length > 0 ? slip.items : [slip];
+  let totalValue = 0;
 
+  confirmMsg += "Sản phẩm:\n";
+  slipItems.forEach((it) => {
+    confirmMsg += `- ${it.productName}${
+      it.variantSize ? ` (Size ${it.variantSize})` : ""
+    } x ${it.quantity} @ ${it.importPrice.toLocaleString("vi-VN")}₫\n`;
+    totalValue += it.totalValue || it.quantity * it.importPrice;
+  });
+
+  confirmMsg += `\nTổng giá trị: ${totalValue.toLocaleString("vi-VN")}₫\n\n`;
   confirmMsg += "⚠️ Sau khi hoàn thành, phiếu không thể sửa đổi!";
 
   if (!confirm(confirmMsg)) return;
@@ -644,33 +767,19 @@ function handleCompleteSlip(slipId) {
     return;
   }
 
-  // process inventory updates for each item
   let allSuccess = true;
-  if (Array.isArray(slip.items)) {
-    for (const it of slip.items) {
-      const note = `Phiếu nhập ${slip.slipNumber}${
-        slip.supplier ? ` - NCC: ${slip.supplier}` : ""
-      }`;
-      const ok = productManager.processProductImport(
-        it.productId,
-        it.quantity,
-        it.importPrice,
-        it.variantSize,
-        note
-      );
-      if (!ok) allSuccess = false;
-    }
-  } else {
-    const ok = productManager.processProductImport(
-      slip.productId,
-      slip.quantity,
-      slip.importPrice,
-      slip.variantSize,
-      `Phiếu nhập ${slip.slipNumber}${
-        slip.supplier ? ` - NCC: ${slip.supplier}` : ""
-      }`
-    );
 
+  for (const it of slipItems) {
+    const note = `Phiếu nhập ${slip.slipNumber}${
+      slip.supplier ? ` - NCC: ${slip.supplier}` : ""
+    }`;
+    const ok = productManager.processProductImport(
+      it.productId,
+      it.quantity,
+      it.importPrice,
+      it.variantSize,
+      note
+    );
     if (!ok) allSuccess = false;
   }
 
@@ -680,24 +789,14 @@ function handleCompleteSlip(slipId) {
     );
     renderImportSlipsList();
 
-    // Dispatch custom event để báo inventory cần update
-    console.log("📢 [import-admin] Dispatching inventoryUpdated event...");
+    const event = new CustomEvent("inventoryUpdated", {
+      detail: { slipId, slipNumber: slip.slipNumber, items: slip.items },
+      bubbles: true,
+      cancelable: true,
+    });
 
-    // Use a small delay to ensure data is properly saved before notifying listeners
-    setTimeout(() => {
-      const event = new CustomEvent("inventoryUpdated", {
-        detail: { slipId, slipNumber: slip.slipNumber, items: slip.items },
-        bubbles: true,
-        cancelable: true,
-      });
-
-      // Dispatch on both window and document for better compatibility
-      window.dispatchEvent(event);
-      document.dispatchEvent(event);
-      console.log(
-        "📢 [import-admin] Event dispatched successfully on both window and document"
-      );
-    }, 100);
+    window.dispatchEvent(event);
+    document.dispatchEvent(event);
   } else {
     alert(
       "⚠️ Phiếu đã hoàn thành nhưng có lỗi khi cập nhật tồn kho cho một số sản phẩm!"
@@ -735,7 +834,7 @@ function handleViewSlip(slipId) {
     return;
   }
 
-  let details = `\n═══════════════════════════════════════\n        CHI TIẾT PHIẾU NHẬP\n═══════════════════════════════════════\n\nSố phiếu: ${
+  let details = `\n╔═══════════════════════════════════════╗\n       CHI TIẾT PHIẾU NHẬP\n╚═══════════════════════════════════════╝\n\nSố phiếu: ${
     slip.slipNumber
   }\nTrạng thái: ${
     slip.status === "COMPLETED" ? "✅ Đã hoàn thành" : "📝 Nháp"
@@ -743,23 +842,21 @@ function handleViewSlip(slipId) {
 
   details +=
     "───────────────────────────────────────\nTHÔNG TIN SẢN PHẨM\n───────────────────────────────────────\n";
-  if (Array.isArray(slip.items)) {
-    slip.items.forEach((it) => {
-      details += `- ${it.productName}${
-        it.variantSize ? ` (Size ${it.variantSize})` : ""
-      } x ${it.quantity} @ ${it.importPrice.toLocaleString("vi-VN")}₫\n`;
-    });
-  } else {
-    details += `Tên sản phẩm: ${slip.productName}\n${
-      slip.variantSize
-        ? `Kích cỡ: Size ${slip.variantSize}`
-        : "Kích cỡ: Không có"
-    }\n`;
-  }
 
-  details += `\n───────────────────────────────────────\nTHÔNG TIN NHẬP HÀNG\n───────────────────────────────────────\nTổng giá trị: ${(
-    slip.totalValue || 0
-  ).toLocaleString("vi-VN")}₫\n${
+  const slipItems =
+    Array.isArray(slip.items) && slip.items.length > 0 ? slip.items : [slip];
+  let totalValue = 0;
+
+  slipItems.forEach((it) => {
+    details += `- ${it.productName}${
+      it.variantSize ? ` (Size ${it.variantSize})` : ""
+    } x ${it.quantity} @ ${it.importPrice.toLocaleString("vi-VN")}₫\n`;
+    totalValue += it.totalValue || it.quantity * it.importPrice;
+  });
+
+  details += `\n───────────────────────────────────────\nTHÔNG TIN NHẬP HÀNG\n───────────────────────────────────────\nTổng giá trị: ${totalValue.toLocaleString(
+    "vi-VN"
+  )}₫\n${
     slip.supplier ? `Nhà cung cấp: ${slip.supplier}` : ""
   }\n\n───────────────────────────────────────\nTHỜI GIAN\n───────────────────────────────────────\nNgày tạo: ${new Date(
     slip.createdDate
@@ -774,7 +871,7 @@ function handleViewSlip(slipId) {
   if (slip.note)
     details += `\n───────────────────────────────────────\nGHI CHÚ\n───────────────────────────────────────\n${slip.note}\n`;
 
-  details += "═══════════════════════════════════════\n";
+  details += "╚═══════════════════════════════════════╝\n";
 
   alert(details);
 }
