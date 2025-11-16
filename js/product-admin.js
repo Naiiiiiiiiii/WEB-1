@@ -405,7 +405,7 @@ function handleToggleProduct(e) {
   const success = productManager.toggleHideStatus(productId);
 
   if (success) {
-    const newStatus = product.isHidden ? "đã được hiển thị" : "đã được ẩn";
+    const newStatus = product.isHidden ? "đã được ẩn" : "đã được hiển thị";
     showNotification(`✅ Sản phẩm "${product.name}" ${newStatus}!`, "success");
     renderProductList();
   } else {
