@@ -1,8 +1,3 @@
-/**
- * Order Admin Module - Enhanced với State Machine validation
- * @version 2.0.0
- */
-
 import {
   getFilteredOrders,
   updateOrderStatus,
@@ -10,11 +5,6 @@ import {
 } from "./order-manager.js";
 import { DOM, userManager } from "./admin.js";
 
-// ==================== CONSTANTS ====================
-
-/**
- * Định nghĩa trạng thái đơn hàng
- */
 const ORDER_STATUS = {
   NEW: "Đang chờ xử lý",
   PROCESSED: "Đã xử lý",
@@ -22,28 +12,17 @@ const ORDER_STATUS = {
   CANCELED: "Đã hủy",
 };
 
-/**
- * Các trạng thái cuối (final states) - không thể thay đổi
- */
 const FINAL_STATES = [ORDER_STATUS.DELIVERED, ORDER_STATUS.CANCELED];
 
-/**
- * State transition rules - quy tắc chuyển đổi trạng thái
- * @type {Object.<string, string[]>}
- */
 const STATE_TRANSITIONS = {
   [ORDER_STATUS.NEW]: [ORDER_STATUS.PROCESSED, ORDER_STATUS.CANCELED],
   [ORDER_STATUS.PROCESSED]: [ORDER_STATUS.DELIVERED, ORDER_STATUS.CANCELED],
-  [ORDER_STATUS.DELIVERED]: [], // Final state - không thể chuyển
-  [ORDER_STATUS.CANCELED]: [], // Final state - không thể chuyển
+  [ORDER_STATUS.DELIVERED]: [],
+  [ORDER_STATUS.CANCELED]: [],
 };
-
-// ==================== STATE ====================
 
 let currentOrderList = [];
 let currentViewingOrderId = null;
-
-// ==================== INITIALIZATION ====================
 
 export function initOrderAdmin() {
   DOM.orderFilterApply.addEventListener("click", loadAndRenderOrders);
@@ -56,16 +35,11 @@ export function initOrderAdmin() {
   });
 
   if (DOM.orderStatusUpdateForm) {
-    DOM.orderStatusUpdateForm.addEventListener(
-      "submit",
-      handleStatusUpdateSubmit
-    );
+    DOM.orderStatusUpdateForm.addEventListener("submit", handleStatusUpdateSubmit);
   }
 
   loadAndRenderOrders();
 }
-
-// ==================== DATA LOADING ====================
 
 export function loadAndRenderOrders() {
   const filters = {
@@ -90,8 +64,6 @@ function resetFiltersAndLoad() {
   loadAndRenderOrders();
 }
 
-// ==================== RENDERING ====================
-
 function renderOrderTable(orders, users) {
   const tableBody = DOM.ordersTableBody;
   tableBody.innerHTML = "";
@@ -111,7 +83,7 @@ function renderOrderTable(orders, users) {
   orders.forEach((order) => {
     const customer = users.find((u) => u.tenDangNhap === order.userId);
     const customerName =
-      customer?.hoTen || order.shippingInfo?.fullName || "Khách vãng lai";
+      customer?.hoTen || order.shipping?.fullName || order.shippingInfo?.fullName || "Khách vãng lai";
 
     const row = document.createElement("tr");
     row.dataset.orderId = order.id;
@@ -143,8 +115,6 @@ function renderOrderTable(orders, users) {
   });
 }
 
-// ==================== ORDER DETAILS ====================
-
 function handleTableClick(e) {
   const viewButton = e.target.closest(".btn-view-detail");
   if (viewButton) {
@@ -153,10 +123,6 @@ function handleTableClick(e) {
   }
 }
 
-/**
- * Hiển thị chi tiết đơn hàng
- * @param {string} orderId - ID đơn hàng
- */
 function showOrderDetails(orderId) {
   const order = currentOrderList.find((o) => o.id === orderId);
   if (!order) {
@@ -166,17 +132,33 @@ function showOrderDetails(orderId) {
 
   currentViewingOrderId = orderId;
 
-  // Get customer info
   const customer = userManager.users.find(
     (u) => u.tenDangNhap === order.userId
   );
-  const customerName =
-    customer?.hoTen || order.shippingInfo?.fullName || "Khách vãng lai";
-  const customerEmail = customer?.email || "N/A";
-  const customerPhone = order.shippingInfo?.phone || "N/A";
-  const customerAddress = order.shippingInfo?.address || "N/A";
 
-  // Render customer info
+  const customerName =
+    customer?.hoTen ||
+    order.shipping?.fullName ||
+    order.shippingInfo?.fullName ||
+    "Khách vãng lai";
+
+  const customerEmail =
+    order.shipping?.email ||
+    customer?.email ||
+    "N/A";
+
+  const customerPhone =
+    order.shipping?.phone ||
+    order.shippingInfo?.phone ||
+    customer?.soDienThoai ||
+    "N/A";
+
+  const customerAddress =
+    order.shipping?.address ||
+    order.shippingInfo?.address ||
+    customer?.diaChiMacDinh ||
+    "N/A";
+
   DOM.orderDetailMeta.innerHTML = `
         <div><strong>Mã đơn:</strong> ${order.id}</div>
         <div><strong>Ngày đặt:</strong> ${
@@ -192,7 +174,6 @@ function showOrderDetails(orderId) {
         <div><strong>Địa chỉ:</strong> ${customerAddress}</div>
     `;
 
-  // Render items
   let itemsHtml = "<ul>";
   if (order.items && order.items.length > 0) {
     order.items.forEach((item) => {
@@ -214,18 +195,12 @@ function showOrderDetails(orderId) {
   itemsHtml += "</ul>";
   DOM.orderDetailItems.innerHTML = itemsHtml;
 
-  // ✅ FIX: Render status selector với validation
   renderStatusSelector(order);
 
-  // Show detail box
   DOM.orderDetailBox.style.display = "block";
   DOM.orderDetailBox.scrollIntoView({ behavior: "smooth" });
 }
 
-/**
- * ✅ NEW: Render status selector với business logic validation
- * @param {Object} order - Order object
- */
 function renderStatusSelector(order) {
   const statusSelect = DOM.orderStatusUpdateSelect;
   if (!statusSelect) return;
@@ -233,15 +208,12 @@ function renderStatusSelector(order) {
   const currentStatus = order.status;
   const isFinalState = isFinalStatus(currentStatus);
 
-  // Set current value
   statusSelect.value = currentStatus;
 
-  // ✅ Disable nếu là final state
   statusSelect.disabled = isFinalState;
   DOM.orderStatusUpdateBtn.disabled = isFinalState;
 
   if (isFinalState) {
-    // Thêm message giải thích tại sao không thể thay đổi
     const existingMessage = statusSelect.parentElement.querySelector(
       ".final-state-message"
     );
@@ -257,7 +229,6 @@ function renderStatusSelector(order) {
       statusSelect.parentElement.appendChild(message);
     }
   } else {
-    // Remove message nếu có
     const existingMessage = statusSelect.parentElement.querySelector(
       ".final-state-message"
     );
@@ -266,27 +237,18 @@ function renderStatusSelector(order) {
     }
   }
 
-  // ✅ Chỉ hiển thị các options hợp lệ
   populateValidStatusOptions(statusSelect, currentStatus);
 }
 
-/**
- * ✅ NEW: Populate dropdown với chỉ các trạng thái hợp lệ
- * @param {HTMLSelectElement} selectElement - Select element
- * @param {string} currentStatus - Trạng thái hiện tại
- */
 function populateValidStatusOptions(selectElement, currentStatus) {
-  // Clear existing options
   selectElement.innerHTML = "";
 
-  // Add current status (always first)
   const currentOption = document.createElement("option");
   currentOption.value = currentStatus;
   currentOption.textContent = currentStatus;
   currentOption.selected = true;
   selectElement.appendChild(currentOption);
 
-  // Add valid next states
   const validNextStates = getValidTransitions(currentStatus);
   validNextStates.forEach((status) => {
     const option = document.createElement("option");
@@ -296,13 +258,6 @@ function populateValidStatusOptions(selectElement, currentStatus) {
   });
 }
 
-// ==================== STATUS VALIDATION ====================
-
-/**
- * ✅ NEW: Kiểm tra xem status có phải final state không
- * @param {string} status - Trạng thái cần kiểm tra
- * @returns {boolean}
- */
 function isFinalStatus(status) {
   return FINAL_STATES.some(
     (finalStatus) =>
@@ -310,13 +265,7 @@ function isFinalStatus(status) {
   );
 }
 
-/**
- * ✅ NEW: Lấy danh sách trạng thái hợp lệ có thể chuyển đổi
- * @param {string} currentStatus - Trạng thái hiện tại
- * @returns {string[]} Mảng các trạng thái hợp lệ
- */
 function getValidTransitions(currentStatus) {
-  // Normalize status
   const normalizedStatus = Object.values(ORDER_STATUS).find(
     (status) => status.toLowerCase() === currentStatus.toLowerCase().trim()
   );
@@ -329,14 +278,7 @@ function getValidTransitions(currentStatus) {
   return STATE_TRANSITIONS[normalizedStatus] || [];
 }
 
-/**
- * ✅ NEW: Validate xem có thể chuyển từ currentStatus sang newStatus không
- * @param {string} currentStatus - Trạng thái hiện tại
- * @param {string} newStatus - Trạng thái mới
- * @returns {{valid: boolean, reason?: string}}
- */
 function validateStatusTransition(currentStatus, newStatus) {
-  // Nếu không thay đổi thì OK
   if (currentStatus.toLowerCase().trim() === newStatus.toLowerCase().trim()) {
     return {
       valid: false,
@@ -344,7 +286,6 @@ function validateStatusTransition(currentStatus, newStatus) {
     };
   }
 
-  // Kiểm tra final state
   if (isFinalStatus(currentStatus)) {
     return {
       valid: false,
@@ -352,7 +293,6 @@ function validateStatusTransition(currentStatus, newStatus) {
     };
   }
 
-  // Kiểm tra transition hợp lệ
   const validTransitions = getValidTransitions(currentStatus);
   const isValid = validTransitions.some(
     (status) => status.toLowerCase().trim() === newStatus.toLowerCase().trim()
@@ -370,12 +310,6 @@ function validateStatusTransition(currentStatus, newStatus) {
   return { valid: true };
 }
 
-// ==================== STATUS UPDATE ====================
-
-/**
- * Xử lý submit form cập nhật trạng thái
- * @param {Event} e - Submit event
- */
 function handleStatusUpdateSubmit(e) {
   e.preventDefault();
 
@@ -393,16 +327,13 @@ function handleStatusUpdateSubmit(e) {
   const currentStatus = order.status;
   const newStatus = DOM.orderStatusUpdateSelect.value;
 
-  // ✅ VALIDATE: Kiểm tra transition hợp lệ
   const validation = validateStatusTransition(currentStatus, newStatus);
   if (!validation.valid) {
     alert(`❌ ${validation.reason}`);
-    // Reset về trạng thái cũ
     DOM.orderStatusUpdateSelect.value = currentStatus;
     return;
   }
 
-  // ✅ CONFIRM: Đặc biệt cho "Đã hủy" (hoàn tồn kho)
   if (newStatus.toLowerCase().trim() === ORDER_STATUS.CANCELED.toLowerCase()) {
     if (
       !confirm(
@@ -414,7 +345,6 @@ function handleStatusUpdateSubmit(e) {
     }
   }
 
-  // ✅ CONFIRM: Đặc biệt cho "Đã giao" (final state)
   if (newStatus.toLowerCase().trim() === ORDER_STATUS.DELIVERED.toLowerCase()) {
     if (
       !confirm(
@@ -426,7 +356,6 @@ function handleStatusUpdateSubmit(e) {
     }
   }
 
-  // Update status
   const success = updateOrderStatus(currentViewingOrderId, newStatus);
 
   if (success) {
@@ -439,13 +368,6 @@ function handleStatusUpdateSubmit(e) {
   }
 }
 
-// ==================== UTILITIES ====================
-
-/**
- * Get CSS class cho status badge
- * @param {string} status - Order status
- * @returns {string} CSS class name
- */
 function getStatusClass(status) {
   const s = status.toLowerCase().trim();
 
@@ -460,7 +382,5 @@ function getStatusClass(status) {
       return "status-new";
   }
 }
-
-// ==================== EXPORTS ====================
 
 export { ORDER_STATUS, FINAL_STATES, validateStatusTransition, isFinalStatus };

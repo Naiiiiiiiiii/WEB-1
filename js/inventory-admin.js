@@ -846,12 +846,12 @@ window.removeCategoryThreshold = function (categoryId) {
   }
 };
 
-// ... (các hàm event handlers khác giữ nguyên)
+
 
 // ==================== INITIALIZATION ====================
 
 function initInventoryAdmin() {
-  console.log("📦 Initializing Inventory Admin...");
+  // console.log("📦 Initializing Inventory Admin...");
 
   // Populate category filter
   populateCategoryFilter();
@@ -901,7 +901,7 @@ function initInventoryAdmin() {
     renderInventoryTable();
   });
 
-  console.log("✅ Inventory Admin initialized");
+  // console.log("✅ Inventory Admin initialized");
 }
 
 // Auto-init when DOM ready

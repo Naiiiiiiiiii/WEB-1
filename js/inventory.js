@@ -23,7 +23,7 @@ export function setupInventoryModule(productManager, categoryManager) {
     const LOW_STOCK_THRESHOLD = 5;
 
     if (!inventoryTableBody || !addImportForm || !productSelect || !sizeInputGroup || !sizeInput || !stockMovementModal || !movementFilterForm || !closeMovementModalBtn || !closeMovementModalFooterBtn || !summaryStartStock || !summaryTotalIn || !summaryTotalOut || !summaryEndStock) {
-        console.error("LỖI KHỞI TẠO INVENTORY MODULE: Thiếu một hoặc nhiều phần tử HTML cần thiết. Kiểm tra ID.");
+        // console.error("LỖI KHỞI TẠO INVENTORY MODULE: Thiếu một hoặc nhiều phần tử HTML cần thiết. Kiểm tra ID.");
 
         if (!summaryStartStock) console.error("Thiếu #summaryStartStock");
         if (!summaryTotalIn) console.error("Thiếu #summaryTotalIn");

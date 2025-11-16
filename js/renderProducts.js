@@ -321,36 +321,10 @@ document.addEventListener("DOMContentLoaded", () => {
       modalPrice.innerHTML = priceHtml;
     }
 
-    // ✅ Fix sizes - lấy dynamic từ variants
+    // ❌ BỎ hiển thị chọn size khi bấm "Xem nhanh"
     if (modalOptionsContainer) {
-      const variants = product.variants || [];
-      const uniqueSizes = [...new Set(variants.map((v) => v.size))].filter(
-        Boolean
-      );
-
-      const sizeOptions =
-        uniqueSizes.length > 0
-          ? uniqueSizes
-              .map(
-                (size) =>
-                  `<option value="${escapeHtml(size)}">Size ${escapeHtml(
-                    size
-                  )}</option>`
-              )
-              .join("")
-          : [39, 40, 41, 42, 43]
-              .map((size) => `<option value="${size}">Size ${size}</option>`)
-              .join("");
-
-      modalOptionsContainer.innerHTML = `
-    <div class="form-group size-selector">
-        <label for="modal-shoe-size">Chọn Kích cỡ:</label>
-        <select id="modal-shoe-size" required>
-            <option value="">-- Chọn size --</option>
-            ${sizeOptions}
-        </select>
-    </div>
-  `;
+      modalOptionsContainer.innerHTML = "";
+      modalOptionsContainer.style.display = "none";
     }
 
     if (modalAddBtn) modalAddBtn.dataset.id = id;
@@ -370,7 +344,10 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.style.display = "none";
     modal.setAttribute("aria-hidden", "true");
 
-    if (modalOptionsContainer) modalOptionsContainer.innerHTML = "";
+    if (modalOptionsContainer) {
+      modalOptionsContainer.innerHTML = "";
+      modalOptionsContainer.style.display = "";
+    }
   }
 
   productGrid.addEventListener("click", (e) => {
@@ -448,13 +425,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = Number(this.dataset.id);
       const product = productManager.getProductById(id);
 
-      const sizeSelector = document.getElementById("modal-shoe-size");
-      const selectedSize = sizeSelector ? sizeSelector.value : null;
-
-      if (!selectedSize || selectedSize === "") {
-        alert("Vui lòng chọn kích cỡ giày.");
-        return;
-      }
+      // Không yêu cầu chọn size trong "Xem nhanh"
+      const selectedSize = "Chưa chọn";
 
       if (product && window.addToCart) {
         window.addToCart(
